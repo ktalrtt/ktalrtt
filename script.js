@@ -2,6 +2,7 @@ const $ = (id) => document.getElementById(id);
 const ADMIN_NAME = "khổng tiến anh đẹp trai";
 const STORAGE_KEY = "kyyeu_invitation_custom_config_v1";
 let currentConfig = { ...CONFIG };
+let currentGuestName = "";
 try {
   const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
   if (saved) currentConfig = { ...currentConfig, ...saved };
@@ -21,7 +22,7 @@ function applyConfig() {
   setLines("gateTitle", currentConfig.gateTitle);
   $("gateCopy").textContent = currentConfig.gateCopy || "";
   $("mainEyebrow").textContent = currentConfig.mainEyebrow || "";
-  $("helloLine").textContent = currentConfig.invitationLine || "Khổng Tiến Anh trân trọng mời bạn đi dự kỷ yếu";
+  $("helloLine").textContent = `${currentConfig.greetingPrefix || "Kính chào:"} ${currentGuestName}`.trim();
   setLines("mainTitle", currentConfig.mainTitle);
   $("mainMessage").textContent = currentConfig.mainMessage || "";
   $("eventDate").textContent = currentConfig.eventDate || "";
@@ -48,7 +49,7 @@ function readImage(file) {
   return new Promise((resolve, reject) => {
     if (!file) return resolve(null);
     if (!file.type.startsWith("image/")) return reject(new Error("Vui lòng chọn một tệp ảnh."));
-    if (file.size > 3 * 1024 * 1024) return reject(new Error("Ảnh tối đa 3 MB để file cấu hình không quá lớn."));
+    if (file.size > 500 * 1024) return reject(new Error("Mỗi ảnh tối đa 500 KB để lưu ổn định trong trình duyệt. Bạn hãy nén ảnh nhỏ hơn rồi chọn lại."));
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result);
     reader.onerror = () => reject(new Error("Không đọc được ảnh."));
@@ -70,6 +71,8 @@ $("nameForm").addEventListener("submit", (event) => {
   if (!name) return;
   $("gate").classList.add("hidden");
   $("invitation").classList.remove("hidden");
+  currentGuestName = name;
+  $("helloLine").textContent = `${currentConfig.greetingPrefix || "Kính chào:"} ${name}`;
   const isAdmin = name.toLocaleLowerCase("vi-VN") === ADMIN_NAME;
   $("adminPanel").classList.toggle("hidden", !isAdmin);
   if (isAdmin) fillEditor();
@@ -85,15 +88,22 @@ $("adminForm").addEventListener("submit", async (event) => {
   try {
     const cover = await readImage($("editCover").files[0]);
     const background = await readImage($("editBackground").files[0]);
+    const galleryUploads = await Promise.all([1, 2, 3].map(i => readImage($(`editGallery${i}`).files[0])));
     currentConfig = { ...currentConfig,
       invitationLine: $("editInvitationLine").value.trim(), mainTitle: $("editMainTitle").value.trim(),
       mainMessage: $("editMessage").value.trim(), eventDate: $("editDate").value.trim(),
       eventPlace: $("editPlace").value.trim(), buttonText: $("editButtonText").value.trim(),
       fontFamily: $("editFont").value,
-      ...(cover ? { coverImage: cover } : {}), ...(background ? { backgroundImage: background } : {})
+      ...(cover ? { coverImage: cover } : {}), ...(background ? { backgroundImage: background } : {}),
+      gallery: (currentConfig.gallery || []).map((item, index) => ({
+        ...item,
+        ...(galleryUploads[index] ? { image: galleryUploads[index] } : {})
+      }))
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(currentConfig));
-    applyConfig(); alert("Đã lưu thay đổi trên trình duyệt này!");
+    applyConfig();
+    ["editCover", "editBackground", "editGallery1", "editGallery2", "editGallery3"].forEach(id => { $(id).value = ""; });
+    alert("Đã lưu thay đổi trên trình duyệt này!");
   } catch (error) { alert(error.message || "Có lỗi khi lưu ảnh."); }
 });
 $("exportConfig").addEventListener("click", downloadConfig);

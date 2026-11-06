@@ -16,3 +16,12 @@
 
 ## Triển khai
 Giữ nguyên cấu hình GitHub Pages: branch `main`, folder `/ (root)`. Sau khi thay file, chờ GitHub Pages cập nhật rồi tải lại website.
+
+
+## Bảng quản trị và thư viện ảnh
+- Nhập tên `Khổng Tiến Anh đẹp trai` để mở bảng chỉnh sửa.
+- Dòng “Kính chào” tự động lấy tên mà khách vừa nhập.
+- Có thể thay ảnh bìa, ảnh nền và từng ảnh kỷ yếu 1, 2, 3 trong bảng quản trị.
+- Chọn “Lưu thay đổi trên máy này” để lưu trong trình duyệt hiện tại.
+- Chọn “Tải config.js để cập nhật GitHub”, sau đó thay file `config.js` trong repository để khách khác thấy thay đổi.
+- Giữ nguyên thư mục `assets` đang có trong repository.
