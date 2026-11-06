@@ -4,6 +4,7 @@ const DB_NAME = "kyyeu_invitation_db";
 const DB_STORE = "settings";
 const DB_KEY = "site-config";
 const ACCOUNT_KEY = "remembered-guest-name";
+const RSVP_WEB_APP_URL = "https://script.google.com/macros/s/AKfycby0xLcANRpEN6RmVUS4yaVj58iC2EPPV0ddPoB9z9KDH1sZQC9mgZwb4-XwYqo2ZfZ1/exec";
 let currentConfig = { ...CONFIG };
 let currentGuestName = "";
 function openConfigDB() {
@@ -89,9 +90,8 @@ function applyConfig() {
   $("confirmTitle").textContent = currentConfig.confirmTitle || "Bạn xác nhận tham gia nhé?";
   $("confirmYes").textContent = currentConfig.confirmYesText || "Đồng ý, mình sẽ tham gia ♥";
   $("confirmNo").textContent = currentConfig.confirmNoText || "Để mình suy nghĩ thêm";
-  $("confirmNote").textContent = currentConfig.confirmNote || "Email sẽ được soạn sẵn; bạn chỉ cần nhấn Gửi trong ứng dụng email.";
+  $("confirmNote").textContent = currentConfig.confirmNote || "Thông tin xác nhận sẽ được gửi tự động về email của chủ lời mời.";
   $("coverImage").src = currentConfig.coverImage || "";
-  $("rsvpLink").href = "mailto:" + encodeURIComponent(currentConfig.rsvpEmail || "hello@example.com") + "?subject=" + encodeURIComponent("Xác nhận tham gia chụp kỷ yếu");
   $("rsvpLink").innerHTML = `${escapeHtml(currentConfig.buttonText || "Chấp nhận lời mời")} <span>↗</span>`;
   document.documentElement.style.setProperty("--site-font", `"${currentConfig.fontFamily || "DM Sans"}", sans-serif`);
   document.body.style.backgroundImage = "";
@@ -131,7 +131,7 @@ function fillEditor() {
   $("editConfirmYes").value = currentConfig.confirmYesText || "Đồng ý, mình sẽ tham gia ♥";
   $("editConfirmNo").value = currentConfig.confirmNoText || "Để mình suy nghĩ thêm";
   $("editConfirmCopy").value = currentConfig.confirmCopy || "Cảm ơn bạn đã nhận lời. Xác nhận để mở email thông báo cho chủ nhân lời mời.";
-  $("editConfirmNote").value = currentConfig.confirmNote || "Email sẽ được soạn sẵn; bạn chỉ cần nhấn Gửi trong ứng dụng email.";
+  $("editConfirmNote").value = currentConfig.confirmNote || "Thông tin xác nhận sẽ được gửi tự động về email của chủ lời mời.";
   $("editGreetingPrefix").value = currentConfig.greetingPrefix || "Kính chào:";
   $("editFooterNote").value = currentConfig.footerNote || "";
   $("editRsvpEmail").value = currentConfig.rsvpEmail || "";
@@ -356,6 +356,50 @@ document.addEventListener("click", event => {
   if (button && !button.disabled && button.id !== "soundToggle") playClickSound();
 });
 
+// Bọt bong bóng khi bấm và vệt sáng/bong bóng nhỏ chạy theo chuột (chỉ trên thiết bị có chuột).
+function spawnBubble(x, y, count = 7, trail = false) {
+  if (currentConfig.motionEnabled === false || currentConfig.motionStyle === "off" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  for (let i = 0; i < count; i++) {
+    const bubble = document.createElement("i");
+    bubble.className = trail ? "cursor-bubble cursor-bubble-trail" : "cursor-bubble";
+    const angle = Math.random() * Math.PI * 2;
+    const distance = trail ? 8 + Math.random() * 18 : 24 + Math.random() * 58;
+    bubble.style.setProperty("--dx", `${Math.cos(angle) * distance}px`);
+    bubble.style.setProperty("--dy", `${Math.sin(angle) * distance - (trail ? 8 : 20)}px`);
+    bubble.style.left = `${x}px`;
+    bubble.style.top = `${y}px`;
+    bubble.style.setProperty("--bubble-size", `${trail ? 4 + Math.random() * 5 : 7 + Math.random() * 10}px`);
+    document.body.appendChild(bubble);
+    bubble.addEventListener("animationend", () => bubble.remove(), { once: true });
+  }
+}
+let lastPointerBubble = 0;
+if (window.matchMedia("(pointer: fine)").matches) {
+  const cursorGlow = document.createElement("div");
+  cursorGlow.className = "cursor-glow";
+  cursorGlow.setAttribute("aria-hidden", "true");
+  document.body.appendChild(cursorGlow);
+  document.addEventListener("pointermove", event => {
+    if (currentConfig.motionEnabled === false || currentConfig.motionStyle === "off") {
+      cursorGlow.style.opacity = "0";
+      return;
+    }
+    cursorGlow.style.opacity = "1";
+    cursorGlow.style.left = `${event.clientX}px`;
+    cursorGlow.style.top = `${event.clientY}px`;
+    const now = performance.now();
+    if (now - lastPointerBubble > 85) {
+      spawnBubble(event.clientX, event.clientY, 1, true);
+      lastPointerBubble = now;
+    }
+  }, { passive: true });
+}
+document.addEventListener("click", event => {
+  if (event.target.closest("button, a, .photo-frame, .gallery-item")) {
+    spawnBubble(event.clientX || 0, event.clientY || 0, 9, false);
+  }
+});
+
 const revealTargets = ".hero-content,.hero-art,.section-heading,.gallery-item,footer";
 if ("IntersectionObserver" in window) {
   const revealObserver = new IntersectionObserver(entries => {
@@ -374,7 +418,10 @@ if ("IntersectionObserver" in window) {
 }
 
 $("rsvpLink").addEventListener("click", () => {
-  $("confirmText").textContent = `${currentConfig.confirmCopy || "Cảm ơn bạn đã nhận lời."} ${currentGuestName ? `(${currentGuestName})` : ""} Sau khi xác nhận, email thông báo sẽ được soạn sẵn.`;
+  $("confirmText").textContent = `${currentConfig.confirmCopy || "Cảm ơn bạn đã nhận lời."} ${currentGuestName ? `(${currentGuestName})` : ""} Khi xác nhận, thông báo sẽ được gửi tự động.`;
+  $("confirmStatus").textContent = "";
+  $("confirmYes").disabled = false;
+  $("confirmYes").classList.remove("is-sending");
   $("confirmModal").classList.remove("hidden");
   document.body.classList.add("modal-open");
   playOpenSound();
@@ -387,12 +434,51 @@ $("confirmNo").addEventListener("click", closeConfirmModal);
 $("confirmModal").addEventListener("click", event => {
   if (event.target === $("confirmModal")) closeConfirmModal();
 });
-$("confirmYes").addEventListener("click", () => {
-  const recipient = currentConfig.rsvpEmail || "khongtienanhlrtt@gmail.com";
-  const subject = `Xác nhận tham gia chụp kỷ yếu - ${currentGuestName}`;
-  const body = `Xin chào Khổng Tiến Anh,\n\nMình là ${currentGuestName}. Mình xác nhận sẽ tham gia buổi chụp kỷ yếu.\n\nCảm ơn bạn đã mời mình!`;
-  const mailto = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  closeConfirmModal();
-  playSuccessSound();
-  window.location.href = mailto;
+let rsvpSending = false;
+$("confirmYes").addEventListener("click", async () => {
+  if (rsvpSending) return;
+  rsvpSending = true;
+  const button = $("confirmYes");
+  const status = $("confirmStatus");
+  button.disabled = true;
+  button.classList.add("is-sending");
+  button.textContent = "Đang gửi xác nhận…";
+  status.textContent = "Đang gửi thông tin đến chủ lời mời. Vui lòng đợi một chút nhé.";
+  status.className = "confirm-status is-pending";
+  const payload = {
+    name: currentGuestName || "Khách mời",
+    note: "Đã xác nhận tham gia buổi chụp kỷ yếu.",
+    page: location.href,
+    submittedAt: new Date().toISOString()
+  };
+  try {
+    // text/plain + no-cors tránh yêu cầu preflight từ trình duyệt khi gọi Apps Script.
+    // Response ở chế độ opaque nên chỉ xác nhận yêu cầu đã được gửi đi, không đọc được kết quả MailApp.
+    await fetch(RSVP_WEB_APP_URL, {
+      method: "POST",
+      mode: "no-cors",
+      redirect: "follow",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    });
+    playSuccessSound();
+    status.textContent = "Đã gửi yêu cầu xác nhận! Chủ lời mời sẽ nhận thông báo qua Gmail nếu Apps Script đã được cấp quyền và triển khai đúng.";
+    status.className = "confirm-status is-success";
+    button.textContent = "Đã gửi yêu cầu ♥";
+    setTimeout(() => {
+      closeConfirmModal();
+      button.textContent = currentConfig.confirmYesText || "Đồng ý, mình sẽ tham gia ♥";
+      button.disabled = false;
+      button.classList.remove("is-sending");
+      rsvpSending = false;
+    }, 2600);
+  } catch (error) {
+    console.error("Không gửi được thông báo RSVP:", error);
+    status.textContent = "Chưa gửi được thông báo. Bạn hãy thử lại hoặc báo chủ lời mời kiểm tra đường dẫn Apps Script.";
+    status.className = "confirm-status is-error";
+    button.textContent = currentConfig.confirmYesText || "Thử gửi lại ♥";
+    button.disabled = false;
+    button.classList.remove("is-sending");
+    rsvpSending = false;
+  }
 });

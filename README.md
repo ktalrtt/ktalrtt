@@ -32,8 +32,10 @@ Bản này dùng IndexedDB thay cho localStorage để lưu ảnh và cấu hìn
 
 
 ## Xác nhận tham gia và tối ưu ảnh
-- Nút “Chấp nhận lời mời” mở hộp xác nhận. Khi khách đồng ý, website mở email đã soạn sẵn gửi tới `khongtienanhlrtt@gmail.com`; khách cần bấm Gửi. GitHub Pages thuần không có máy chủ để tự gửi email trực tiếp.
-- Có hiệu ứng mở trang, hộp xác nhận, nút bấm và tiếng click tạo bằng Web Audio (không tải thêm thư viện).
+- Nút “Chấp nhận lời mời” mở hộp xác nhận. Khi khách đồng ý, website gửi POST đến Google Apps Script đã cấu hình trong `script.js`; Apps Script dùng `MailApp.sendEmail` để gửi thông báo về `khongtienanhlrtt@gmail.com`.
+- Google Apps Script cần được triển khai dưới dạng Web app, thực thi với tư cách chủ sở hữu và cho phép người dùng truy cập phù hợp; chủ sở hữu phải cấp quyền gửi email. Nếu thay đổi mã Apps Script, hãy cập nhật deployment đang dùng.
+- Trình duyệt gọi Apps Script bằng `fetch` ở chế độ `no-cors`, vì vậy website không đọc được phản hồi chi tiết từ Google. Thông báo trên web xác nhận yêu cầu đã được gửi đi, không đảm bảo email đã vào Inbox; hãy kiểm tra cả Spam và nhật ký Executions của Apps Script khi thử nghiệm.
+- Có hiệu ứng mở trang, hộp xác nhận, nút bấm, bong bóng khi nhấn, vệt bong bóng và ánh sáng đi theo chuột; tiếng click được tạo bằng Web Audio (không tải thêm thư viện).
 - Ảnh tải lên tối đa 15 MB mỗi ảnh gốc; website tự thu nhỏ cạnh dài tối đa 1600 px và nén WebP mục tiêu khoảng 450 KB, giới hạn 500 KB mỗi ảnh sau nén.
 
 
