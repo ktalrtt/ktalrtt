@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7eee8">
+  <title>Thư mời kỷ yếu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="gate" class="gate">
+    <div class="gate-card">
+      <p class="eyebrow" id="gateEyebrow">A LITTLE INVITATION</p>
+      <div class="flower">✿</div>
+      <h1 id="gateTitle">Một lời mời<br><em>dành riêng cho bạn</em></h1>
+      <p class="gate-copy" id="gateCopy">Nhập tên của bạn để mở lá thư nhỏ này nhé.</p>
+      <form id="nameForm">
+        <label class="sr-only" for="guestName">Tên của bạn</label>
+        <input id="guestName" name="guestName" maxlength="50" autocomplete="name" placeholder="Nhập tên của bạn..." required>
+        <button type="submit">Mở lời mời <span>↗</span></button>
+      </form>
+      <p class="tiny-note">một ngày đặc biệt · những kỷ niệm thật đẹp</p>
+    </div>
+  </main>
+
+  <main id="invitation" class="invitation hidden">
+    <nav class="topbar"><span class="brand">OUR LITTLE MOMENT <i>✳</i></span><button id="backBtn" class="text-button">← Quay lại</button></nav>
+    <section class="hero">
+      <div class="hero-content">
+        <p class="eyebrow" id="mainEyebrow">SAVE THE DATE · 2026</p>
+        <p class="hello" id="helloLine">Khổng Tiến Anh trân trọng mời bạn đi dự kỷ yếu</p>
+        <h1 id="mainTitle">Mời bạn đi<br><em>chụp kỷ yếu</em></h1>
+        <div class="rule"><span>✳</span></div>
+        <p class="message" id="mainMessage">Thanh xuân chỉ ghé qua một lần. Cùng nhau lưu giữ những khoảnh khắc rực rỡ nhất, để sau này khi nhìn lại, chúng ta vẫn có thể mỉm cười vì đã từng có nhau trong những năm tháng tuyệt đẹp ấy.</p>
+        <div class="details">
+          <div><span class="detail-label">THỜI GIAN</span><strong id="eventDate">Sẽ sớm được bật mí</strong></div>
+          <div><span class="detail-label">ĐỊA ĐIỂM</span><strong id="eventPlace">Cùng nhau chọn nhé</strong></div>
+        </div>
+        <a id="rsvpLink" class="rsvp" href="mailto:hello@example.com">Chấp nhận lời mời <span>↗</span></a>
+      </div>
+      <div class="hero-art">
+        <div class="photo-frame"><img id="coverImage" src="assets/cover.svg" alt="Ảnh kỷ niệm"></div>
+        <span class="photo-caption">the days we'll remember</span>
+        <span class="sparkle s1">✳</span><span class="sparkle s2">✧</span>
+      </div>
+    </section>
+    <section class="gallery-section">
+      <div class="section-heading"><p class="eyebrow">MEMORIES IN FRAMES</p><h2>Một chút <em>thanh xuân</em></h2><p>Những khoảnh khắc mong được cùng bạn viết tiếp.</p></div>
+      <div id="gallery" class="gallery"></div>
+    </section>
+    <footer><span>MADE WITH ♡ FOR OUR CLASS</span><span id="footerNote">Hẹn gặp bạn trong ngày thật vui!</span></footer>
+  </main>
+  <section id="adminPanel" class="admin-panel hidden" aria-label="Bảng chỉnh sửa thiệp">
+    <div class="admin-heading"><div><p class="eyebrow">PRIVATE EDITOR</p><h2>Chỉnh sửa <em>thiệp mời</em></h2><p>Chỉ mở khi nhập đúng tên quản trị.</p></div><button id="closeAdmin" class="text-button" type="button">Đóng ×</button></div>
+    <form id="adminForm" class="admin-grid">
+      <label>Lời mời<input id="editInvitationLine" type="text"></label>
+      <label>Tiêu đề thiệp<input id="editMainTitle" type="text" placeholder="Dùng dấu | để xuống dòng"></label>
+      <label class="wide">Lời nhắn<textarea id="editMessage" rows="3"></textarea></label>
+      <label>Thời gian<input id="editDate" type="text" placeholder="Ví dụ: 7:00, ngày 20/11/2026"></label>
+      <label>Địa điểm<input id="editPlace" type="text" placeholder="Ví dụ: Trường ..."></label>
+      <label>Chữ trên nút<input id="editButtonText" type="text"></label>
+      <label>Ảnh trên thiệp<input id="editCover" type="file" accept="image/*"></label>
+      <label>Ảnh nền toàn trang<input id="editBackground" type="file" accept="image/*"></label>
+      <label>Kiểu chữ<select id="editFont"><option value="DM Sans">DM Sans – hiện đại</option><option value="Playfair Display">Playfair Display – thanh lịch</option><option value="Georgia">Georgia – cổ điển</option><option value="Arial">Arial – đơn giản</option><option value="serif">Serif – có chân</option><option value="sans-serif">Sans-serif – không chân</option></select></label>
+      <div class="admin-actions wide"><button class="rsvp" type="submit">Lưu thay đổi trên máy này</button><button id="exportConfig" class="secondary-action" type="button">Tải config.js để cập nhật GitHub</button></div>
+      <p class="admin-help wide">Lưu trên máy này chỉ hiển thị ở trình duyệt hiện tại. Muốn mọi người đều thấy, hãy tải config.js rồi thay file cũ trong GitHub. Ảnh đã chọn sẽ được đóng gói vào file cấu hình.</p>
+    </form>
+  </section>
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
