@@ -25,3 +25,35 @@ Giữ nguyên cấu hình GitHub Pages: branch `main`, folder `/ (root)`. Sau kh
 - Chọn “Lưu thay đổi trên máy này” để lưu trong trình duyệt hiện tại.
 - Chọn “Tải config.js để cập nhật GitHub”, sau đó thay file `config.js` trong repository để khách khác thấy thay đổi.
 - Giữ nguyên thư mục `assets` đang có trong repository.
+
+
+## Bản sửa lỗi lưu ảnh
+Bản này dùng IndexedDB thay cho localStorage để lưu ảnh và cấu hình, giúp tránh lỗi vượt giới hạn localStorage. Mỗi ảnh tối đa 5 MB. Muốn mọi khách đều thấy thay đổi, vẫn cần xuất config.js và cập nhật lên GitHub.
+
+
+## Xác nhận tham gia và tối ưu ảnh
+- Nút “Chấp nhận lời mời” mở hộp xác nhận. Khi khách đồng ý, website mở email đã soạn sẵn gửi tới `khongtienanhlrtt@gmail.com`; khách cần bấm Gửi. GitHub Pages thuần không có máy chủ để tự gửi email trực tiếp.
+- Có hiệu ứng mở trang, hộp xác nhận, nút bấm và tiếng click tạo bằng Web Audio (không tải thêm thư viện).
+- Ảnh tải lên tối đa 15 MB mỗi ảnh gốc; website tự thu nhỏ cạnh dài tối đa 1600 px và nén WebP mục tiêu khoảng 450 KB, giới hạn 500 KB mỗi ảnh sau nén.
+
+
+## Lưu tên đăng nhập và đăng xuất
+- Ở màn hình đầu, bật **Nhớ tên trên thiết bị này** để trình duyệt ghi nhớ tên đã nhập bằng IndexedDB. Lần sau mở website trên cùng trình duyệt/thiết bị, tên sẽ được điền sẵn.
+- Nút **Đăng xuất** đưa người dùng về màn hình nhập tên; tên đã nhớ vẫn được giữ lại để tiện đăng nhập lần sau. Bỏ chọn ô nhớ tên khi đăng nhập để xóa tên đã lưu.
+- Đây là trang tĩnh chỉ đăng nhập bằng tên, không có mật khẩu hay xác thực máy chủ; không dùng cách này để bảo vệ dữ liệu bí mật.
+
+## Nội dung có thể chỉnh sửa
+Trong bảng PRIVATE EDITOR có thể chỉnh tiêu đề trang, nội dung màn hình đăng nhập, lời chào, tiêu đề và nội dung thiệp, ngày giờ, địa điểm, chữ nút, email nhận RSVP, lời nhắn cuối trang, chú thích ảnh, font và các ảnh. Sau khi lưu trên máy, bấm **Tải config.js để cập nhật GitHub** rồi thay file config.js trong repository để công khai thay đổi cho tất cả khách.
+
+
+## Chỉnh sửa giao diện ngay trên website
+
+Đăng nhập bằng tên quản trị hiện có để mở bảng **Chỉnh sửa thiệp mời**. Ngoài các nội dung chữ, email và ảnh vốn có, bảng quản trị còn cho phép:
+
+- Thay riêng ảnh nền màn hình đăng nhập (sảnh), ảnh nền phần thiệp chính và ảnh nền thư viện ảnh.
+- Chỉnh màu nhấn, màu chữ, màu nền sảnh và màu nền thư viện; điều chỉnh độ mờ lớp phủ ảnh nền.
+- Đổi kiểu chữ và chú thích ảnh bìa.
+- Bật/tắt chuyển động, chọn chuyển động sang trọng/nhẹ/tắt; bật/tắt âm thanh và chỉnh âm lượng.
+- Lưu để xem ngay trên trình duyệt đang dùng hoặc xuất `config.js` để cập nhật bản GitHub Pages công khai.
+
+**Lưu ý quan trọng:** GitHub Pages chỉ lưu website tĩnh. Nút lưu trong bảng quản trị lưu riêng trên thiết bị/trình duyệt của bạn; khách truy cập bằng thiết bị khác sẽ không tự thấy thay đổi đó. Để cập nhật cho tất cả mọi người, hãy chọn **Tải config.js để cập nhật GitHub**, sau đó thay `config.js` trong kho GitHub và commit. Các nội dung mặc định ban đầu được giữ nguyên; chỉ những trường bạn thay đổi mới ghi đè nội dung cũ.

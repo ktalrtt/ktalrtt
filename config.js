@@ -11,7 +11,7 @@ const CONFIG = {
   eventDate: "Sẽ sớm được bật mí",
   eventPlace: "Cùng nhau chọn nhé",
   buttonText: "Chấp nhận lời mời",
-  rsvpEmail: "hello@example.com",
+  rsvpEmail: "khongtienanhlrtt@gmail.com",
   footerNote: "Hẹn gặp bạn trong ngày thật vui!",
   coverImage: "assets/cover.svg",
   backgroundImage: "",

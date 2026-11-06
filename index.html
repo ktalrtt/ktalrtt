@@ -20,14 +20,15 @@
       <form id="nameForm">
         <label class="sr-only" for="guestName">Tên của bạn</label>
         <input id="guestName" name="guestName" maxlength="50" autocomplete="name" placeholder="Nhập tên của bạn..." required>
-        <button type="submit">Mở lời mời <span>↗</span></button>
+        <label class="remember-option"><input id="rememberName" type="checkbox" checked> Nhớ tên trên thiết bị này</label>
+        <button id="gateButton" type="submit">Mở lời mời <span>↗</span></button>
       </form>
-      <p class="tiny-note">một ngày đặc biệt · những kỷ niệm thật đẹp</p>
+      <p class="tiny-note" id="gateTinyNote">một ngày đặc biệt · những kỷ niệm thật đẹp</p>
     </div>
   </main>
 
   <main id="invitation" class="invitation hidden">
-    <nav class="topbar"><span class="brand">OUR LITTLE MOMENT <i>✳</i></span><button id="backBtn" class="text-button">← Quay lại</button></nav>
+    <nav class="topbar"><span class="brand" id="brandText">OUR LITTLE MOMENT <i>✳</i></span><div class="topbar-actions"><button id="backBtn" class="text-button" type="button">← Quay lại</button><button id="soundToggle" class="text-button sound-toggle" type="button" aria-pressed="true">♫ Âm thanh: bật</button><button id="logoutBtn" class="text-button logout-button" type="button">Đăng xuất ↗</button></div></nav>
     <section class="hero">
       <div class="hero-content">
         <p class="eyebrow" id="mainEyebrow">SAVE THE DATE · 2026</p>
@@ -39,37 +40,90 @@
           <div><span class="detail-label">THỜI GIAN</span><strong id="eventDate">Sẽ sớm được bật mí</strong></div>
           <div><span class="detail-label">ĐỊA ĐIỂM</span><strong id="eventPlace">Cùng nhau chọn nhé</strong></div>
         </div>
-        <a id="rsvpLink" class="rsvp" href="mailto:hello@example.com">Chấp nhận lời mời <span>↗</span></a>
+        <button id="rsvpLink" class="rsvp" type="button">Chấp nhận lời mời <span>↗</span></button>
       </div>
       <div class="hero-art">
         <div class="photo-frame"><img id="coverImage" src="assets/cover.svg" alt="Ảnh kỷ niệm"></div>
-        <span class="photo-caption">the days we'll remember</span>
+        <span class="photo-caption" id="photoCaption">the days we'll remember</span>
         <span class="sparkle s1">✳</span><span class="sparkle s2">✧</span>
       </div>
     </section>
     <section class="gallery-section">
-      <div class="section-heading"><p class="eyebrow">MEMORIES IN FRAMES</p><h2>Một chút <em>thanh xuân</em></h2><p>Những khoảnh khắc mong được cùng bạn viết tiếp.</p></div>
+      <div class="section-heading"><p class="eyebrow" id="galleryEyebrow">MEMORIES IN FRAMES</p><h2 id="galleryTitle">Một chút <em>thanh xuân</em></h2><p id="galleryCopy">Những khoảnh khắc mong được cùng bạn viết tiếp.</p></div>
       <div id="gallery" class="gallery"></div>
     </section>
     <footer><span>MADE WITH ♡ FOR OUR CLASS</span><span id="footerNote">Hẹn gặp bạn trong ngày thật vui!</span></footer>
   </main>
+
+  <section id="confirmModal" class="confirm-modal hidden" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="confirm-card">
+      <div class="confirm-flower">✿</div>
+      <p class="eyebrow">ONE LITTLE YES</p>
+      <h2 id="confirmTitle">Bạn xác nhận tham gia nhé?</h2>
+      <p id="confirmText" class="confirm-copy">Cảm ơn bạn đã nhận lời. Xác nhận để mở email thông báo cho chủ nhân lời mời.</p>
+      <div class="confirm-actions">
+        <button id="confirmYes" class="rsvp" type="button">Đồng ý, mình sẽ tham gia ♥</button>
+        <button id="confirmNo" class="secondary-action" type="button">Để mình suy nghĩ thêm</button>
+      </div>
+      <p class="confirm-note" id="confirmNote">Email sẽ được soạn sẵn; bạn chỉ cần nhấn Gửi trong ứng dụng email.</p>
+    </div>
+  </section>
   <section id="adminPanel" class="admin-panel hidden" aria-label="Bảng chỉnh sửa thiệp">
     <div class="admin-heading"><div><p class="eyebrow">PRIVATE EDITOR</p><h2>Chỉnh sửa <em>thiệp mời</em></h2><p>Chỉ mở khi nhập đúng tên quản trị.</p></div><button id="closeAdmin" class="text-button" type="button">Đóng ×</button></div>
     <form id="adminForm" class="admin-grid">
+      <label>Tên trang (tiêu đề tab)<input id="editSiteTitle" type="text"></label>
+      <label>Dòng nhỏ ở màn hình đăng nhập<input id="editGateEyebrow" type="text"></label>
+      <label>Tiêu đề màn hình đăng nhập<input id="editGateTitle" type="text" placeholder="Dùng dấu | để xuống dòng"></label>
+      <label>Lời hướng dẫn đăng nhập<input id="editGateCopy" type="text"></label>
+      <label>Chữ nút mở lời mời<input id="editGateButton" type="text"></label>
+      <label>Chữ nhỏ cuối màn hình đăng nhập<input id="editGateTinyNote" type="text"></label>
+      <label>Tên thương hiệu trên thanh đầu<input id="editBrandText" type="text"></label>
+      <label>Dòng nhỏ trên thiệp<input id="editMainEyebrow" type="text"></label>
+      <label>Dòng nhỏ đầu thư viện ảnh<input id="editGalleryEyebrow" type="text"></label>
+      <label>Tiêu đề thư viện ảnh<input id="editGalleryTitle" type="text" placeholder="Dùng dấu | để xuống dòng"></label>
+      <label class="wide">Mô tả thư viện ảnh<input id="editGalleryCopy" type="text"></label>
+      <label>Lời chào trước tên<input id="editGreetingPrefix" type="text"></label>
       <label>Lời mời<input id="editInvitationLine" type="text"></label>
       <label>Tiêu đề thiệp<input id="editMainTitle" type="text" placeholder="Dùng dấu | để xuống dòng"></label>
       <label class="wide">Lời nhắn<textarea id="editMessage" rows="3"></textarea></label>
       <label>Thời gian<input id="editDate" type="text" placeholder="Ví dụ: 7:00, ngày 20/11/2026"></label>
       <label>Địa điểm<input id="editPlace" type="text" placeholder="Ví dụ: Trường ..."></label>
       <label>Chữ trên nút<input id="editButtonText" type="text"></label>
+      <label>Email nhận xác nhận<input id="editRsvpEmail" type="email"></label>
+      <label class="wide">Lời nhắn cuối trang<input id="editFooterNote" type="text"></label>
+      <label>Tiêu đề bảng xác nhận<input id="editConfirmTitle" type="text"></label>
+      <label>Chữ nút đồng ý<input id="editConfirmYes" type="text"></label>
+      <label>Chữ nút từ chối<input id="editConfirmNo" type="text"></label>
+      <label class="wide">Lời nhắn trong bảng xác nhận<input id="editConfirmCopy" type="text"></label>
+      <label class="wide">Ghi chú dưới bảng xác nhận<input id="editConfirmNote" type="text"></label>
+      <label>Chú thích ảnh 1<input id="editCaption1" type="text"></label>
+      <label>Chú thích ảnh 2<input id="editCaption2" type="text"></label>
+      <label>Chú thích ảnh 3<input id="editCaption3" type="text"></label>
       <label>Ảnh trên thiệp<input id="editCover" type="file" accept="image/*"></label>
-      <label>Ảnh nền toàn trang<input id="editBackground" type="file" accept="image/*"></label>
+      <label>Ảnh nền sảnh đăng nhập<input id="editGateBackground" type="file" accept="image/*"></label>
+      <label>Ảnh nền phần thiệp chính<input id="editBackground" type="file" accept="image/*"></label>
+      <label>Ảnh nền khu vực thư viện ảnh<input id="editGalleryBackground" type="file" accept="image/*"></label>
       <label>Ảnh kỷ yếu 1<input id="editGallery1" type="file" accept="image/*"></label>
       <label>Ảnh kỷ yếu 2<input id="editGallery2" type="file" accept="image/*"></label>
       <label>Ảnh kỷ yếu 3<input id="editGallery3" type="file" accept="image/*"></label>
+      <label>Chú thích dưới ảnh bìa<input id="editPhotoCaption" type="text"></label>
+      <label>Màu nhấn / màu trang trí<input id="editAccentColor" type="color" value="#b77d70"></label>
+      <label>Màu chữ chính<input id="editTextColor" type="color" value="#342d2a"></label>
+      <label>Màu nền sảnh<input id="editGateColor" type="color" value="#f7eee8"></label>
+      <label>Màu nền thư viện ảnh<input id="editGalleryColor" type="color" value="#f3e9e2"></label>
+      <label>Độ mờ lớp phủ sảnh <input id="editGateOverlay" type="range" min="0" max="100" value="72"></label>
+      <label>Độ mờ lớp phủ thiệp <input id="editPageOverlay" type="range" min="0" max="100" value="78"></label>
+      <label>Độ mờ lớp phủ thư viện ảnh <input id="editGalleryOverlay" type="range" min="0" max="100" value="78"></label>
       <label>Kiểu chữ<select id="editFont"><option value="DM Sans">DM Sans – hiện đại</option><option value="Playfair Display">Playfair Display – thanh lịch</option><option value="Georgia">Georgia – cổ điển</option><option value="Arial">Arial – đơn giản</option><option value="serif">Serif – có chân</option><option value="sans-serif">Sans-serif – không chân</option></select></label>
+      <div class="settings-box wide">
+        <h3>Hiệu ứng & trải nghiệm</h3>
+        <label class="setting-check"><input id="editMotionEnabled" type="checkbox" checked> Bật hiệu ứng chuyển động</label>
+        <label class="setting-check"><input id="editSoundEnabled" type="checkbox" checked> Bật âm thanh khi bấm / mở thiệp</label>
+        <label>Âm lượng hiệu ứng <input id="editSoundVolume" type="range" min="0" max="100" value="65"></label>
+        <label>Kiểu chuyển động<select id="editMotionStyle"><option value="luxury">Sang trọng – nhiều hiệu ứng</option><option value="soft">Nhẹ nhàng – tinh tế</option><option value="off">Tắt toàn bộ hiệu ứng</option></select></label>
+      </div>
       <div class="admin-actions wide"><button class="rsvp" type="submit">Lưu thay đổi trên máy này</button><button id="exportConfig" class="secondary-action" type="button">Tải config.js để cập nhật GitHub</button></div>
-      <p class="admin-help wide">Bạn có thể thay riêng từng ảnh trong thư viện. Lưu trên máy này chỉ hiển thị ở trình duyệt hiện tại. Muốn mọi người đều thấy, hãy tải config.js rồi thay file cũ trong GitHub. Mỗi ảnh nên nhỏ hơn 500 KB để lưu ổn định.</p>
+      <p class="admin-help wide">Bạn có thể chỉnh toàn bộ chữ, màu sắc, nền sảnh, nền thiệp, nền thư viện ảnh, ảnh và bật/tắt hiệu ứng, âm thanh ngay tại đây. Tên đăng nhập được nhớ trên thiết bị nếu bật tùy chọn ở màn hình đầu. Lưu trên máy này chỉ hiển thị ở trình duyệt hiện tại. Muốn mọi người đều thấy, hãy tải config.js rồi thay file cũ trong GitHub. Ảnh sẽ tự động được thu nhỏ và nén (mục tiêu tối đa khoảng 450 KB/ảnh) trước khi lưu. Lưu trên máy này áp dụng ngay ở trình duyệt hiện tại; tải config.js để đưa thay đổi lên GitHub Pages cho mọi người cùng thấy.</p>
     </form>
   </section>
   <script src="config.js"></script>
