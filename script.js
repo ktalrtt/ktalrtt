@@ -128,7 +128,7 @@ function fillEditor() {
   $("editGalleryEyebrow").value = currentConfig.galleryEyebrow || "MEMORIES IN FRAMES";
   $("editWorldTitle").value = currentConfig.worldTitle || "Bảo tàng thanh xuân";
   $("editWorldGlow").value = currentConfig.worldGlow || "#d6ad79";
-  $("editWorldItems").value = (currentConfig.worldItems || []).map(x => [x.title,x.description,x.url,x.icon || "✳"].join(" | ")).join("\n");
+  $("editWorldItems").value = (currentConfig.worldItems || []).map(x => [x.title,x.description,x.url,x.icon || "✳",x.image || ""].join(" | ")).join("\n");
   $("editWorldPages").value = JSON.stringify(currentConfig.worldPages || {}, null, 2);
   $("editGalleryTitle").value = currentConfig.galleryTitle || "Một chút|thanh xuân";
   $("editGalleryCopy").value = currentConfig.galleryCopy || "Những khoảnh khắc mong được cùng bạn viết tiếp.";
@@ -297,7 +297,7 @@ $("adminForm").addEventListener("submit", async (event) => {
       galleryEyebrow: $("editGalleryEyebrow").value.trim(), galleryTitle: $("editGalleryTitle").value.trim(),
       galleryCopy: $("editGalleryCopy").value.trim(),
       worldTitle: $("editWorldTitle").value.trim(), worldGlow: $("editWorldGlow").value,
-      worldItems: $("editWorldItems").value.split(/\r?\n/).map(line => line.split("|").map(s => s.trim())).filter(parts => parts[0] && parts[2]).map(parts => ({ title: parts[0], description: parts[1] || "Khám phá kỷ niệm", url: parts[2], icon: parts[3] || "✳" })),
+      worldItems: $("editWorldItems").value.split(/\r?\n/).map(line => line.split("|").map(s => s.trim())).filter(parts => parts[0] && parts[2]).map(parts => ({ title: parts[0], description: parts[1] || "Khám phá kỷ niệm", url: parts[2], icon: parts[3] || "✳", image: parts[4] || "" })),
       worldPages: JSON.parse($("editWorldPages").value || "{}"),
       confirmTitle: $("editConfirmTitle").value.trim(),
       confirmYesText: $("editConfirmYes").value.trim(), confirmNoText: $("editConfirmNo").value.trim(),
