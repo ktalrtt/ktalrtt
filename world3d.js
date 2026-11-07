@@ -1,4 +1,4 @@
-/* Sảnh triển lãm kỷ yếu 360°: không gian ấm áp, nhẹ và tối ưu cho thiết bị phổ thông. */
+/* Sảnh vũ trụ 360° — dựng ổn định một lần, hạn chế nhấp nháy khi cập nhật cấu hình. */
 (() => {
  const $=id=>document.getElementById(id), stage=$('worldStage');
  if(!stage)return;
@@ -10,16 +10,16 @@
   {title:'Lời nhắn',description:'Điều muốn nói với nhau',url:'pages/messages.html',icon:'♡'},
   {title:'Hành trình lớp',description:'Từ ngày đầu đến hôm nay',url:'pages/journey.html',icon:'⌁'}
  ];
- let yaw=0,pitch=0,zoom=1,drag=false,lastX=0,lastY=0,pid=null,raf=0,moveRaf=0,pendingX=0,pendingY=0,vx=0,vy=0;
+ let yaw=0,pitch=0,zoom=1,drag=false,lastX=0,lastY=0,pid=null,raf=0,moveRaf=0,pendingX=0,pendingY=0,vx=0,vy=0,hasRendered=false;
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const cfg=()=>window.getYearbookConfig?window.getYearbookConfig():{};
  const base=()=>new URL('.',document.querySelector('script[src$="world3d.js"]')?.src||location.href);
  function href(v){if(!v||v==='#')return '#';if(/^(https?:|mailto:|tel:)/i.test(v))return v;return new URL(String(v).replace(/^\/+/,''),base()).href;}
  function render(){
   const c=cfg(),items=Array.isArray(c.worldItems)&&c.worldItems.length?c.worldItems:fallback;
-  $('worldTitle').textContent=c.worldTitle||'Thành phố ký ức đại dương';
+  $('worldTitle').textContent=c.worldTitle||'Vũ trụ thanh xuân';
   document.documentElement.style.setProperty('--world-glow',c.worldGlow||'#df70ff');
-  stage.querySelectorAll('.immersive-room,.room-vignette').forEach(n=>n.remove());
+  if(hasRendered){\n   const old=stage.querySelector('.immersive-room');\n   if(old) old.remove();\n   stage.querySelector('.room-vignette')?.remove();\n  }
   const room=document.createElement('div');room.className='immersive-room';room.id='immersiveRoom';
   const back=document.createElement('div');back.className='room-backdrop';back.innerHTML='<div class="room-nebula"></div><div class="room-logo"><span>✦</span><b></b><small></small></div>';back.querySelector('b').textContent=(c.worldCenterTitle||'THANH XUÂN | DƯỚI ĐẠI DƯƠNG').replace(/\s*\|\s*/g,'\n');back.querySelector('small').textContent=c.worldCenterSubtitle||'NƠI KỶ NIỆM LẶN SÂU TRONG TIM';room.append(back);
   const floor=document.createElement('div');floor.className='room-floor';room.append(floor);
@@ -27,7 +27,7 @@
   items.forEach((it,i)=>{
    const a=document.createElement('a');a.className='room-portal portal-'+(i%6);a.href=href(it.url);a.style.transform='rotateY('+((i*360/items.length))+'deg) translateZ(650px) rotateY(180deg)';
    const img=it.image||it.photo||'';
-   a.innerHTML='<div class="portal-inner">'+(img?'<img class="portal-image" src="'+esc(img)+'" alt="">':'<div class="portal-art"><span>'+esc(it.icon||'✦')+'</span><i>✧</i></div>')+'<div class="portal-info"><small>OCEAN MEMORY · 0'+(i+1)+'</small><strong>'+esc(it.title||'Kỷ niệm')+'</strong><span>'+esc(it.description||'Mở ra một vùng ký ức xanh')+'</span><em>LẶN SÂU KHÁM PHÁ ↗</em></div></div>';
+   a.innerHTML='<div class="portal-inner">'+(img?'<img class="portal-image" src="'+esc(img)+'" alt="">':'<div class="portal-art"><span>'+esc(it.icon||'✦')+'</span><i>✧</i></div>')+'<div class="portal-info"><small>COSMIC MEMORY · 0'+(i+1)+'</small><strong>'+esc(it.title||'Kỷ niệm')+'</strong><span>'+esc(it.description||'Mở ra một vùng ký ức')+'</span><em>CHẠM ĐỂ KHÁM PHÁ ↗</em></div></div>';
    const portalImage=a.querySelector('.portal-image');if(portalImage){portalImage.loading='lazy';portalImage.decoding='async';}
    if(a.href==='#')a.addEventListener('click',e=>e.preventDefault());
    room.append(a);
