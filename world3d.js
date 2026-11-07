@@ -17,17 +17,17 @@
  function href(v){if(!v||v==='#')return '#';if(/^(https?:|mailto:|tel:)/i.test(v))return v;return new URL(String(v).replace(/^\/+/,''),base()).href;}
  function render(){
   const c=cfg(),items=Array.isArray(c.worldItems)&&c.worldItems.length?c.worldItems:fallback;
-  $('worldTitle').textContent=c.worldTitle||'Bảo tàng thanh xuân';
+  $('worldTitle').textContent=c.worldTitle||'Thành phố ký ức đại dương';
   document.documentElement.style.setProperty('--world-glow',c.worldGlow||'#df70ff');
   stage.querySelectorAll('.immersive-room,.room-vignette').forEach(n=>n.remove());
   const room=document.createElement('div');room.className='immersive-room';room.id='immersiveRoom';
-  const back=document.createElement('div');back.className='room-backdrop';back.innerHTML='<div class="room-nebula"></div><div class="room-logo"><span>✦</span><b></b><small></small></div>';back.querySelector('b').textContent=(c.worldCenterTitle||'THANH XUÂN | CỦA CHÚNG MÌNH').replace(/\s*\|\s*/g,'\n');back.querySelector('small').textContent=c.worldCenterSubtitle||'NHỮNG NGÀY KHÔNG QUÊN';room.append(back);
+  const back=document.createElement('div');back.className='room-backdrop';back.innerHTML='<div class="room-nebula"></div><div class="room-logo"><span>✦</span><b></b><small></small></div>';back.querySelector('b').textContent=(c.worldCenterTitle||'THANH XUÂN | DƯỚI ĐẠI DƯƠNG').replace(/\s*\|\s*/g,'\n');back.querySelector('small').textContent=c.worldCenterSubtitle||'NƠI KỶ NIỆM LẶN SÂU TRONG TIM';room.append(back);
   const floor=document.createElement('div');floor.className='room-floor';room.append(floor);
   const ceiling=document.createElement('div');ceiling.className='room-ceiling';room.append(ceiling);
   items.forEach((it,i)=>{
    const a=document.createElement('a');a.className='room-portal portal-'+(i%6);a.href=href(it.url);a.style.transform='rotateY('+((i*360/items.length))+'deg) translateZ(650px) rotateY(180deg)';
    const img=it.image||it.photo||'';
-   a.innerHTML='<div class="portal-inner">'+(img?'<img class="portal-image" src="'+esc(img)+'" alt="">':'<div class="portal-art"><span>'+esc(it.icon||'✦')+'</span><i>✧</i></div>')+'<div class="portal-info"><small>MEMORY SPACE · 0'+(i+1)+'</small><strong>'+esc(it.title||'Kỷ niệm')+'</strong><span>'+esc(it.description||'Mở ra một miền ký ức')+'</span><em>CHẠM ĐỂ KHÁM PHÁ ↗</em></div></div>';
+   a.innerHTML='<div class="portal-inner">'+(img?'<img class="portal-image" src="'+esc(img)+'" alt="">':'<div class="portal-art"><span>'+esc(it.icon||'✦')+'</span><i>✧</i></div>')+'<div class="portal-info"><small>OCEAN MEMORY · 0'+(i+1)+'</small><strong>'+esc(it.title||'Kỷ niệm')+'</strong><span>'+esc(it.description||'Mở ra một vùng ký ức xanh')+'</span><em>LẶN SÂU KHÁM PHÁ ↗</em></div></div>';
    const portalImage=a.querySelector('.portal-image');if(portalImage){portalImage.loading='lazy';portalImage.decoding='async';}
    if(a.href==='#')a.addEventListener('click',e=>e.preventDefault());
    room.append(a);
@@ -42,16 +42,19 @@
   const z=$('worldZoomValue');if(z)z.textContent=Math.round(zoom*100)+'%';
   const range=$('worldZoomRange');if(range)range.value=String(Math.round(zoom*100));
  }
- function down(e){if(e.target.closest('.room-portal'))return;drag=true;pid=e.pointerId;lastX=e.clientX;lastY=e.clientY;vx=vy=0;stage.classList.add('is-dragging');try{stage.setPointerCapture(pid)}catch(_){}if(raf)cancelAnimationFrame(raf);}
+ function down(e){if(e.target.closest('.room-portal'))return;drag=true;pid=e.pointerId;lastX=e.clientX;lastY=e.clientY;vx=vy=0;stage.classList.add('is-dragging');try{stage.setPointerCapture(pid)}catch(_){}if(raf)cancelAnimationFrame(raf);if(moveRaf){cancelAnimationFrame(moveRaf);moveRaf=0;}}
  function move(e){if(!drag||e.pointerId!==pid)return;pendingX=e.clientX;pendingY=e.clientY;if(moveRaf)return;moveRaf=requestAnimationFrame(()=>{moveRaf=0;const dx=pendingX-lastX,dy=pendingY-lastY;lastX=pendingX;lastY=pendingY;yaw+=dx*.18;pitch=Math.max(-55,Math.min(55,pitch-dy*.15));vx=dx*.18;vy=-dy*.15;update();});}
- function up(){if(!drag)return;drag=false;pid=null;stage.classList.remove('is-dragging');const coast=()=>{if(drag||Math.abs(vx)+Math.abs(vy)<.07)return;yaw+=vx;pitch=Math.max(-55,Math.min(55,pitch+vy));vx*=.91;vy*=.91;update();raf=requestAnimationFrame(coast)};raf=requestAnimationFrame(coast);}
+ function up(){if(!drag)return;drag=false;pid=null;stage.classList.remove('is-dragging');const mode=document.documentElement.dataset.performance||"balanced";
+  if(mode==="low"||window.matchMedia("(prefers-reduced-motion: reduce)").matches){vx=vy=0;return;}
+  const friction=mode==="high"?.94:.88;
+  const coast=()=>{if(drag||Math.abs(vx)+Math.abs(vy)<.08)return;yaw+=vx;pitch=Math.max(-55,Math.min(55,pitch+vy));vx*=friction;vy*=friction;update();raf=requestAnimationFrame(coast)};raf=requestAnimationFrame(coast);}
  stage.addEventListener('pointerdown',down);stage.addEventListener('pointermove',move);stage.addEventListener('pointerup',up);stage.addEventListener('pointercancel',up);stage.addEventListener('lostpointercapture',up);
  stage.addEventListener('wheel',e=>{e.preventDefault();zoom=Math.max(.78,Math.min(1.35,zoom+(e.deltaY<0?.05:-.05)));update()},{passive:false});
  $('worldZoomIn')?.addEventListener('click',()=>{zoom=Math.min(1.35,zoom+.08);update()});
  $('worldZoomOut')?.addEventListener('click',()=>{zoom=Math.max(.78,zoom-.08);update()});
  $('worldZoomRange')?.addEventListener('input',e=>{zoom=Math.max(.78,Math.min(1.35,Number(e.target.value)/100));update()});
  $('worldLeft')?.addEventListener('click',()=>{yaw-=30;update()});$('worldRight')?.addEventListener('click',()=>{yaw+=30;update()});
- $('worldReset')?.addEventListener('click',()=>{yaw=0;pitch=0;zoom=1;update()});
+ $('worldReset')?.addEventListener('click',()=>{if(raf)cancelAnimationFrame(raf);vx=vy=0;yaw=0;pitch=0;zoom=1;update();});
  stage.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')yaw-=10;if(e.key==='ArrowRight')yaw+=10;if(e.key==='ArrowUp')pitch=Math.min(55,pitch+8);if(e.key==='ArrowDown')pitch=Math.max(-55,pitch-8);if(e.key==='+'||e.key==='=')zoom=Math.min(1.45,zoom+.1);if(e.key==='-')zoom=Math.max(.72,zoom-.1);update()});
  window.renderWorld3D=render;window.addEventListener('resize',update);window.addEventListener('kyyeu-config-ready',render);
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render();
