@@ -209,3 +209,29 @@ body{color:var(--text-color)}.eyebrow,.detail-label,.brand i,.gallery-item figca
 
 /* Place the starfield and title on the far inner wall of the room. */
 .room-backdrop{transform:translateZ(-900px)}
+
+/* Final lobby layout: balanced header, centered 360 room, six evenly spaced portals. */
+.world-lobby{min-height:calc(100svh - 76px);padding:28px clamp(16px,4vw,56px) 22px;display:flex;flex-direction:column;gap:12px;overflow:hidden}
+.world-hud{width:min(100%,1250px);min-height:88px;align-items:center;gap:24px;flex-wrap:wrap}
+.world-heading{position:relative!important;left:auto!important;top:auto!important;max-width:min(560px,100%);flex:1 1 420px;min-width:260px}
+.world-hud h1{font-size:clamp(28px,3.2vw,46px);line-height:1.1;margin:5px 0 7px;overflow-wrap:anywhere}
+.world-hud p:not(.eyebrow){line-height:1.5;max-width:540px;margin:0}
+.world-controls{position:relative!important;right:auto!important;top:auto!important;flex:0 1 auto;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:7px}
+.world-stage{width:min(100%,1250px);height:clamp(430px,66vh,690px);flex:1 1 auto;min-height:420px;max-height:690px;margin:0 auto;border:1px solid #b89cff2b;border-radius:24px;overflow:hidden;touch-action:none;perspective:1100px;background:radial-gradient(ellipse at 50% 45%,#322454,#101b3d 58%,#050817);box-shadow:inset 0 0 90px #030611,0 25px 90px #0008}
+.world-bottom{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;width:min(100%,1250px);margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-size:9px;letter-spacing:.12em}
+.open-invitation{align-self:center;position:relative;z-index:15;border:1px solid #ffb7e7aa;border-radius:999px;padding:13px 25px;background:linear-gradient(135deg,#a83d91,#5e3f9f);color:white;font-weight:700;letter-spacing:.08em;box-shadow:0 0 32px #d85bb755;cursor:pointer}
+.open-invitation:hover{transform:translateY(-2px);box-shadow:0 0 42px #d85bb799}
+.classic-toolbar{display:flex;justify-content:space-between;align-items:center;padding:16px clamp(18px,7vw,90px);border-bottom:1px solid #eee5df;color:var(--muted);font-size:10px;letter-spacing:.16em}
+.classic-back{border:1px solid var(--line);border-radius:30px;padding:10px 16px;background:#fff;color:var(--ink);cursor:pointer}
+.classic-invitation{background:#fbf7f3;min-height:100vh;color:var(--ink)}
+.sound-floating{position:fixed;right:18px;bottom:18px;z-index:25;border:1px solid #fff5;border-radius:999px;background:#17132bcc;color:#fff;padding:10px 14px;cursor:pointer}
+.room-portal{width:clamp(230px,23vw,300px);height:clamp(300px,38vw,390px);margin:-195px 0 0 -150px}
+.portal-inner{padding:9px}
+.portal-image,.portal-art{height:62%}
+.portal-info{gap:6px;padding:12px 9px}
+.portal-info strong{font-size:clamp(18px,2vw,23px)}
+.portal-info span{font-size:11px}
+.room-backdrop{transform:translateZ(900px)}
+.room-logo{transform:translate(-50%,-50%) translateZ(1px)}
+.legacy-hidden{display:none!important}
+@media(max-width:760px){.world-lobby{min-height:calc(100svh - 52px);padding:16px 12px;gap:10px}.world-hud{min-height:0;display:flex;align-items:flex-start}.world-heading{flex-basis:100%;min-width:0}.world-hud h1{font-size:29px}.world-controls{justify-content:flex-start}.world-stage{height:55svh;min-height:390px;flex:none;border-radius:18px}.world-bottom{justify-content:center;font-size:7px}.world-bottom>span:nth-child(2){display:none}.open-invitation{padding:12px 18px;font-size:11px}.room-portal{width:225px;height:295px;margin:-147px 0 0 -112px}.portal-info strong{font-size:18px}.portal-info span{font-size:10px}.classic-toolbar{padding:12px 16px}}
