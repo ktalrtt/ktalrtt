@@ -271,3 +271,61 @@ h1,h2,.world-hud h1,.room-logo b,.portal-info strong{font-family:"Playfair Displ
 .cursor-bubble{pointer-events:none}
 @media(max-width:760px){.world-stage{border-radius:17px}.world-lobby{background:radial-gradient(ellipse at 50% 42%,#462657 0%,#11162e 56%,#080b1b 100%)}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+
+/* YEARBOOK REVISION: warm school memories + lighter rendering + continuous invitation */
+.invitation:not(.hidden){height:auto!important;min-height:100svh;overflow:visible!important}
+.world-lobby{position:relative;background:linear-gradient(180deg,#f8e9df 0%,#f4e5db 45%,#e8d9c9 100%)!important;color:#59463f}
+.world-lobby:after{display:none!important}
+.world-hud .eyebrow{color:#a96d70!important;text-shadow:none!important}
+.world-hud h1{color:#59463f!important;text-shadow:none!important}
+.world-hud h1 em{color:#bd7f83!important}
+.world-hud p:not(.eyebrow){color:#806c61!important}
+.world-controls button{background:#fff9f2!important;color:#70584f!important;border:1px solid #d8b8a7!important;box-shadow:0 2px 8px #795a4820}
+.world-controls button:hover{background:#f2d9d0!important}
+.world-stage{background:linear-gradient(180deg,#f5d9ca 0%,#f4e5d6 58%,#c9aa8f 100%)!important;border:1px solid #d5b6a1!important;box-shadow:0 12px 28px #73533b20!important;contain:paint}
+.room-backdrop{border:0!important;border-radius:0!important;background:linear-gradient(180deg,#f4d9c8 0%,#f7e9d8 47%,#e8cbb5 100%)!important;box-shadow:none!important}
+.room-backdrop:before{inset:0!important;opacity:.32!important;background-image:repeating-linear-gradient(90deg,transparent 0 120px,#ffffff24 121px 122px),linear-gradient(180deg,#fff6,transparent 30%,#b9876c18)!important}
+.room-backdrop:after{content:"";position:absolute;left:8%;right:8%;top:13%;height:70px;border-top:2px solid #b9876c88;border-radius:50%;background:radial-gradient(circle at 8% 60%,#c77f79 0 5px,transparent 6px),radial-gradient(circle at 20% 85%,#e6b77e 0 5px,transparent 6px),radial-gradient(circle at 35% 96%,#a6b49a 0 5px,transparent 6px),radial-gradient(circle at 50% 100%,#d78c91 0 5px,transparent 6px),radial-gradient(circle at 65% 96%,#e6b77e 0 5px,transparent 6px),radial-gradient(circle at 80% 85%,#a6b49a 0 5px,transparent 6px),radial-gradient(circle at 92% 60%,#c77f79 0 5px,transparent 6px);pointer-events:none}
+.room-nebula{display:none!important}
+.room-floor{border-radius:0!important;background:repeating-linear-gradient(90deg,#b58c70 0 2px,#d6b69a 2px 115px,#c59f80 116px 118px)!important;box-shadow:none!important;opacity:.75}
+.room-ceiling{background:linear-gradient(180deg,#f7e9db,#ead4c1)!important;opacity:.8}
+.room-logo{top:39%!important;color:#76584c!important;text-shadow:none!important;background:#fff9ef;border:1px solid #d6b49b;border-radius:14px;padding:15px 26px;box-shadow:0 5px 18px #8d655022}
+.room-logo span{font-size:30px!important;color:#c78382!important}
+.room-logo b{font-size:clamp(20px,2.7vw,31px)!important;color:#76584c!important;letter-spacing:.04em!important}
+.room-logo small{color:#a8796f!important;font-size:8px!important;letter-spacing:.16em!important}
+.room-portal{filter:none!important}
+.portal-inner{padding:9px!important;border-radius:8px!important;background:#fffaf1!important;border:7px solid #fffaf1!important;outline:1px solid #d5b59d;box-shadow:0 8px 20px #76543c2b!important;backdrop-filter:none!important}
+.portal-inner:after{inset:3px!important;border:1px solid #d9c1aa!important;border-radius:4px!important}
+.portal-image,.portal-art{border-radius:3px!important}
+.portal-art{background:linear-gradient(145deg,#f0d6c6,#e6e9d9 55%,#f3e7cf)!important}
+.portal-art:before,.portal-art:after{width:145px!important;height:145px!important;border:1px solid #b78c7a55!important;box-shadow:none!important}
+.portal-art:after{width:108px!important;height:108px!important;border-style:dashed!important}
+.portal-art span{font-size:66px!important;color:#a76f73!important;text-shadow:none!important}
+.portal-art i{color:#bd8d62!important}
+.portal-info{background:#fffaf1!important;padding:12px 10px!important}
+.portal-info small{color:#b27b78!important;letter-spacing:.12em!important}
+.portal-info strong{color:#654d43!important;text-shadow:none!important}
+.portal-info span{color:#887267!important}
+.portal-info em{color:#a76f73!important}
+.room-portal:hover .portal-inner{box-shadow:0 12px 24px #76543c33!important;border-color:#fffaf1!important}
+.room-vignette{background:linear-gradient(0deg,#77533a12,transparent 30%,transparent 75%,#fff2)!important}
+.open-invitation{background:#a96f73!important;border:1px solid #fff4e8!important;box-shadow:0 5px 16px #8e5c5528!important;letter-spacing:.04em}
+.open-invitation:hover{background:#925d62!important;box-shadow:0 7px 20px #8e5c5533!important}
+.world-bottom{color:#886e61!important}
+.world-bottom i{background:#8aaf8d!important;box-shadow:none!important}
+.world-zoom{color:#886e61!important}
+.world-zoom input{accent-color:#b77d78!important}
+.classic-invitation{overflow:visible!important}
+.classic-invitation .hero{padding-top:clamp(55px,8vw,100px);padding-bottom:clamp(60px,8vw,100px)}
+.classic-invitation .gallery-section{padding-bottom:clamp(80px,10vw,130px)}
+.classic-invitation footer{min-height:84px;align-items:center;line-height:1.7;padding-top:28px;padding-bottom:28px}
+.classic-toolbar{background:#fbf7f3}
+@media(max-width:760px){
+ .world-lobby{background:linear-gradient(180deg,#f8e9df,#e8d9c9)!important}
+ .world-stage{background:linear-gradient(180deg,#f5d9ca,#f4e5d6 58%,#c9aa8f)!important}
+ .room-logo{padding:10px 16px}
+ .room-logo b{font-size:19px!important}
+ .room-portal{filter:none!important}
+}
+@media(prefers-reduced-motion:reduce){.room-portal,.portal-inner{transition:none!important}}
