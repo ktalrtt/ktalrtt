@@ -341,7 +341,8 @@ $("adminForm").addEventListener("submit", async (event) => {
     const background = await readImage($("editBackground").files[0]);
     const gateBackground = await readImage($("editGateBackground").files[0]);
     const galleryBackground = await readImage($("editGalleryBackground").files[0]);
-    const worldBackground = await readImage($("editWorldBackground").files[0]);\n    const musicData = await readMusic($("editMusicFile").files[0]);
+    const worldBackground = await readImage($("editWorldBackground").files[0]);
+    const musicData = await readMusic($("editMusicFile").files[0]);
     const worldItemUploads = await Promise.all([1,2,3,4,5,6].map(i => readImage($(`editWorldItem${i}`).files[0])));
     const galleryUploads = await Promise.all([1, 2, 3].map(i => readImage($(`editGallery${i}`).files[0])));
     currentConfig = { ...currentConfig,
@@ -370,7 +371,9 @@ $("adminForm").addEventListener("submit", async (event) => {
       pageOverlay: Number($("editPageOverlay").value) / 100,
       galleryOverlay: Number($("editGalleryOverlay").value) / 100,
       motionEnabled: $("editMotionEnabled").checked, soundEnabled: $("editSoundEnabled").checked,
-      soundVolume: Number($("editSoundVolume").value), motionStyle: $("editMotionStyle").value,\n      musicUrl: $("editMusicClear").checked ? "" : $("editMusicUrl").value.trim(), musicEnabled: $("editMusicEnabled").checked, musicVolume: Number($("editMusicVolume").value),\n      ...( $("editMusicClear").checked ? { musicData: "" } : {} ), ...(musicData ? { musicData, musicUrl: "" } : {}),
+      soundVolume: Number($("editSoundVolume").value), motionStyle: $("editMotionStyle").value,
+      musicUrl: $("editMusicClear").checked ? "" : $("editMusicUrl").value.trim(), musicEnabled: $("editMusicEnabled").checked, musicVolume: Number($("editMusicVolume").value),
+      ...( $("editMusicClear").checked ? { musicData: "" } : {} ), ...(musicData ? { musicData, musicUrl: "" } : {}),
       ...(cover ? { coverImage: cover } : {}), ...(background ? { backgroundImage: background } : {}),
       ...(gateBackground ? { gateBackgroundImage: gateBackground } : {}),
       ...(galleryBackground ? { galleryBackgroundImage: galleryBackground } : {}),
@@ -388,7 +391,8 @@ $("adminForm").addEventListener("submit", async (event) => {
     soundVolume = (currentConfig.soundVolume ?? 65) / 100;
     localStorage.setItem("kyyeu-sound", soundEnabled ? "on" : "off");
     updateSoundButton();
-    applyBackgroundMusic();\n    alert("Đã lưu trên trình duyệt này. Để mọi người cùng thấy, hãy tải config.js và cập nhật file trên GitHub.");
+    applyBackgroundMusic();
+    alert("Đã lưu trên trình duyệt này. Để mọi người cùng thấy, hãy tải config.js và cập nhật file trên GitHub.");
   } catch (error) {
     console.error(error);
     alert(error.name === "QuotaExceededError"
@@ -465,7 +469,8 @@ $("soundToggle")?.addEventListener("click", () => {
   soundEnabled = !soundEnabled;
   localStorage.setItem("kyyeu-sound", soundEnabled ? "on" : "off");
   updateSoundButton();
-  if (soundEnabled) { playOpenSound(); startBackgroundMusic(); } else $("bgMusic")?.pause();\n  if (currentConfig.musicEnabled !== false) startBackgroundMusic();
+  if (soundEnabled) { playOpenSound(); startBackgroundMusic(); } else $("bgMusic")?.pause();
+  if (currentConfig.musicEnabled !== false) startBackgroundMusic();
 });
 updateSoundButton();
 document.addEventListener("click", event => {
