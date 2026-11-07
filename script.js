@@ -507,7 +507,9 @@ if (window.matchMedia("(pointer: fine)").matches) {
     /* Disable continuous particle spawning while moving: keep click effects only for smoother rendering. */
   }, { passive: true });
 }
-document.addEventListener("click", event => {\n  if (event.target.closest("button, a, .photo-frame, .gallery-item")) spawnBubble(event.clientX || 0, event.clientY || 0, 5, false);\n});
+document.addEventListener("click", event => {
+  if (event.target.closest("button, a, .photo-frame, .gallery-item")) spawnBubble(event.clientX || 0, event.clientY || 0, 5, false);
+});
 
 const revealTargets = ".hero-content,.hero-art,.section-heading,.gallery-item,footer";
 if ("IntersectionObserver" in window) {
