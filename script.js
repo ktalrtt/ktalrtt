@@ -306,6 +306,7 @@ $("nameForm").addEventListener("submit", async (event) => {
     window.scrollTo({ top: 0, behavior: "auto" });
   });
   playOpenSound();
+  startBackgroundMusic();
 });
 $("backBtn")?.addEventListener("click", async () => {
   await runCinematicTransition("leave", () => {
@@ -464,7 +465,7 @@ $("soundToggle")?.addEventListener("click", () => {
   soundEnabled = !soundEnabled;
   localStorage.setItem("kyyeu-sound", soundEnabled ? "on" : "off");
   updateSoundButton();
-  if (soundEnabled) playOpenSound();\n  if (currentConfig.musicEnabled !== false) startBackgroundMusic();
+  if (soundEnabled) { playOpenSound(); startBackgroundMusic(); } else $("bgMusic")?.pause();\n  if (currentConfig.musicEnabled !== false) startBackgroundMusic();
 });
 updateSoundButton();
 document.addEventListener("click", event => {
@@ -503,18 +504,10 @@ if (window.matchMedia("(pointer: fine)").matches) {
     cursorGlow.style.opacity = "1";
     cursorGlow.style.left = `${event.clientX}px`;
     cursorGlow.style.top = `${event.clientY}px`;
-    const now = performance.now();
-    if (now - lastPointerBubble > 85) {
-      spawnBubble(event.clientX, event.clientY, 1, true);
-      lastPointerBubble = now;
-    }
+    /* Disable continuous particle spawning while moving: keep click effects only for smoother rendering. */
   }, { passive: true });
 }
-document.addEventListener("click", event => {
-  if (event.target.closest("button, a, .photo-frame, .gallery-item")) {
-    spawnBubble(event.clientX || 0, event.clientY || 0, 9, false);
-  }
-});
+document.addEventListener("click", event => {\n  if (event.target.closest("button, a, .photo-frame, .gallery-item")) spawnBubble(event.clientX || 0, event.clientY || 0, 5, false);\n});
 
 const revealTargets = ".hero-content,.hero-art,.section-heading,.gallery-item,footer";
 if ("IntersectionObserver" in window) {
