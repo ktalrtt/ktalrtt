@@ -21,7 +21,7 @@
   document.documentElement.style.setProperty('--world-glow',c.worldGlow||'#df70ff');
   stage.querySelectorAll('.immersive-room,.room-vignette').forEach(n=>n.remove());
   const room=document.createElement('div');room.className='immersive-room';room.id='immersiveRoom';
-  const back=document.createElement('div');back.className='room-backdrop';back.innerHTML='<div class="room-nebula"></div><div class="room-logo"><span>✦</span><b></b><small></small></div>';back.querySelector('b').textContent=(c.worldCenterTitle||'OUR CLASS | OUR FOREVER').replace(/\\s*\\|\\s*/g,'\\n');back.querySelector('small').textContent=c.worldCenterSubtitle||'MEMORIES LIVE HERE';room.append(back);
+  const back=document.createElement('div');back.className='room-backdrop';back.innerHTML='<div class="room-nebula"></div><div class="room-logo"><span>✦</span><b></b><small></small></div>';back.querySelector('b').textContent=(c.worldCenterTitle||'OUR CLASS | OUR FOREVER').replace(/\s*\|\s*/g,'\n');back.querySelector('small').textContent=c.worldCenterSubtitle||'MEMORIES LIVE HERE';room.append(back);
   const floor=document.createElement('div');floor.className='room-floor';room.append(floor);
   const ceiling=document.createElement('div');ceiling.className='room-ceiling';room.append(ceiling);
   items.forEach((it,i)=>{
