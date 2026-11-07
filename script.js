@@ -258,9 +258,26 @@ loadSavedConfig().then(async () => {
 });
 
 // Chuyển cảnh cinematic: chỉ dùng CSS/JS thuần, không tải thư viện ngoài.
+const PERFORMANCE_KEY = "kyyeu-performance-mode";
+function getPerformanceMode() {
+  const saved = localStorage.getItem(PERFORMANCE_KEY);
+  return ["low", "balanced", "high"].includes(saved) ? saved : "balanced";
+}
+function setPerformanceMode(mode) {
+  const safe = ["low", "balanced", "high"].includes(mode) ? mode : "balanced";
+  localStorage.setItem(PERFORMANCE_KEY, safe);
+  document.documentElement.dataset.performance = safe;
+  document.querySelectorAll('input[name="performanceMode"]').forEach(input => { input.checked = input.value === safe; });
+}
+document.querySelectorAll('input[name="performanceMode"]').forEach(input => {
+  input.addEventListener("change", () => setPerformanceMode(input.value));
+});
+setPerformanceMode(getPerformanceMode());
+
 function runCinematicTransition(direction, onCovered) {
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const disabled = currentConfig.motionEnabled === false || currentConfig.motionStyle === "off";
+  const mode = getPerformanceMode();
+  const disabled = mode === "low" || currentConfig.motionEnabled === false || currentConfig.motionStyle === "off";
   if (reduced || disabled) {
     onCovered();
     return Promise.resolve();
@@ -268,7 +285,7 @@ function runCinematicTransition(direction, onCovered) {
   const layer = document.createElement("div");
   layer.className = `cinematic-transition ${direction === "enter" ? "is-entering" : "is-leaving"}`;
   layer.setAttribute("aria-hidden", "true");
-  layer.innerHTML = `<div class="cinematic-vortex"></div><div class="cinematic-core"></div><div class="cinematic-wordmark">${direction === "enter" ? "A NEW MEMORY" : "UNTIL NEXT TIME"}<span>✦</span></div><div class="cinematic-particles">${Array.from({length:36}, (_,i) => `<i style="--i:${i};--angle:${i*10}deg;--delay:${(i%9)*.025}s;--size:${3+(i%4)*2}px"></i>`).join("")}</div>`;
+  layer.innerHTML = `<div class="cinematic-vortex"></div><div class="cinematic-core"></div><div class="cinematic-wordmark">${direction === "enter" ? "A NEW MEMORY" : "UNTIL NEXT TIME"}<span>✦</span></div><div class="cinematic-particles">${Array.from({length:mode === "high" ? 36 : 14}, (_,i) => `<i style="--i:${i};--angle:${i*10}deg;--delay:${(i%9)*.025}s;--size:${3+(i%4)*2}px"></i>`).join("")}</div>`;
   document.body.appendChild(layer);
   document.body.classList.add("cinematic-running");
   // Đổi nội dung đúng lúc lớp sáng đã che kín toàn màn hình.
@@ -280,7 +297,7 @@ function runCinematicTransition(direction, onCovered) {
     layer.remove();
     document.body.classList.remove("cinematic-running");
     resolve();
-  }, 1660));
+  }, mode === "high" ? 1660 : 1120));
 }
 
 $("nameForm").addEventListener("submit", async (event) => {
