@@ -287,8 +287,7 @@ $("nameForm").addEventListener("submit", async (event) => {
   event.preventDefault();
   const name = $("guestName").value.trim();
   if (!name) return;
-  if ($("rememberName").checked) await setRememberedName(name);
-  else await setRememberedName("");
+  try { if ($("rememberName").checked) await setRememberedName(name); else await setRememberedName(""); } catch (error) { console.warn("Không lưu được tên khách trên thiết bị:", error); }
   currentGuestName = name;
   $("helloLine").textContent = `${currentConfig.greetingPrefix || "Kính chào:"} ${name}`;
   const isAdmin = name.toLocaleLowerCase("vi-VN").normalize("NFC") === ADMIN_NAME.normalize("NFC");
