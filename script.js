@@ -319,6 +319,7 @@ $("adminForm").addEventListener("submit", async (event) => {
     const gateBackground = await readImage($("editGateBackground").files[0]);
     const galleryBackground = await readImage($("editGalleryBackground").files[0]);
     const worldBackground = await readImage($("editWorldBackground").files[0]);
+    const worldItemUploads = await Promise.all([1,2,3,4,5,6].map(i => readImage($(`editWorldItem${i}`).files[0])));
     const galleryUploads = await Promise.all([1, 2, 3].map(i => readImage($(`editGallery${i}`).files[0])));
     currentConfig = { ...currentConfig,
       siteTitle: $("editSiteTitle").value.trim(), gateButtonText: $("editGateButton").value.trim(),
@@ -327,7 +328,7 @@ $("adminForm").addEventListener("submit", async (event) => {
       galleryCopy: $("editGalleryCopy").value.trim(),
       worldTitle: $("editWorldTitle").value.trim(), worldGlow: $("editWorldGlow").value,
       worldCenterTitle: $("editWorldCenterTitle").value.trim(), worldCenterSubtitle: $("editWorldCenterSubtitle").value.trim(),
-      worldItems: $("editWorldItems").value.split(/\r?\n/).map(line => line.split("|").map(s => s.trim())).filter(parts => parts[0] && parts[2]).map(parts => ({ title: parts[0], description: parts[1] || "Khám phá kỷ niệm", url: parts[2], icon: parts[3] || "✳", image: parts[4] || "" })),
+      worldItems: $("editWorldItems").value.split(/\r?\n/).map(line => line.split("|").map(s => s.trim())).filter(parts => parts[0] && parts[2]).map((parts,index) => ({ title: parts[0], description: parts[1] || "Khám phá kỷ niệm", url: parts[2], icon: parts[3] || "✳", image: worldItemUploads[index] || parts[4] || currentConfig.worldItems?.[index]?.image || "" })),
       worldPages: JSON.parse($("editWorldPages").value || "{}"),
       confirmTitle: $("editConfirmTitle").value.trim(),
       confirmYesText: $("editConfirmYes").value.trim(), confirmNoText: $("editConfirmNo").value.trim(),
@@ -359,7 +360,7 @@ $("adminForm").addEventListener("submit", async (event) => {
     await saveConfigToDB(currentConfig);
     applyConfig();
     if (window.renderWorld3D) window.renderWorld3D();
-    ["editCover", "editBackground", "editGateBackground", "editGalleryBackground", "editGallery1", "editGallery2", "editGallery3", "editWorldBackground"].forEach(id => { $(id).value = ""; });
+    ["editCover", "editBackground", "editGateBackground", "editGalleryBackground", "editGallery1", "editGallery2", "editGallery3", "editWorldBackground", "editWorldItem1", "editWorldItem2", "editWorldItem3", "editWorldItem4", "editWorldItem5", "editWorldItem6"].forEach(id => { $(id).value = ""; });
     soundEnabled = currentConfig.soundEnabled !== false;
     soundVolume = (currentConfig.soundVolume ?? 65) / 100;
     localStorage.setItem("kyyeu-sound", soundEnabled ? "on" : "off");
