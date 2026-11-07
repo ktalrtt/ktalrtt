@@ -370,7 +370,7 @@ $("adminForm").addEventListener("submit", async (event) => {
       pageOverlay: Number($("editPageOverlay").value) / 100,
       galleryOverlay: Number($("editGalleryOverlay").value) / 100,
       motionEnabled: $("editMotionEnabled").checked, soundEnabled: $("editSoundEnabled").checked,
-      soundVolume: Number($("editSoundVolume").value), motionStyle: $("editMotionStyle").value,\n      musicUrl: $("editMusicUrl").value.trim(), musicEnabled: $("editMusicEnabled").checked, musicVolume: Number($("editMusicVolume").value),\n      ...( $("editMusicClear").checked ? { musicData: "" } : {} ), ...(musicData ? { musicData, musicUrl: "" } : {}),
+      soundVolume: Number($("editSoundVolume").value), motionStyle: $("editMotionStyle").value,\n      musicUrl: $("editMusicClear").checked ? "" : $("editMusicUrl").value.trim(), musicEnabled: $("editMusicEnabled").checked, musicVolume: Number($("editMusicVolume").value),\n      ...( $("editMusicClear").checked ? { musicData: "" } : {} ), ...(musicData ? { musicData, musicUrl: "" } : {}),
       ...(cover ? { coverImage: cover } : {}), ...(background ? { backgroundImage: background } : {}),
       ...(gateBackground ? { gateBackgroundImage: gateBackground } : {}),
       ...(galleryBackground ? { galleryBackgroundImage: galleryBackground } : {}),
