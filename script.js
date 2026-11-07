@@ -426,7 +426,7 @@ $("adminForm").addEventListener("submit", async (event) => {
 });
 $("exportConfig").addEventListener("click", downloadConfig);
 $("copyConfig")?.addEventListener("click", async () => {
-  const source = "/* File được xuất từ trình chỉnh sửa kỷ yếu */\\nconst CONFIG = " + JSON.stringify(currentConfig, null, 2) + ";\\n";
+  const source = "/* File được xuất từ trình chỉnh sửa kỷ yếu */\nconst CONFIG = " + JSON.stringify(currentConfig, null, 2) + ";\n";
   try {
     await navigator.clipboard.writeText(source);
     alert("Đã sao chép toàn bộ config.js. Bạn có thể dán vào file config.js trên GitHub.");
