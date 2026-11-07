@@ -283,7 +283,7 @@ $("nameForm").addEventListener("submit", async (event) => {
   });
   playOpenSound();
 });
-$("backBtn").addEventListener("click", async () => {
+$("backBtn")?.addEventListener("click", async () => {
   await runCinematicTransition("leave", () => {
     $("invitation").classList.add("hidden");
     $("gate").classList.remove("hidden");
