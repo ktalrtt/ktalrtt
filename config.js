@@ -15,7 +15,7 @@ const CONFIG = {
   footerNote: "Hẹn gặp bạn trong ngày thật vui!",
   coverImage: "assets/cover.svg",
   backgroundImage: "",
-  fontFamily: "DM Sans",
+  fontFamily: "Be Vietnam Pro",
   worldTitle: "Sảnh chính",
   worldGlow: "#d6ad79",
   worldItems: [
