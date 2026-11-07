@@ -298,7 +298,7 @@ $("nameForm").addEventListener("submit", async (event) => {
   $("adminPanel").classList.toggle("hidden", !isAdmin);
   $("quickEdit")?.classList.toggle("hidden", !isAdmin);
   if (isAdmin) fillEditor();
-  await runCinematicTransition("enter", () => {
+  const openingTransition = runCinematicTransition("enter", () => {
     $("gate").classList.add("hidden");
     $("invitation").classList.remove("hidden");
     $("worldLobby")?.classList.remove("hidden");
@@ -307,6 +307,7 @@ $("nameForm").addEventListener("submit", async (event) => {
   });
   playOpenSound();
   startBackgroundMusic();
+  await openingTransition;
 });
 $("backBtn")?.addEventListener("click", async () => {
   await runCinematicTransition("leave", () => {
