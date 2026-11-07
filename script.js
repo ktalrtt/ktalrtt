@@ -109,6 +109,9 @@ function applyConfig() {
   invitation.style.backgroundImage = currentConfig.backgroundImage
     ? `linear-gradient(rgba(251,247,243,${(currentConfig.pageOverlay ?? .78)}),rgba(251,247,243,${(currentConfig.pageOverlay ?? .78)})),url("${currentConfig.backgroundImage}")`
     : "";
+  document.documentElement.style.setProperty("--ocean-deep", currentConfig.oceanDeep || "#062b46");
+  document.documentElement.style.setProperty("--ocean-light", currentConfig.oceanLight || "#4fd6d0");
+  document.documentElement.dataset.oceanLife = currentConfig.oceanLife || "medium";
   const worldStage = $("worldStage");
   if (worldStage) worldStage.style.backgroundImage = currentConfig.worldBackgroundImage ? `linear-gradient(rgba(4,7,20,.35),rgba(4,7,20,.62)),url("${currentConfig.worldBackgroundImage}")` : "";
   gallerySection.style.backgroundImage = currentConfig.galleryBackgroundImage
@@ -132,6 +135,9 @@ function fillEditor() {
   $("editGalleryEyebrow").value = currentConfig.galleryEyebrow || "MEMORIES IN FRAMES";
   $("editWorldTitle").value = currentConfig.worldTitle || "Bảo tàng thanh xuân";
   $("editWorldGlow").value = currentConfig.worldGlow || "#d6ad79";
+  $("editOceanDeep").value = currentConfig.oceanDeep || "#062b46";
+  $("editOceanLight").value = currentConfig.oceanLight || "#4fd6d0";
+  $("editOceanLife").value = currentConfig.oceanLife || "medium";
   $("editWorldCenterTitle").value = currentConfig.worldCenterTitle || "OUR CLASS | OUR FOREVER";
   $("editWorldCenterSubtitle").value = currentConfig.worldCenterSubtitle || "MEMORIES LIVE HERE";
   $("editWorldItems").value = (currentConfig.worldItems || []).map(x => [x.title,x.description,x.url,x.icon || "✳",x.image || ""].join(" | ")).join("\n");
@@ -285,7 +291,7 @@ function runCinematicTransition(direction, onCovered) {
   const layer = document.createElement("div");
   layer.className = `cinematic-transition ${direction === "enter" ? "is-entering" : "is-leaving"}`;
   layer.setAttribute("aria-hidden", "true");
-  layer.innerHTML = `<div class="cinematic-vortex"></div><div class="cinematic-core"></div><div class="cinematic-wordmark">${direction === "enter" ? "A NEW MEMORY" : "UNTIL NEXT TIME"}<span>✦</span></div><div class="cinematic-particles">${Array.from({length:mode === "high" ? 36 : 14}, (_,i) => `<i style="--i:${i};--angle:${i*10}deg;--delay:${(i%9)*.025}s;--size:${3+(i%4)*2}px"></i>`).join("")}</div>`;
+  layer.innerHTML = `<div class="cinematic-vortex"></div><div class="cinematic-core"></div><div class="cinematic-wordmark">${direction === "enter" ? "A NEW MEMORY" : "UNTIL NEXT TIME"}<span>✦</span></div><div class="cinematic-particles">${Array.from({length:mode === "high" ? 48 : mode === "balanced" ? 20 : 8}, (_,i) => `<i style="--i:${i};--angle:${i*10}deg;--delay:${(i%9)*.025}s;--size:${3+(i%4)*2}px"></i>`).join("")}</div>`;
   document.body.appendChild(layer);
   document.body.classList.add("cinematic-running");
   // Đổi nội dung đúng lúc lớp sáng đã che kín toàn màn hình.
@@ -297,7 +303,7 @@ function runCinematicTransition(direction, onCovered) {
     layer.remove();
     document.body.classList.remove("cinematic-running");
     resolve();
-  }, mode === "high" ? 1660 : 1120));
+  }, mode === "high" ? 1850 : mode === "balanced" ? 1300 : 900));
 }
 
 $("nameForm").addEventListener("submit", async (event) => {
@@ -368,6 +374,7 @@ $("adminForm").addEventListener("submit", async (event) => {
       galleryEyebrow: $("editGalleryEyebrow").value.trim(), galleryTitle: $("editGalleryTitle").value.trim(),
       galleryCopy: $("editGalleryCopy").value.trim(),
       worldTitle: $("editWorldTitle").value.trim(), worldGlow: $("editWorldGlow").value,
+      oceanDeep: $("editOceanDeep").value, oceanLight: $("editOceanLight").value, oceanLife: $("editOceanLife").value,
       worldCenterTitle: $("editWorldCenterTitle").value.trim(), worldCenterSubtitle: $("editWorldCenterSubtitle").value.trim(),
       worldItems: $("editWorldItems").value.split(/\r?\n/).map(line => line.split("|").map(s => s.trim())).filter(parts => parts[0] && parts[2]).map((parts,index) => ({ title: parts[0], description: parts[1] || "Khám phá kỷ niệm", url: parts[2], icon: parts[3] || "✳", image: worldItemUploads[index] || parts[4] || currentConfig.worldItems?.[index]?.image || "" })),
       worldPages: JSON.parse($("editWorldPages").value || "{}"),
@@ -418,6 +425,20 @@ $("adminForm").addEventListener("submit", async (event) => {
   }
 });
 $("exportConfig").addEventListener("click", downloadConfig);
+$("copyConfig")?.addEventListener("click", async () => {
+  const source = "/* File được xuất từ trình chỉnh sửa kỷ yếu */\\nconst CONFIG = " + JSON.stringify(currentConfig, null, 2) + ";\\n";
+  try {
+    await navigator.clipboard.writeText(source);
+    alert("Đã sao chép toàn bộ config.js. Bạn có thể dán vào file config.js trên GitHub.");
+  } catch (_) {
+    const area = document.createElement("textarea");
+    area.value = source; area.style.position = "fixed"; area.style.opacity = "0";
+    document.body.appendChild(area); area.select();
+    const ok = document.execCommand("copy"); area.remove();
+    alert(ok ? "Đã sao chép config.js." : "Không thể sao chép tự động. Hãy dùng nút Tải config.js.");
+  }
+});
+
 
 $("quickEdit")?.addEventListener("click", () => { $("adminPanel")?.classList.remove("hidden"); $("adminPanel")?.scrollIntoView({behavior:"smooth",block:"start"}); });
 
