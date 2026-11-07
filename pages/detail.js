@@ -18,5 +18,8 @@
  $('#itemClose').onclick=()=>$('#itemEditor').hidden=true;
  $('#itemSave').onclick=()=>{const file=$('#itemImage').files[0],title=$('#itemTitle').value.trim(),text=$('#itemText').value.trim();if(!title&&!file){$('#status').textContent='Hãy nhập tiêu đề hoặc chọn ảnh.';return}const add=image=>{data.items.push({title,text,image});save();$('#itemEditor').hidden=true;$('#itemTitle').value='';$('#itemText').value='';$('#itemImage').value=''};if(file){const rd=new FileReader();rd.onload=()=>{const im=new Image();im.onload=()=>{const scale=Math.min(1,1400/Math.max(im.width,im.height)),cv=document.createElement('canvas');cv.width=im.width*scale;cv.height=im.height*scale;cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);add(cv.toDataURL('image/jpeg',.78))};im.src=rd.result};rd.readAsDataURL(file)}else add('')};
  $('#exportPage').onclick=()=>{const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=id+'-content.json';a.click();URL.revokeObjectURL(u)};
+ const canEdit=sessionStorage.getItem('kyyeu-admin-session')==='1';
+ ['editOpen','addItem','exportPage'].forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=!canEdit});
+ if(!canEdit){$('#status').textContent='Chế độ xem · chỉ quản trị viên mới được chỉnh sửa';}
  draw();
 })();
