@@ -49,17 +49,19 @@
  }
  function down(e){if(e.target.closest('.room-portal'))return;drag=true;pid=e.pointerId;lastX=e.clientX;lastY=e.clientY;vx=vy=0;stage.classList.add('is-dragging');try{stage.setPointerCapture(pid)}catch(_){}if(raf)cancelAnimationFrame(raf);if(moveRaf){cancelAnimationFrame(moveRaf);moveRaf=0;}}
  function move(e){if(!drag||e.pointerId!==pid)return;pendingX=e.clientX;pendingY=e.clientY;if(moveRaf)return;moveRaf=requestAnimationFrame(()=>{moveRaf=0;const dx=pendingX-lastX,dy=pendingY-lastY;lastX=pendingX;lastY=pendingY;yaw+=dx*.18;pitch=Math.max(-55,Math.min(55,pitch-dy*.15));vx=dx*.18;vy=-dy*.15;update();});}
- function up(){if(!drag)return;drag=false;pid=null;stage.classList.remove('is-dragging');const mode=document.documentElement.dataset.performance||"balanced";
-  if(mode==="low"||window.matchMedia("(prefers-reduced-motion: reduce)").matches){vx=vy=0;return;}
-  const friction=mode==="high"?.94:.88;
-  const coast=()=>{if(drag||Math.abs(vx)+Math.abs(vy)<.08)return;yaw+=vx;pitch=Math.max(-55,Math.min(55,pitch+vy));vx*=friction;vy*=friction;update();raf=requestAnimationFrame(coast)};raf=requestAnimationFrame(coast);}
+ function up(){
+  if(!drag)return;
+  drag=false;pid=null;vx=vy=0;
+  stage.classList.remove('is-dragging');
+  if(moveRaf){cancelAnimationFrame(moveRaf);moveRaf=0;}
+ }
  stage.addEventListener('pointerdown',down);stage.addEventListener('pointermove',move);stage.addEventListener('pointerup',up);stage.addEventListener('pointercancel',up);stage.addEventListener('lostpointercapture',up);
  stage.addEventListener('wheel',e=>{e.preventDefault();zoom=Math.max(.78,Math.min(1.35,zoom+(e.deltaY<0?.05:-.05)));update()},{passive:false});
  $('worldZoomIn')?.addEventListener('click',()=>{zoom=Math.min(1.35,zoom+.08);update()});
  $('worldZoomOut')?.addEventListener('click',()=>{zoom=Math.max(.78,zoom-.08);update()});
  $('worldZoomRange')?.addEventListener('input',e=>{zoom=Math.max(.78,Math.min(1.35,Number(e.target.value)/100));update()});
  $('worldLeft')?.addEventListener('click',()=>{yaw-=30;update()});$('worldRight')?.addEventListener('click',()=>{yaw+=30;update()});
- $('worldReset')?.addEventListener('click',()=>{if(raf)cancelAnimationFrame(raf);vx=vy=0;yaw=0;pitch=0;zoom=1;update();});
+ $('worldReset')?.addEventListener('click',()=>{if(raf)cancelAnimationFrame(raf);if(moveRaf)cancelAnimationFrame(moveRaf);moveRaf=0;vx=vy=0;yaw=0;pitch=0;zoom=1;update();});
  stage.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')yaw-=10;if(e.key==='ArrowRight')yaw+=10;if(e.key==='ArrowUp')pitch=Math.min(55,pitch+8);if(e.key==='ArrowDown')pitch=Math.max(-55,pitch-8);if(e.key==='+'||e.key==='=')zoom=Math.min(1.45,zoom+.1);if(e.key==='-')zoom=Math.max(.72,zoom-.1);update()});
  window.renderWorld3D=render;window.addEventListener('resize',update);window.addEventListener('kyyeu-config-ready',render);
 })();
