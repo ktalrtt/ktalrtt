@@ -178,3 +178,31 @@ body{color:var(--text-color)}.eyebrow,.detail-label,.brand i,.gallery-item figca
 .world-stage{user-select:none;-webkit-user-select:none}
 .world-card{cursor:pointer}
 @media(max-width:700px){.world-bottom{justify-content:center}.world-bottom>span:nth-child(2){display:none}.world-zoom input{width:88px}}
+
+/* FIRST-PERSON 360° ROOM — camera at center, environment rotates around viewer */
+.world-stage{perspective:1050px!important;perspective-origin:50% 50%!important;overflow:hidden!important;touch-action:none!important;cursor:grab!important;background:radial-gradient(ellipse at 50% 42%,#38205e,#101b3d 48%,#050817 100%)!important}
+.world-stage.is-looking{cursor:grabbing!important}
+.world-stage>.world-stars,.world-stage>.world-nebula,.world-stage>.world-horizon,.world-stage>.world-floor,.world-stage>.world-orbit-line,.world-stage>.world-vortex,.world-stage>.world-orbit,.world-stage>.world-center{display:none!important}
+.immersive-room{position:absolute;inset:0;transform-style:preserve-3d;transform-origin:50% 50%;will-change:transform;pointer-events:none}
+.room-backdrop{position:absolute;left:50%;top:50%;width:2500px;height:1500px;margin:-750px 0 0 -1250px;border-radius:50%;border:1px solid #cba0ff25;background:radial-gradient(ellipse at 50% 44%,#7546a555 0%,#1b2854aa 34%,#071126 75%);box-shadow:inset 0 0 180px #030611}
+.room-backdrop:before{content:"";position:absolute;inset:5%;border-radius:50%;background-image:radial-gradient(2px 2px at 12% 18%,#fff 95%,transparent),radial-gradient(1px 1px at 32% 65%,#e9d6ff 95%,transparent),radial-gradient(2px 2px at 78% 25%,#8eeaff 95%,transparent),radial-gradient(1px 1px at 65% 72%,#fff 95%,transparent);background-size:230px 190px,310px 240px,370px 270px,190px 220px;opacity:.8}
+.room-nebula{position:absolute;inset:12%;border-radius:50%;background:radial-gradient(ellipse at 28% 45%,#e63da844,transparent 38%),radial-gradient(ellipse at 72% 55%,#22c7ff38,transparent 40%);filter:blur(25px)}
+.room-logo{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;text-align:center;color:#fff;text-shadow:0 0 25px #d88cff}
+.room-logo span{font-size:46px;color:#fff0c9}.room-logo b{font:600 28px/1.2 Georgia;letter-spacing:.12em}.room-logo small{margin-top:10px;font-size:9px;letter-spacing:.35em;color:#bfefff}
+.room-floor{position:absolute;left:50%;top:85%;width:2600px;height:1600px;margin:-800px 0 0 -1300px;border-radius:50%;transform:rotateX(87deg);transform-origin:center;background:repeating-radial-gradient(ellipse at center,transparent 0 54px,#d49cff25 55px 57px),linear-gradient(90deg,transparent,#6f4acb22,transparent);box-shadow:0 0 120px #854aff22}
+.room-ceiling{position:absolute;left:50%;top:-65%;width:2400px;height:1300px;margin-left:-1200px;border-radius:50%;transform:rotateX(-87deg);background:repeating-radial-gradient(ellipse at center,transparent 0 100px,#a9a0ff17 101px 102px),radial-gradient(ellipse,#6a3f9633,transparent 65%)}
+.room-portal{position:absolute;left:50%;top:50%;width:clamp(270px,29vw,390px);height:clamp(330px,40vw,470px);margin:-235px 0 0 -195px;pointer-events:auto;text-decoration:none;color:#fff;backface-visibility:hidden;filter:drop-shadow(0 20px 55px #02040cbb)}
+.portal-inner{height:100%;padding:11px;border-radius:23px;border:1px solid #e5c4ff99;background:linear-gradient(145deg,#ffffff28,#21133feF 48%,#090d26f2);box-shadow:inset 0 0 35px #f6bfff22,0 0 45px #b55aff44;backdrop-filter:blur(9px);overflow:hidden;position:relative}
+.portal-inner:after{content:"";position:absolute;inset:6px;border:1px solid #f5d4ff44;border-radius:17px;pointer-events:none}
+.portal-image,.portal-art{display:block;width:100%;height:65%;object-fit:cover;border-radius:15px}
+.portal-art{position:relative;display:grid;place-items:center;background:radial-gradient(circle at 50% 35%,#fff7,transparent 12%),radial-gradient(ellipse at 28% 25%,#ff76c9aa,transparent 45%),radial-gradient(ellipse at 72% 75%,#4ddcff99,transparent 45%),linear-gradient(135deg,#26134b,#08172f)}
+.portal-art:before,.portal-art:after{content:"";position:absolute;width:180px;height:180px;border:1px solid #ffffff66;border-radius:50%;box-shadow:0 0 35px #f3aaff66}
+.portal-art:after{width:130px;height:130px;border-style:dashed;transform:rotateX(65deg) rotateZ(30deg)}
+.portal-art span{font:500 72px Georgia;color:#fff;text-shadow:0 0 30px #fff,0 0 65px #ff72e4;z-index:1}
+.portal-art i{position:absolute;top:18%;right:20%;font-size:27px;color:white}
+.portal-info{display:flex;flex-direction:column;gap:8px;padding:16px 12px}
+.portal-info small{font-size:9px;letter-spacing:.22em;color:#d5a5ff}.portal-info strong{font:600 26px/1.1 Georgia;text-shadow:0 0 18px #df9dff77}.portal-info span{font-size:12px;color:#d9cde8}.portal-info em{font-style:normal;font-size:9px;letter-spacing:.18em;color:#ffb5e8;margin-top:5px}
+.room-portal:hover .portal-inner{border-color:#fff;box-shadow:inset 0 0 40px #ff9de955,0 0 65px #c36cff99}
+.room-vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 30%,#02040c55 100%),linear-gradient(0deg,#05071377,transparent 22%,transparent 75%,#05071344)}
+.world-bottom{z-index:12;align-items:center;gap:12px;flex-wrap:wrap}.world-zoom{display:flex;align-items:center;gap:8px;pointer-events:auto}.world-zoom input{width:110px;accent-color:#ef73d0}
+@media(max-width:700px){.room-portal{width:270px;height:350px;margin:-175px 0 0 -135px}.portal-info strong{font-size:22px}.room-logo b{font-size:22px}.world-bottom{justify-content:center}.world-bottom>span:nth-child(2){display:none}}
