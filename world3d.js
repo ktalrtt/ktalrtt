@@ -1,4 +1,4 @@
-/* First-person 360° yearbook room. Camera stays at the center; the room turns around the viewer. */
+/* Sảnh triển lãm kỷ yếu 360°: không gian ấm áp, nhẹ và tối ưu cho thiết bị phổ thông. */
 (() => {
  const $=id=>document.getElementById(id), stage=$('worldStage');
  if(!stage)return;
@@ -21,7 +21,7 @@
   document.documentElement.style.setProperty('--world-glow',c.worldGlow||'#df70ff');
   stage.querySelectorAll('.immersive-room,.room-vignette').forEach(n=>n.remove());
   const room=document.createElement('div');room.className='immersive-room';room.id='immersiveRoom';
-  const back=document.createElement('div');back.className='room-backdrop';back.innerHTML='<div class="room-nebula"></div><div class="room-logo"><span>✦</span><b></b><small></small></div>';back.querySelector('b').textContent=(c.worldCenterTitle||'OUR CLASS | OUR FOREVER').replace(/\s*\|\s*/g,'\n');back.querySelector('small').textContent=c.worldCenterSubtitle||'MEMORIES LIVE HERE';room.append(back);
+  const back=document.createElement('div');back.className='room-backdrop';back.innerHTML='<div class="room-nebula"></div><div class="room-logo"><span>✦</span><b></b><small></small></div>';back.querySelector('b').textContent=(c.worldCenterTitle||'THANH XUÂN | CỦA CHÚNG MÌNH').replace(/\s*\|\s*/g,'\n');back.querySelector('small').textContent=c.worldCenterSubtitle||'NHỮNG NGÀY KHÔNG QUÊN';room.append(back);
   const floor=document.createElement('div');floor.className='room-floor';room.append(floor);
   const ceiling=document.createElement('div');ceiling.className='room-ceiling';room.append(ceiling);
   items.forEach((it,i)=>{
@@ -38,7 +38,7 @@
  }
  function update(){
   const r=$('immersiveRoom');if(!r)return;
-  r.style.transform='translateZ(-80px) rotateX('+pitch+'deg) rotateY('+yaw+'deg) scale('+zoom+')';
+  r.style.transform='translate3d(0,0,-80px) rotateX('+pitch+'deg) rotateY('+yaw+'deg) scale('+zoom+')';
   const z=$('worldZoomValue');if(z)z.textContent=Math.round(zoom*100)+'%';
   const range=$('worldZoomRange');if(range)range.value=String(Math.round(zoom*100));
  }
