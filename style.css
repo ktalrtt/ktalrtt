@@ -206,3 +206,6 @@ body{color:var(--text-color)}.eyebrow,.detail-label,.brand i,.gallery-item figca
 .room-vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 30%,#02040c55 100%),linear-gradient(0deg,#05071377,transparent 22%,transparent 75%,#05071344)}
 .world-bottom{z-index:12;align-items:center;gap:12px;flex-wrap:wrap}.world-zoom{display:flex;align-items:center;gap:8px;pointer-events:auto}.world-zoom input{width:110px;accent-color:#ef73d0}
 @media(max-width:700px){.room-portal{width:270px;height:350px;margin:-175px 0 0 -135px}.portal-info strong{font-size:22px}.room-logo b{font-size:22px}.world-bottom{justify-content:center}.world-bottom>span:nth-child(2){display:none}}
+
+/* Place the starfield and title on the far inner wall of the room. */
+.room-backdrop{transform:translateZ(-900px)}
