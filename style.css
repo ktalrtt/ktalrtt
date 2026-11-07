@@ -741,3 +741,38 @@ html[data-performance="low"] *,html[data-performance="low"] *:before,html[data-p
 .world-stage.is-dragging .room-portal,.world-stage.is-dragging .portal-inner{transition:none!important}
 .world-stage.is-dragging{cursor:grabbing}
 @media(prefers-reduced-motion:reduce){html[data-performance="high"] .world-stage:before{animation:none!important}}
+
+
+/* FIX: keep the 3D viewport in the lobby layout, never over the heading/buttons */
+.world-lobby{display:flex!important;flex-direction:column!important;gap:14px!important;min-height:0!important}
+.world-hud{position:relative!important;inset:auto!important;flex:0 0 auto!important;width:100%!important}
+.world-stage{
+ position:relative!important;inset:auto!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
+ display:block!important;width:min(100%,1250px)!important;height:clamp(390px,58vh,620px)!important;
+ min-height:390px!important;max-height:620px!important;flex:1 1 auto!important;margin:0 auto!important;
+ perspective:950px!important;overflow:hidden!important;isolation:isolate!important;
+}
+.world-stage>.world-stars,.world-stage>.world-nebula,.world-stage>.world-horizon,
+.world-stage>.world-floor,.world-stage>.world-orbit-line,.world-stage>.world-vortex,
+.world-stage>.world-orbit,.world-stage>.world-center{display:none!important}
+.immersive-room{position:absolute!important;inset:0!important;z-index:1!important;pointer-events:none!important;transform-style:preserve-3d!important}
+.room-vignette{z-index:2!important;opacity:.35!important}
+.world-stage:before{z-index:3!important;opacity:.12!important;pointer-events:none!important}
+.room-nebula{display:none!important}
+.room-backdrop:before{opacity:.28!important}
+.room-backdrop:after{opacity:.5!important}
+.room-portal{will-change:auto!important;filter:none!important;transition:none!important}
+.portal-inner{backdrop-filter:none!important;transition:none!important}
+.room-portal:hover .portal-inner{transform:none!important}
+.room-logo{top:40%!important}
+.world-bottom{position:relative!important;z-index:12!important;flex:0 0 auto!important}
+.world-controls{position:relative!important;z-index:25!important}
+.open-invitation{position:relative!important;z-index:25!important}
+html[data-performance="high"] .room-portal{filter:drop-shadow(0 7px 12px #02061788)!important}
+html[data-performance="high"] .world-stage:before{animation:none!important}
+@media(max-width:760px){
+ .world-lobby{gap:11px!important;padding:14px 12px!important}
+ .world-hud{display:flex!important;flex-direction:column!important}
+ .world-stage{height:52svh!important;min-height:340px!important;max-height:500px!important;flex:none!important}
+ .world-bottom{justify-content:center!important}
+}
