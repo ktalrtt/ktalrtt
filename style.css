@@ -243,7 +243,7 @@ body{color:var(--text-color)}.eyebrow,.detail-label,.brand i,.gallery-item figca
 /* Youthful yearbook atmosphere + performance pass (Nov 2026). */
 :root{--site-font:"Be Vietnam Pro",sans-serif;--world-glow:#ff8acb}
 html{scroll-behavior:auto}
-body{font-family:"Be Vietnam Pro",Arial,sans-serif;font-synthesis:none;text-rendering:optimizeLegibility}
+body{font-family:var(--site-font,"Be Vietnam Pro"),Arial,sans-serif;font-synthesis:none;text-rendering:optimizeLegibility}
 button,input,textarea,select{font-family:inherit}
 h1,h2,.world-hud h1,.room-logo b,.portal-info strong{font-family:"Playfair Display","Be Vietnam Pro",serif}
 .world-lobby{background:radial-gradient(ellipse at 48% 52%,rgba(130,65,168,.38),transparent 42%),radial-gradient(ellipse at 12% 16%,rgba(255,102,178,.20),transparent 32%),radial-gradient(ellipse at 88% 18%,rgba(105,195,255,.16),transparent 30%),linear-gradient(180deg,#110d27 0%,#10152d 48%,#080b1b 100%)}
