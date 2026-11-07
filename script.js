@@ -4,6 +4,8 @@ const DB_NAME = "kyyeu_invitation_db";
 const DB_STORE = "settings";
 const DB_KEY = "site-config";
 const ACCOUNT_KEY = "remembered-guest-name";
+const ADMIN_SESSION_KEY = "kyyeu-admin-session";
+const ENTERED_SESSION_KEY = "kyyeu-entered-session";
 const RSVP_WEB_APP_URL = "https://script.google.com/macros/s/AKfycby0xLcANRpEN6RmVUS4yaVj58iC2EPPV0ddPoB9z9KDH1sZQC9mgZwb4-XwYqo2ZfZ1/exec";
 let currentConfig = { ...CONFIG };
 let currentGuestName = "";
@@ -215,6 +217,17 @@ loadSavedConfig().then(async () => {
   updateSoundButton();
   const remembered = await getRememberedName();
   if (remembered) $("guestName").value = remembered;
+  if (sessionStorage.getItem(ENTERED_SESSION_KEY) === "1") {
+    currentGuestName = sessionStorage.getItem("kyyeu-guest-name") || remembered || "";
+    $("helloLine").textContent = `${currentConfig.greetingPrefix || "Kính chào:"} ${currentGuestName}`.trim();
+    $("gate").classList.add("hidden");
+    $("invitation").classList.remove("hidden");
+    $("worldLobby")?.classList.remove("hidden");
+    $("classicInvitation")?.classList.add("hidden");
+    const isAdmin = sessionStorage.getItem(ADMIN_SESSION_KEY) === "1";
+    $("adminPanel").classList.toggle("hidden", !isAdmin);
+    if (isAdmin) fillEditor();
+  }
 });
 
 // Chuyển cảnh cinematic: chỉ dùng CSS/JS thuần, không tải thư viện ngoài.
@@ -251,12 +264,17 @@ $("nameForm").addEventListener("submit", async (event) => {
   else await setRememberedName("");
   currentGuestName = name;
   $("helloLine").textContent = `${currentConfig.greetingPrefix || "Kính chào:"} ${name}`;
-  const isAdmin = name.toLocaleLowerCase("vi-VN") === ADMIN_NAME;
+  const isAdmin = name.toLocaleLowerCase("vi-VN").normalize("NFC") === ADMIN_NAME.normalize("NFC");
+  sessionStorage.setItem(ENTERED_SESSION_KEY, "1");
+  sessionStorage.setItem("kyyeu-guest-name", name);
+  if (isAdmin) sessionStorage.setItem(ADMIN_SESSION_KEY, "1"); else sessionStorage.removeItem(ADMIN_SESSION_KEY);
   $("adminPanel").classList.toggle("hidden", !isAdmin);
   if (isAdmin) fillEditor();
   await runCinematicTransition("enter", () => {
     $("gate").classList.add("hidden");
     $("invitation").classList.remove("hidden");
+    $("worldLobby")?.classList.remove("hidden");
+    $("classicInvitation")?.classList.add("hidden");
     window.scrollTo({ top: 0, behavior: "auto" });
   });
   playOpenSound();
@@ -273,6 +291,9 @@ $("backBtn").addEventListener("click", async () => {
 $("logoutBtn").addEventListener("click", async () => {
   await runCinematicTransition("leave", () => {
     currentGuestName = "";
+    sessionStorage.removeItem(ENTERED_SESSION_KEY);
+    sessionStorage.removeItem("kyyeu-guest-name");
+    sessionStorage.removeItem(ADMIN_SESSION_KEY);
     $("invitation").classList.add("hidden");
     $("adminPanel").classList.add("hidden");
     $("confirmModal").classList.add("hidden");
@@ -342,6 +363,20 @@ $("adminForm").addEventListener("submit", async (event) => {
   }
 });
 $("exportConfig").addEventListener("click", downloadConfig);
+
+/* Main lobby / restored classic invitation navigation. */
+$("openInvitation")?.addEventListener("click", () => {
+  $("worldLobby")?.classList.add("hidden");
+  $("classicInvitation")?.classList.remove("hidden");
+  $("adminPanel")?.classList.toggle("hidden", sessionStorage.getItem(ADMIN_SESSION_KEY) !== "1");
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+$("returnLobby")?.addEventListener("click", () => {
+  $("classicInvitation")?.classList.add("hidden");
+  $("worldLobby")?.classList.remove("hidden");
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+
 
 
 // Hộp xác nhận tham gia và hiệu ứng âm thanh được tạo trực tiếp bằng Web Audio.
