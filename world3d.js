@@ -1,45 +1,22 @@
-/* Sảnh kỷ yếu 3D: xoay 360° bằng chuột, cảm ứng hoặc bàn phím. */
+/* Sảnh 3D vũ trụ kỷ yếu: xoay 360° và click để mở trang HTML riêng. */
 (() => {
-  const $ = id => document.getElementById(id);
-  const stage = $('worldStage'), orbit = $('worldOrbit');
-  if (!stage || !orbit) return;
-  let angle = 0, dragging = false, lastX = 0, velocity = 0, raf = 0;
-  const fallback = [
-    {title:'Album ảnh',description:'Những khung hình thanh xuân',url:'pages/album.html',icon:'▧'},
-    {title:'Thành viên',description:'Những gương mặt thân quen',url:'pages/members.html',icon:'✳'},
-    {title:'Video thanh xuân',description:'Chuyển động của những ngày xưa',url:'pages/videos.html',icon:'▶'},
-    {title:'Kỷ niệm',description:'Chuyện nhỏ không thể quên',url:'pages/memories.html',icon:'✧'},
-    {title:'Lời nhắn',description:'Điều muốn nói với nhau',url:'pages/messages.html',icon:'♡'},
-    {title:'Hành trình lớp',description:'Từ ngày đầu đến hôm nay',url:'pages/journey.html',icon:'⌁'}
-  ];
-  function getConfig(){ return window.getYearbookConfig ? window.getYearbookConfig() : {}; }
-  function render(){
-    const c=getConfig(), items=(c.worldItems && c.worldItems.length ? c.worldItems : fallback);
-    $('worldTitle').innerHTML = `${escapeText(c.worldTitle || 'Bảo tàng thanh xuân')}`;
-    document.documentElement.style.setProperty('--world-glow', c.worldGlow || '#d6ad79');
-    orbit.innerHTML='';
-    const radius=Math.min(430, Math.max(255, stage.clientWidth*.34));
-    items.forEach((item,i)=>{
-      const card=document.createElement('a'); card.className='world-card'; card.href=item.url || '#';
-      const a=(360/items.length)*i;
-      card.style.setProperty('--card-angle', `${a}deg`);
-      card.style.setProperty('--card-radius', `${radius}px`);
-      card.innerHTML=`<span class="world-card-icon">${escapeText(item.icon || '✳')}</span><span class="world-card-title">${escapeText(item.title)}</span><span class="world-card-desc">${escapeText(item.description || '')}</span><span class="world-card-open">KHÁM PHÁ ↗</span>`;
-      card.addEventListener('click',e=>{ if(Math.abs(velocity)>2){e.preventDefault();return;} });
-      orbit.appendChild(card);
-    });
-    update();
-  }
-  function escapeText(s){return String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-  function update(){ orbit.style.transform=`translate(-50%,-50%) rotateY(${angle}deg)`; }
-  function down(e){dragging=true;lastX=e.clientX;velocity=0;stage.classList.add('is-dragging');stage.setPointerCapture?.(e.pointerId);}
-  function move(e){if(!dragging)return;const dx=e.clientX-lastX;lastX=e.clientX;angle+=dx*.32;velocity=dx*.32;update();}
-  function up(){dragging=false;stage.classList.remove('is-dragging');if(raf)cancelAnimationFrame(raf);const coast=()=>{if(dragging||Math.abs(velocity)<.08)return;angle+=velocity;velocity*=.94;update();raf=requestAnimationFrame(coast);};raf=requestAnimationFrame(coast);}
-  stage.addEventListener('pointerdown',down);stage.addEventListener('pointermove',move);stage.addEventListener('pointerup',up);stage.addEventListener('pointercancel',up);stage.addEventListener('lostpointercapture',up);
-  $('worldLeft').addEventListener('click',()=>{angle-=35;update();});$('worldRight').addEventListener('click',()=>{angle+=35;update();});$('worldReset').addEventListener('click',()=>{angle=0;velocity=0;update();});
-  stage.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'){angle-=12;update();}if(e.key==='ArrowRight'){angle+=12;update();}});
-  window.renderWorld3D=render;
-  window.addEventListener('resize',render);
-  window.addEventListener('kyyeu-config-ready',render);
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render();
+ const $=id=>document.getElementById(id), stage=$('worldStage'), orbit=$('worldOrbit'); if(!stage||!orbit)return;
+ const fallback=[
+  {title:'Album ảnh',description:'Những khung hình thanh xuân',url:'pages/album.html',icon:'▧'},
+  {title:'Thành viên',description:'Những gương mặt thân quen',url:'pages/members.html',icon:'✦'},
+  {title:'Video thanh xuân',description:'Chuyển động của ngày xưa',url:'pages/videos.html',icon:'▶'},
+  {title:'Kỷ niệm',description:'Chuyện nhỏ không thể quên',url:'pages/memories.html',icon:'✧'},
+  {title:'Lời nhắn',description:'Điều muốn nói với nhau',url:'pages/messages.html',icon:'♡'},
+  {title:'Hành trình lớp',description:'Từ ngày đầu đến hôm nay',url:'pages/journey.html',icon:'⌁'}];
+ let angle=0,dragging=false,lastX=0,velocity=0,raf=0,pointerId=null,cards=[];
+ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const cfg=()=>window.getYearbookConfig?window.getYearbookConfig():{};
+ function render(){const c=cfg(),items=Array.isArray(c.worldItems)&&c.worldItems.length?c.worldItems:fallback;$('worldTitle').textContent=c.worldTitle||'Vũ trụ thanh xuân';document.documentElement.style.setProperty('--world-glow',c.worldGlow||'#ff69c9');orbit.replaceChildren();cards=items.map((it,i)=>{const a=document.createElement('a');a.className='world-card tone-'+['pink','cyan','violet','gold','blue','coral'][i%6];a.href=it.url||'#';a.setAttribute('aria-label','Mở '+(it.title||'nội dung'));a.innerHTML=`<span class="world-card-top"><i>✦</i> MEMORY PORTAL <b>0${i+1}</b></span><span class="world-card-icon">${esc(it.icon||'✦')}</span><span class="world-card-title">${esc(it.title||'Kỷ niệm')}</span><span class="world-card-desc">${esc(it.description||'Mở ra một miền ký ức')}</span><span class="world-card-open">KHÁM PHÁ <b>↗</b></span>`;a.addEventListener('pointerdown',e=>e.stopPropagation());a.addEventListener('click',e=>{if(!it.url||it.url==='#')e.preventDefault();});orbit.appendChild(a);return a;});update();}
+ function update(){const w=stage.clientWidth||innerWidth,h=stage.clientHeight||560,rx=Math.min(w*.43,690),ry=Math.min(h*.19,128),n=Math.max(cards.length,1);cards.forEach((card,i)=>{const rad=((i*360/n)+angle-90)*Math.PI/180,depth=Math.cos(rad),x=Math.sin(rad)*rx,y=Math.sin(rad*2)*ry*.30,scale=.70+((depth+1)/2)*.34,opacity=.50+((depth+1)/2)*.50;card.style.transform=`translate3d(calc(-50% + ${x}px),calc(-50% + ${y}px),${depth*150}px) scale(${scale})`;card.style.opacity=opacity.toFixed(2);card.style.zIndex=String(Math.round((depth+1)*100));card.style.pointerEvents=depth<-.78?'none':'auto';card.setAttribute('aria-hidden',depth<-.78?'true':'false');});}
+ function down(e){if(e.target.closest('.world-card'))return;dragging=true;lastX=e.clientX;velocity=0;pointerId=e.pointerId;stage.classList.add('is-dragging');try{stage.setPointerCapture(e.pointerId)}catch(_){}if(raf)cancelAnimationFrame(raf);}
+ function move(e){if(!dragging||e.pointerId!==pointerId)return;const dx=e.clientX-lastX;lastX=e.clientX;angle+=dx*.28;velocity=dx*.28;update();}
+ function up(){if(!dragging)return;dragging=false;pointerId=null;stage.classList.remove('is-dragging');const coast=()=>{if(dragging||Math.abs(velocity)<.06)return;angle+=velocity;velocity*=.94;update();raf=requestAnimationFrame(coast)};raf=requestAnimationFrame(coast);}
+ stage.addEventListener('pointerdown',down);stage.addEventListener('pointermove',move);stage.addEventListener('pointerup',up);stage.addEventListener('pointercancel',up);stage.addEventListener('lostpointercapture',up);
+ $('worldLeft')?.addEventListener('click',()=>{angle-=34;velocity=0;update()});$('worldRight')?.addEventListener('click',()=>{angle+=34;velocity=0;update()});$('worldReset')?.addEventListener('click',()=>{angle=0;velocity=0;update()});stage.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'){angle-=12;update()}if(e.key==='ArrowRight'){angle+=12;update()}});
+ window.renderWorld3D=render;window.addEventListener('resize',update);window.addEventListener('kyyeu-config-ready',render);if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render();
 })();
