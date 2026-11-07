@@ -38,6 +38,7 @@
   });
   stage.append(room);
   const v=document.createElement('div');v.className='room-vignette';stage.append(v);
+  hasRendered=true;
   update();
  }
  function update(){
@@ -61,5 +62,4 @@
  $('worldReset')?.addEventListener('click',()=>{if(raf)cancelAnimationFrame(raf);vx=vy=0;yaw=0;pitch=0;zoom=1;update();});
  stage.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')yaw-=10;if(e.key==='ArrowRight')yaw+=10;if(e.key==='ArrowUp')pitch=Math.min(55,pitch+8);if(e.key==='ArrowDown')pitch=Math.max(-55,pitch-8);if(e.key==='+'||e.key==='=')zoom=Math.min(1.45,zoom+.1);if(e.key==='-')zoom=Math.max(.72,zoom-.1);update()});
  window.renderWorld3D=render;window.addEventListener('resize',update);window.addEventListener('kyyeu-config-ready',render);
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render();
 })();
