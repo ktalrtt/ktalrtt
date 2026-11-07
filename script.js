@@ -109,6 +109,8 @@ function applyConfig() {
   invitation.style.backgroundImage = currentConfig.backgroundImage
     ? `linear-gradient(rgba(251,247,243,${(currentConfig.pageOverlay ?? .78)}),rgba(251,247,243,${(currentConfig.pageOverlay ?? .78)})),url("${currentConfig.backgroundImage}")`
     : "";
+  const worldStage = $("worldStage");
+  if (worldStage) worldStage.style.backgroundImage = currentConfig.worldBackgroundImage ? `linear-gradient(rgba(4,7,20,.35),rgba(4,7,20,.62)),url("${currentConfig.worldBackgroundImage}")` : "";
   gallerySection.style.backgroundImage = currentConfig.galleryBackgroundImage
     ? `linear-gradient(rgba(243,233,226,${(currentConfig.galleryOverlay ?? .78)}),rgba(243,233,226,${(currentConfig.galleryOverlay ?? .78)})),url("${currentConfig.galleryBackgroundImage}")`
     : "";
@@ -130,6 +132,8 @@ function fillEditor() {
   $("editGalleryEyebrow").value = currentConfig.galleryEyebrow || "MEMORIES IN FRAMES";
   $("editWorldTitle").value = currentConfig.worldTitle || "Bảo tàng thanh xuân";
   $("editWorldGlow").value = currentConfig.worldGlow || "#d6ad79";
+  $("editWorldCenterTitle").value = currentConfig.worldCenterTitle || "OUR CLASS | OUR FOREVER";
+  $("editWorldCenterSubtitle").value = currentConfig.worldCenterSubtitle || "MEMORIES LIVE HERE";
   $("editWorldItems").value = (currentConfig.worldItems || []).map(x => [x.title,x.description,x.url,x.icon || "✳",x.image || ""].join(" | ")).join("\n");
   $("editWorldPages").value = JSON.stringify(currentConfig.worldPages || {}, null, 2);
   $("editGalleryTitle").value = currentConfig.galleryTitle || "Một chút|thanh xuân";
@@ -311,6 +315,7 @@ $("adminForm").addEventListener("submit", async (event) => {
     const background = await readImage($("editBackground").files[0]);
     const gateBackground = await readImage($("editGateBackground").files[0]);
     const galleryBackground = await readImage($("editGalleryBackground").files[0]);
+    const worldBackground = await readImage($("editWorldBackground").files[0]);
     const galleryUploads = await Promise.all([1, 2, 3].map(i => readImage($(`editGallery${i}`).files[0])));
     currentConfig = { ...currentConfig,
       siteTitle: $("editSiteTitle").value.trim(), gateButtonText: $("editGateButton").value.trim(),
@@ -318,6 +323,7 @@ $("adminForm").addEventListener("submit", async (event) => {
       galleryEyebrow: $("editGalleryEyebrow").value.trim(), galleryTitle: $("editGalleryTitle").value.trim(),
       galleryCopy: $("editGalleryCopy").value.trim(),
       worldTitle: $("editWorldTitle").value.trim(), worldGlow: $("editWorldGlow").value,
+      worldCenterTitle: $("editWorldCenterTitle").value.trim(), worldCenterSubtitle: $("editWorldCenterSubtitle").value.trim(),
       worldItems: $("editWorldItems").value.split(/\r?\n/).map(line => line.split("|").map(s => s.trim())).filter(parts => parts[0] && parts[2]).map(parts => ({ title: parts[0], description: parts[1] || "Khám phá kỷ niệm", url: parts[2], icon: parts[3] || "✳", image: parts[4] || "" })),
       worldPages: JSON.parse($("editWorldPages").value || "{}"),
       confirmTitle: $("editConfirmTitle").value.trim(),
@@ -341,6 +347,7 @@ $("adminForm").addEventListener("submit", async (event) => {
       ...(cover ? { coverImage: cover } : {}), ...(background ? { backgroundImage: background } : {}),
       ...(gateBackground ? { gateBackgroundImage: gateBackground } : {}),
       ...(galleryBackground ? { galleryBackgroundImage: galleryBackground } : {}),
+      ...(worldBackground ? { worldBackgroundImage: worldBackground } : {}),
       gallery: (currentConfig.gallery || []).map((item, index) => ({
         ...item, caption: $(`editCaption${index + 1}`).value.trim(),
         ...(galleryUploads[index] ? { image: galleryUploads[index] } : {})
@@ -349,7 +356,7 @@ $("adminForm").addEventListener("submit", async (event) => {
     await saveConfigToDB(currentConfig);
     applyConfig();
     if (window.renderWorld3D) window.renderWorld3D();
-    ["editCover", "editBackground", "editGateBackground", "editGalleryBackground", "editGallery1", "editGallery2", "editGallery3"].forEach(id => { $(id).value = ""; });
+    ["editCover", "editBackground", "editGateBackground", "editGalleryBackground", "editGallery1", "editGallery2", "editGallery3", "editWorldBackground"].forEach(id => { $(id).value = ""; });
     soundEnabled = currentConfig.soundEnabled !== false;
     soundVolume = (currentConfig.soundVolume ?? 65) / 100;
     localStorage.setItem("kyyeu-sound", soundEnabled ? "on" : "off");
