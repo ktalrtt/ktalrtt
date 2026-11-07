@@ -1,20 +1,40 @@
 # Kỷ yếu 3D – Cosmic Lobby (GitHub Pages)
 
-- Sau đăng nhập chỉ còn một sảnh chính toàn màn hình; không có phần thiệp/album kéo dài bên dưới.
-- Sảnh phong cách vũ trụ nhiều màu: sao, tinh vân, vòng xoáy trung tâm và các thẻ nội dung nổi có chiều sâu.
-- Kéo chuột hoặc vuốt để xoay 360°. Bấm từng thẻ để mở trang HTML riêng trong `pages/`.
-- Đã sửa xử lý pointer để thao tác click không bị kéo camera chặn.
+## Bản đã chỉnh sửa
+- Sảnh vũ trụ 3D xoay 360° bằng kéo chuột hoặc vuốt.
+- Zoom gần/xa bằng con lăn chuột, nút +/− và thanh thu phóng; nút “Về giữa” khôi phục góc nhìn và zoom mặc định.
+- Các thẻ nội dung được tạo đường dẫn tương thích cả GitHub Pages dạng `username.github.io/repository/` (không trỏ nhầm về thư mục gốc domain).
+- Bổ sung ảnh SVG mặc định còn thiếu để màn hình mở đầu và album không bị ảnh lỗi.
+- Giữ các trang Album, Thành viên, Video, Kỷ niệm, Lời nhắn và Hành trình lớp.
 
-## Cài đặt trên GitHub Pages
-1. Giải nén ZIP và upload nội dung vào thư mục gốc repository (cùng cấp `index.html`).
-2. Ghi đè `index.html`, `style.css`, `world3d.js`, `script.js`, `config.js`, `README.md` nếu có.
-3. Giữ thư mục `pages/` trong gói này. Không xóa thư mục `assets/` cũ trong repository.
-4. Commit changes, chờ GitHub Pages deploy rồi tải lại bằng Ctrl+F5.
+## Cài đặt GitHub Pages (quan trọng để hết lỗi 404)
+1. Giải nén ZIP này.
+2. Mở repository GitHub của bạn và đưa **toàn bộ nội dung bên trong ZIP** lên thư mục gốc repository. `index.html` phải nằm ngay ở cấp đầu tiên, không nằm trong một thư mục con.
+3. Đảm bảo các mục `pages/`, `assets/` và các file `config.js`, `script.js`, `world3d.js`, `style.css` được commit cùng nhau.
+4. Vào **Settings → Pages**. Chọn đúng branch đang chứa website (thường là `main`) và folder `/ (root)`, rồi Save.
+5. Đợi GitHub Pages deploy hoàn tất. Mở URL Pages do GitHub cung cấp, không mở URL preview của repository. Tải lại bằng `Ctrl + Shift + R`.
 
-## Đổi nội dung xung quanh
-Sửa `worldItems` trong `config.js`: mỗi mục có `title`, `description`, `url`, `icon`. Các trang riêng gồm album, thành viên, video, kỷ niệm, lời nhắn và hành trình lớp.
+Ví dụ cấu trúc repository đúng:
 
-## Chỉnh sửa trên web và giới hạn GitHub Pages
-Trình chỉnh sửa hiện có vẫn được giữ. Lưu trên trình duyệt chỉ áp dụng trên thiết bị đó; muốn mọi người cùng thấy, xuất `config.js` rồi commit lên GitHub. GitHub Pages là hosting tĩnh nên không tự ghi dữ liệu chỉnh sửa ngược vào repository.
+```text
+repository/
+├── index.html
+├── config.js
+├── script.js
+├── world3d.js
+├── style.css
+├── assets/
+└── pages/
+    ├── album.html
+    ├── members.html
+    ├── videos.html
+    ├── memories.html
+    ├── messages.html
+    ├── journey.html
+    └── detail.js
+```
 
-Không cần cài ứng dụng khác hoặc thuê server; website được host bằng GitHub Pages.
+Nếu vẫn 404 sau khi deploy, kiểm tra GitHub Pages đang trỏ đúng branch/folder và tên file đúng chữ hoa-thường. GitHub Pages phân biệt `Pages` với `pages`.
+
+## Chỉnh nội dung
+Sửa `worldItems` và `worldPages` trong `config.js`. Các đường dẫn nội bộ nên để dạng `pages/album.html`, không thêm dấu `/` ở đầu. Trình chỉnh sửa trong website vẫn lưu cấu hình trên trình duyệt; để cập nhật cho tất cả người xem, xuất `config.js` rồi commit file đó lên GitHub.
