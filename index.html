@@ -35,41 +35,8 @@
       </div>
       <button type="button" id="openInvitation" class="open-invitation">✉ MỞ LÁ THƯ THANH XUÂN</button><div class="world-bottom"><span><i></i> GÓC KỶ NIỆM CỦA LỚP MÌNH</span><span>KÉO ĐỂ NHÌN QUANH · CHỌN KHUNG ẢNH ĐỂ MỞ</span><label class="world-zoom"><span>−</span><input id="worldZoomRange" type="range" min="62" max="165" value="100" aria-label="Mức thu phóng"><span id="worldZoomValue">100%</span></label></div>
     </section>
-        <section id="classicInvitation" class="classic-invitation hidden" aria-label="Thư mời kỷ yếu">
-      <div class="classic-toolbar"><button type="button" id="returnLobby" class="classic-back">← Về sảnh chính</button><span>NHỮNG NGÀY MÌNH CÓ NHAU ✳</span></div>
-      <section class="hero">
-        <div class="hero-content">
-          <p class="eyebrow" id="mainEyebrow">SAVE THE DATE · 2026</p>
-          <p class="hello" id="helloLine">Kính chào:</p>
-          <h1 id="mainTitle">Mời bạn đi<br><em>chụp kỷ yếu</em></h1>
-          <div class="rule"><span>✳</span></div>
-          <p class="message" id="mainMessage">Thanh xuân chỉ ghé qua một lần. Cùng nhau lưu giữ những khoảnh khắc rực rỡ nhất.</p>
-          <div class="details"><div><span class="detail-label">THỜI GIAN</span><strong id="eventDate">Sẽ sớm được bật mí</strong></div><div><span class="detail-label">ĐỊA ĐIỂM</span><strong id="eventPlace">Cùng nhau chọn nhé</strong></div></div>
-          <button id="rsvpLink" class="rsvp" type="button">Chấp nhận lời mời <span>↗</span></button>
-        </div>
-        <div class="hero-art"><div class="photo-frame"><img id="coverImage" src="assets/cover.svg" alt="Ảnh kỷ niệm"></div><span class="photo-caption" id="photoCaption">the days we'll remember</span><span class="sparkle s1">✳</span><span class="sparkle s2">✧</span></div>
-      </section>
-      <section id="gallerySection" class="gallery-section"><div class="section-heading"><p class="eyebrow" id="galleryEyebrow">MEMORIES IN FRAMES</p><h2 id="galleryTitle">Một chút <em>thanh xuân</em></h2><p id="galleryCopy">Những khoảnh khắc mong được cùng bạn viết tiếp.</p></div><div id="gallery" class="gallery"></div></section>
-      <footer><span>GỬI THANH XUÂN MỘT CHÚT THƯƠNG ♡</span><span id="footerNote">Hẹn gặp bạn trong ngày thật vui!</span></footer>
-    </section><button id="soundToggle" class="sound-floating" type="button" aria-pressed="true">♫ Âm thanh: bật</button>
-  </main>
-
-  <section id="confirmModal" class="confirm-modal hidden" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
-    <div class="confirm-card">
-      <div class="confirm-flower">✿</div>
-      <p class="eyebrow">ONE LITTLE YES</p>
-      <h2 id="confirmTitle">Bạn xác nhận tham gia nhé?</h2>
-      <p id="confirmText" class="confirm-copy">Cảm ơn bạn đã nhận lời. Xác nhận để mở email thông báo cho chủ nhân lời mời.</p>
-      <div class="confirm-actions">
-        <button id="confirmYes" class="rsvp" type="button">Đồng ý, mình sẽ tham gia ♥</button>
-        <button id="confirmNo" class="secondary-action" type="button">Để mình suy nghĩ thêm</button>
-      </div>
-      <p class="confirm-status" id="confirmStatus" role="status" aria-live="polite"></p>
-      <p class="confirm-note" id="confirmNote">Thông tin xác nhận sẽ được gửi tự động về email của chủ lời mời.</p>
-    </div>
-  </section>
   <section id="adminPanel" class="admin-panel hidden" aria-label="Bảng chỉnh sửa thiệp">
-    <div class="admin-heading"><div><p class="eyebrow">PRIVATE EDITOR</p><h2>Chỉnh sửa <em>thiệp mời</em></h2><p>Chỉ mở khi nhập đúng tên quản trị.</p></div><button id="closeAdmin" class="text-button" type="button">Đóng ×</button></div>
+    <div class="admin-heading"><div><p class="eyebrow">TRUNG TÂM QUẢN TRỊ</p><h2>Bảng điều khiển <em>toàn bộ website</em></h2><p>Khu vực dành cho quản trị viên.</p></div><button id="closeAdmin" class="text-button" type="button">Đóng ×</button></div>
     <form id="adminForm" class="admin-grid">
       <label>Tên trang (tiêu đề tab)<input id="editSiteTitle" type="text"></label>
       <label>Dòng nhỏ ở màn hình đăng nhập<input id="editGateEyebrow" type="text"></label>
@@ -123,10 +90,44 @@
         <label>Kiểu chuyển động<select id="editMotionStyle"><option value="luxury">Sang trọng – nhiều hiệu ứng</option><option value="soft">Nhẹ nhàng – tinh tế</option><option value="off">Tắt toàn bộ hiệu ứng</option></select></label><h3 class="wide music-heading">Âm nhạc thanh xuân · chỉ quản trị viên</h3><p class="wide music-help">Chọn MP3 ngắn (tối đa 1,5 MB) hoặc dán URL nhạc công khai. Nhạc bắt đầu khi khách bấm mở lời mời; trình duyệt không cho tự phát trước thao tác của khách.</p><label class="wide">Tải nhạc MP3 lên<input id="editMusicFile" type="file" accept="audio/mpeg,audio/mp3,audio/ogg,audio/wav,audio/mp4"></label><label class="wide">Hoặc URL nhạc công khai<input id="editMusicUrl" type="url" placeholder="https://.../nhac-ky-yeu.mp3"></label><label class="setting-check"><input id="editMusicEnabled" type="checkbox" checked> Bật nhạc nền sau khi khách mở lời mời</label><label>Âm lượng nhạc nền<input id="editMusicVolume" type="range" min="0" max="100" value="35"></label><label class="setting-check"><input id="editMusicClear" type="checkbox"> Xóa nhạc nền hiện tại</label>
       </div>
       <div class="settings-box wide world-editor-box"><h3>Sảnh 3D · nội dung xung quanh</h3><p>Chỉnh tên, mô tả và đường dẫn từng khu vực. Mỗi đường dẫn sẽ mở một trang web riêng.</p><label class="wide">Danh sách khu vực (Tên | Mô tả | URL | Biểu tượng | URL ảnh tùy chọn)<textarea id="editWorldItems" rows="8" placeholder="Album ảnh | Những khung hình thanh xuân | pages/album.html | ▧"></textarea></label><label>Tiêu đề sảnh<input id="editWorldTitle" type="text"></label><label>Màu ánh sáng sảnh<input id="editWorldGlow" type="color" value="#d6ad79"></label><label>Chữ ở tâm sảnh<input id="editWorldCenterTitle" type="text" placeholder="OUR CLASS | OUR FOREVER"></label><label>Chữ nhỏ dưới tâm sảnh<input id="editWorldCenterSubtitle" type="text" placeholder="MEMORIES LIVE HERE"></label><label class="wide">Ảnh nền không gian sảnh chính<input id="editWorldBackground" type="file" accept="image/*"></label><label>Ảnh cổng Album ảnh<input id="editWorldItem1" type="file" accept="image/*"></label><label>Ảnh cổng Thành viên<input id="editWorldItem2" type="file" accept="image/*"></label><label>Ảnh cổng Video thanh xuân<input id="editWorldItem3" type="file" accept="image/*"></label><label>Ảnh cổng Kỷ niệm<input id="editWorldItem4" type="file" accept="image/*"></label><label>Ảnh cổng Lời nhắn<input id="editWorldItem5" type="file" accept="image/*"></label><label>Ảnh cổng Hành trình lớp<input id="editWorldItem6" type="file" accept="image/*"></label><label class="wide">Nội dung các trang riêng (JSON: title, subtitle, body)<textarea id="editWorldPages" rows="12"></textarea></label></div>
-      <div class="admin-actions wide"><button class="rsvp" type="submit">Lưu thay đổi trên máy này</button><button id="exportConfig" class="secondary-action" type="button">Tải config.js để cập nhật GitHub</button></div>
+      <div class="admin-actions wide"><button class="rsvp" type="submit">Lưu thay đổi trên máy này</button><button id="exportConfig" class="secondary-action" type="button">Tải config.js</button><button id="copyConfig" class="secondary-action" type="button">Sao chép toàn bộ config</button></div>
       <p class="admin-help wide">Bạn có thể chỉnh toàn bộ chữ, màu sắc, nền sảnh, nền thiệp, nền thư viện ảnh, ảnh và bật/tắt hiệu ứng, âm thanh ngay tại đây. Tên đăng nhập được nhớ trên thiết bị nếu bật tùy chọn ở màn hình đầu. Lưu trên máy này chỉ hiển thị ở trình duyệt hiện tại. Muốn mọi người đều thấy, hãy tải config.js rồi thay file cũ trong GitHub. GitHub Pages không có máy chủ lưu nội dung dùng chung; muốn tự đồng bộ tức thì cần kết nối cơ sở dữ liệu và xác thực quản trị. Ảnh sẽ tự động được thu nhỏ và nén (mục tiêu tối đa khoảng 450 KB/ảnh) trước khi lưu. Lưu trên máy này áp dụng ngay ở trình duyệt hiện tại; tải config.js để đưa thay đổi lên GitHub Pages cho mọi người cùng thấy.</p>
     </form>
   </section>
+        <section id="classicInvitation" class="classic-invitation hidden" aria-label="Thư mời kỷ yếu">
+      <div class="classic-toolbar"><button type="button" id="returnLobby" class="classic-back">← Về sảnh chính</button><span>NHỮNG NGÀY MÌNH CÓ NHAU ✳</span></div>
+      <section class="hero">
+        <div class="hero-content">
+          <p class="eyebrow" id="mainEyebrow">SAVE THE DATE · 2026</p>
+          <p class="hello" id="helloLine">Kính chào:</p>
+          <h1 id="mainTitle">Mời bạn đi<br><em>chụp kỷ yếu</em></h1>
+          <div class="rule"><span>✳</span></div>
+          <p class="message" id="mainMessage">Thanh xuân chỉ ghé qua một lần. Cùng nhau lưu giữ những khoảnh khắc rực rỡ nhất.</p>
+          <div class="details"><div><span class="detail-label">THỜI GIAN</span><strong id="eventDate">Sẽ sớm được bật mí</strong></div><div><span class="detail-label">ĐỊA ĐIỂM</span><strong id="eventPlace">Cùng nhau chọn nhé</strong></div></div>
+          <button id="rsvpLink" class="rsvp" type="button">Chấp nhận lời mời <span>↗</span></button>
+        </div>
+        <div class="hero-art"><div class="photo-frame"><img id="coverImage" src="assets/cover.svg" alt="Ảnh kỷ niệm"></div><span class="photo-caption" id="photoCaption">the days we'll remember</span><span class="sparkle s1">✳</span><span class="sparkle s2">✧</span></div>
+      </section>
+      <section id="gallerySection" class="gallery-section"><div class="section-heading"><p class="eyebrow" id="galleryEyebrow">MEMORIES IN FRAMES</p><h2 id="galleryTitle">Một chút <em>thanh xuân</em></h2><p id="galleryCopy">Những khoảnh khắc mong được cùng bạn viết tiếp.</p></div><div id="gallery" class="gallery"></div></section>
+      <footer><span>GỬI THANH XUÂN MỘT CHÚT THƯƠNG ♡</span><span id="footerNote">Hẹn gặp bạn trong ngày thật vui!</span></footer>
+    </section><button id="soundToggle" class="sound-floating" type="button" aria-pressed="true">♫ Âm thanh: bật</button>
+  </main>
+
+  <section id="confirmModal" class="confirm-modal hidden" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="confirm-card">
+      <div class="confirm-flower">✿</div>
+      <p class="eyebrow">ONE LITTLE YES</p>
+      <h2 id="confirmTitle">Bạn xác nhận tham gia nhé?</h2>
+      <p id="confirmText" class="confirm-copy">Cảm ơn bạn đã nhận lời. Xác nhận để mở email thông báo cho chủ nhân lời mời.</p>
+      <div class="confirm-actions">
+        <button id="confirmYes" class="rsvp" type="button">Đồng ý, mình sẽ tham gia ♥</button>
+        <button id="confirmNo" class="secondary-action" type="button">Để mình suy nghĩ thêm</button>
+      </div>
+      <p class="confirm-status" id="confirmStatus" role="status" aria-live="polite"></p>
+      <p class="confirm-note" id="confirmNote">Thông tin xác nhận sẽ được gửi tự động về email của chủ lời mời.</p>
+    </div>
+  </section>
+
   <audio id="bgMusic" loop preload="none"></audio>
   <script src="config.js"></script>
   <script src="script.js"></script>
