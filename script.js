@@ -211,35 +211,70 @@ loadSavedConfig().then(async () => {
   if (remembered) $("guestName").value = remembered;
 });
 
+// Chuyển cảnh cinematic: chỉ dùng CSS/JS thuần, không tải thư viện ngoài.
+function runCinematicTransition(direction, onCovered) {
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const disabled = currentConfig.motionEnabled === false || currentConfig.motionStyle === "off";
+  if (reduced || disabled) {
+    onCovered();
+    return Promise.resolve();
+  }
+  const layer = document.createElement("div");
+  layer.className = `cinematic-transition ${direction === "enter" ? "is-entering" : "is-leaving"}`;
+  layer.setAttribute("aria-hidden", "true");
+  layer.innerHTML = `<div class="cinematic-vortex"></div><div class="cinematic-core"></div><div class="cinematic-wordmark">${direction === "enter" ? "A NEW MEMORY" : "UNTIL NEXT TIME"}<span>✦</span></div><div class="cinematic-particles">${Array.from({length:36}, (_,i) => `<i style="--i:${i};--angle:${i*10}deg;--delay:${(i%9)*.025}s;--size:${3+(i%4)*2}px"></i>`).join("")}</div>`;
+  document.body.appendChild(layer);
+  document.body.classList.add("cinematic-running");
+  // Đổi nội dung đúng lúc lớp sáng đã che kín toàn màn hình.
+  window.setTimeout(() => {
+    onCovered();
+    layer.classList.add("is-revealing");
+  }, 760);
+  return new Promise(resolve => window.setTimeout(() => {
+    layer.remove();
+    document.body.classList.remove("cinematic-running");
+    resolve();
+  }, 1660));
+}
+
 $("nameForm").addEventListener("submit", async (event) => {
   event.preventDefault();
   const name = $("guestName").value.trim();
   if (!name) return;
   if ($("rememberName").checked) await setRememberedName(name);
   else await setRememberedName("");
-  $("gate").classList.add("hidden");
-  $("invitation").classList.remove("hidden");
   currentGuestName = name;
   $("helloLine").textContent = `${currentConfig.greetingPrefix || "Kính chào:"} ${name}`;
   const isAdmin = name.toLocaleLowerCase("vi-VN") === ADMIN_NAME;
   $("adminPanel").classList.toggle("hidden", !isAdmin);
   if (isAdmin) fillEditor();
+  await runCinematicTransition("enter", () => {
+    $("gate").classList.add("hidden");
+    $("invitation").classList.remove("hidden");
+    window.scrollTo({ top: 0, behavior: "auto" });
+  });
   playOpenSound();
-  window.scrollTo({ top: 0, behavior: "smooth" });
 });
-$("backBtn").addEventListener("click", () => {
-  $("invitation").classList.add("hidden"); $("gate").classList.remove("hidden");
-  $("adminPanel").classList.add("hidden"); $("guestName").focus(); window.scrollTo({ top: 0, behavior: "smooth" });
-});
-$("logoutBtn").addEventListener("click", () => {
-  currentGuestName = "";
-  $("invitation").classList.add("hidden");
-  $("adminPanel").classList.add("hidden");
-  $("confirmModal").classList.add("hidden");
-  document.body.classList.remove("modal-open");
-  $("gate").classList.remove("hidden");
+$("backBtn").addEventListener("click", async () => {
+  await runCinematicTransition("leave", () => {
+    $("invitation").classList.add("hidden");
+    $("gate").classList.remove("hidden");
+    $("adminPanel").classList.add("hidden");
+    window.scrollTo({ top: 0, behavior: "auto" });
+  });
   $("guestName").focus();
-  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+$("logoutBtn").addEventListener("click", async () => {
+  await runCinematicTransition("leave", () => {
+    currentGuestName = "";
+    $("invitation").classList.add("hidden");
+    $("adminPanel").classList.add("hidden");
+    $("confirmModal").classList.add("hidden");
+    document.body.classList.remove("modal-open");
+    $("gate").classList.remove("hidden");
+    window.scrollTo({ top: 0, behavior: "auto" });
+  });
+  $("guestName").focus();
 });
 $("closeAdmin").addEventListener("click", () => $("adminPanel").classList.add("hidden"));
 $("adminForm").addEventListener("submit", async (event) => {

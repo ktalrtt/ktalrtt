@@ -112,3 +112,33 @@ body{color:var(--text-color)}.eyebrow,.detail-label,.brand i,.gallery-item figca
 .confirm-status:empty{display:none}.confirm-status.is-pending{color:#92714c}.confirm-status.is-success{color:#477b5b}.confirm-status.is-error{color:#b44f4f}
 .confirm-actions button:disabled{opacity:.72;cursor:wait;transform:none!important}
 @media(prefers-reduced-motion:reduce){.cursor-glow,.cursor-bubble{display:none!important}}
+
+
+/* ULTRA CINEMATIC PAGE TRANSITION – pure CSS, GitHub Pages ready */
+.cinematic-transition{position:fixed;inset:0;z-index:99999;overflow:hidden;pointer-events:none;display:grid;place-items:center;isolation:isolate;background:radial-gradient(ellipse at 50% 50%,#fff8f2 0%,#f6c9bd 13%,#a66c91 35%,#34244f 68%,#100e22 100%);clip-path:circle(0% at 50% 50%);animation:cinematicCurtainIn .78s cubic-bezier(.7,0,.18,1) forwards}
+.cinematic-transition:before,.cinematic-transition:after{content:"";position:absolute;inset:-55%;border-radius:50%;pointer-events:none}
+.cinematic-transition:before{background:conic-gradient(from 0deg,transparent 0 8%,#fff9 10%,transparent 13% 25%,#ffc9dfaa 27%,transparent 30% 48%,#fff8 50%,transparent 53% 72%,#a9e9ff99 75%,transparent 78%);filter:blur(3px);animation:cinematicSpin 2.2s linear infinite}
+.cinematic-transition:after{inset:-15%;background:radial-gradient(circle,transparent 24%,#fff3 24.3%,transparent 25%,transparent 39%,#fff5 39.3%,transparent 40%,transparent 55%,#f8c5df55 55.3%,transparent 56%);animation:cinematicPulse 1.4s ease-in-out infinite}
+.cinematic-vortex{position:absolute;width:min(82vmin,850px);aspect-ratio:1;border-radius:50%;background:repeating-conic-gradient(from 0deg,#fff0 0 7deg,#fff9 7.3deg 7.7deg,#e8a9d988 8deg 8.4deg,#fff0 9deg 15deg);mask:radial-gradient(circle,transparent 0 24%,#000 25% 57%,transparent 70%);filter:drop-shadow(0 0 24px #ffd9f5);animation:cinematicSpin 5s linear infinite}
+.cinematic-core{position:absolute;width:18vmin;min-width:110px;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#fff 0 5%,#fffde9 12%,#ffd6ee 25%,#b68aff88 48%,transparent 72%);box-shadow:0 0 45px 25px #fff8,0 0 110px 65px #e9a5ff88;animation:coreBurst 1.5s cubic-bezier(.16,.8,.25,1) both}
+.cinematic-wordmark{position:absolute;z-index:3;color:#fff;text-align:center;font:600 clamp(11px,1.5vw,16px)/1.5 "DM Sans",sans-serif;letter-spacing:.48em;text-shadow:0 0 22px #fff,0 0 45px #e7aaff;opacity:0;transform:translateY(18px) scale(.8);animation:wordmarkReveal .8s .32s ease forwards}
+.cinematic-wordmark span{display:block;margin-top:12px;font-size:25px;letter-spacing:0;animation:starTurn 2s linear infinite}
+.cinematic-particles{position:absolute;inset:0;z-index:2}
+.cinematic-particles i{position:absolute;left:50%;top:50%;width:var(--size);height:var(--size);border-radius:50%;background:#fff;box-shadow:0 0 10px 3px #fff,0 0 25px 5px #ffbde9;opacity:0;animation:particleFlight 1.15s var(--delay) cubic-bezier(.12,.65,.25,1) both;transform:rotate(var(--angle)) translateY(0)}
+.cinematic-transition.is-revealing{animation:cinematicCurtainOut .9s cubic-bezier(.65,0,.25,1) forwards}
+.cinematic-transition.is-revealing .cinematic-core{animation:coreFade .75s ease forwards}
+.cinematic-transition.is-revealing .cinematic-wordmark{animation:wordmarkFade .35s ease forwards}
+.cinematic-transition.is-revealing .cinematic-particles i{animation:particleFade .45s ease forwards}
+.cinematic-running{overflow:hidden!important}
+@keyframes cinematicCurtainIn{0%{clip-path:circle(0% at 50% 50%);filter:hue-rotate(0)}65%{clip-path:circle(115% at 50% 50%);filter:hue-rotate(35deg)}100%{clip-path:circle(150% at 50% 50%);filter:hue-rotate(0)}}
+@keyframes cinematicCurtainOut{0%{clip-path:circle(150% at 50% 50%);opacity:1}100%{clip-path:circle(0% at 50% 50%);opacity:0}}
+@keyframes cinematicSpin{to{transform:rotate(360deg)}}
+@keyframes cinematicPulse{0%,100%{transform:scale(.88) rotate(0);opacity:.45}50%{transform:scale(1.08) rotate(12deg);opacity:1}}
+@keyframes coreBurst{0%{transform:scale(.05);opacity:0}45%{transform:scale(1.45);opacity:1}100%{transform:scale(1);opacity:.9}}
+@keyframes coreFade{to{transform:scale(3.5);opacity:0}}
+@keyframes wordmarkReveal{to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes wordmarkFade{to{opacity:0;transform:translateY(-12px) scale(1.15)}}
+@keyframes starTurn{to{transform:rotate(360deg)}}
+@keyframes particleFlight{0%{opacity:0;transform:rotate(var(--angle)) translateY(0) scale(.2)}18%{opacity:1}100%{opacity:0;transform:rotate(var(--angle)) translateY(-48vmax) scale(1.1)}}
+@keyframes particleFade{to{opacity:0;transform:scale(0)}}
+@media(prefers-reduced-motion:reduce){.cinematic-transition{display:none!important}}

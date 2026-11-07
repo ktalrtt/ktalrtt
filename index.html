@@ -29,7 +29,18 @@
 
   <main id="invitation" class="invitation hidden">
     <nav class="topbar"><span class="brand" id="brandText">OUR LITTLE MOMENT <i>✳</i></span><div class="topbar-actions"><button id="backBtn" class="text-button" type="button">← Quay lại</button><button id="soundToggle" class="text-button sound-toggle" type="button" aria-pressed="true">♫ Âm thanh: bật</button><button id="logoutBtn" class="text-button logout-button" type="button">Đăng xuất ↗</button></div></nav>
-    <section class="hero">
+    <div class="world-stage" id="worldStage" tabindex="0" aria-label="Không gian 3D tương tác. Dùng phím mũi tên hoặc kéo chuột để xoay.">
+      <div class="world-hud" aria-label="Điều hướng không gian">
+        <span class="world-live"><i></i> 3D EXPERIENCE</span>
+        <div class="world-nav">
+          <button type="button" data-world-jump="hero">Lời mời</button>
+          <button type="button" data-world-jump="gallery-section">Kỷ niệm</button>
+          <button type="button" data-world-jump="rsvpLink">Xác nhận</button>
+        </div>
+        <button class="world-reset" id="worldReset" type="button" aria-label="Đặt lại góc nhìn">↺ Góc nhìn</button>
+      </div>
+      <div class="world-world" id="worldWorld">
+        <section class="hero" id="hero">
       <div class="hero-content">
         <p class="eyebrow" id="mainEyebrow">SAVE THE DATE · 2026</p>
         <p class="hello" id="helloLine">Kính chào:</p>
@@ -48,11 +59,14 @@
         <span class="sparkle s1">✳</span><span class="sparkle s2">✧</span>
       </div>
     </section>
-    <section class="gallery-section">
+    <section class="gallery-section" id="gallery-section">
       <div class="section-heading"><p class="eyebrow" id="galleryEyebrow">MEMORIES IN FRAMES</p><h2 id="galleryTitle">Một chút <em>thanh xuân</em></h2><p id="galleryCopy">Những khoảnh khắc mong được cùng bạn viết tiếp.</p></div>
       <div id="gallery" class="gallery"></div>
     </section>
-    <footer><span>MADE WITH ♡ FOR OUR CLASS</span><span id="footerNote">Hẹn gặp bạn trong ngày thật vui!</span></footer>
+        <footer><span>MADE WITH ♡ FOR OUR CLASS</span><span id="footerNote">Hẹn gặp bạn trong ngày thật vui!</span></footer>
+      </div>
+      <p class="world-hint" id="worldHint">KÉO CHUỘT / VUỐT TAY ĐỂ XOAY KHÔNG GIAN · CHẠM CÁC NÚT ĐỂ KHÁM PHÁ</p>
+    </div>
   </main>
 
   <section id="confirmModal" class="confirm-modal hidden" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
