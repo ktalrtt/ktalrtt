@@ -61,9 +61,11 @@ Trong bảng PRIVATE EDITOR có thể chỉnh tiêu đề trang, nội dung màn
 **Lưu ý quan trọng:** GitHub Pages chỉ lưu website tĩnh. Nút lưu trong bảng quản trị lưu riêng trên thiết bị/trình duyệt của bạn; khách truy cập bằng thiết bị khác sẽ không tự thấy thay đổi đó. Để cập nhật cho tất cả mọi người, hãy chọn **Tải config.js để cập nhật GitHub**, sau đó thay `config.js` trong kho GitHub và commit. Các nội dung mặc định ban đầu được giữ nguyên; chỉ những trường bạn thay đổi mới ghi đè nội dung cũ.
 
 
-## Bản nâng cấp sảnh 3D tương tác
-- Đã thêm sảnh triển lãm 3D bằng Three.js: kéo chuột để xoay, cuộn để tiến/lùi, chạm/click khung trưng bày để đến album kỷ yếu.
-- Có nút điều khiển bằng tay qua webcam (MediaPipe Hands): di chuyển ngón trỏ để xoay; chụm ngón cái và ngón trỏ để mở album. Trình duyệt sẽ hỏi quyền camera; chỉ hoạt động trên HTTPS hoặc localhost.
-- Không cần cài ứng dụng khác hoặc máy chủ riêng. Website vẫn deploy bằng GitHub Pages. Three.js và MediaPipe được tải từ jsDelivr nên thiết bị cần Internet khi mở website.
-- Cách cập nhật: giải nén gói này, tải các file `index.html`, `style.css`, `immersive.js` cùng các file cũ (`script.js`, `config.js`, README) lên repository; giữ nguyên thư mục `assets/` hiện có nếu repository đang có. Commit lên nhánh main.
-- Sảnh 3D là phần bổ sung; nội dung thiệp, album, RSVP và trình chỉnh sửa cũ vẫn được giữ nguyên. Các bảng 3D hiện dùng artwork mẫu, còn album gốc bên dưới tiếp tục lấy ảnh từ `config.js`.
+## Sảnh 3D xoay 360° và các trang nội dung riêng
+- Sau khi đăng nhập, sảnh 3D xuất hiện trước nội dung thiệp. Kéo chuột hoặc vuốt trên màn hình cảm ứng để xoay quanh không gian; có nút xoay trái/phải và về giữa. Có thể dùng phím mũi tên khi sảnh được focus.
+- Mỗi thẻ nội dung là một liên kết tới trang HTML riêng trong `pages/` (album, thành viên, video, kỷ niệm, lời nhắn, hành trình). Mở liên kết sẽ chuyển sang trang mới; mỗi trang có liên kết quay lại sảnh.
+- Trình quản trị có mục “Sảnh 3D · nội dung xung quanh” để đổi tên, mô tả, URL và biểu tượng các khu vực; mỗi dòng theo định dạng `Tên | Mô tả | URL | Biểu tượng`. Có thể đổi tiêu đề sảnh và màu ánh sáng.
+- Lưu trên máy này để xem ngay trên trình duyệt hiện tại; xuất `config.js` và commit lên GitHub để cập nhật cho tất cả khách. GitHub Pages là hosting tĩnh, không có quyền ghi trực tiếp vào repository từ website. Không nhúng GitHub Personal Access Token vào mã nguồn vì khách truy cập có thể lấy được token.
+- Chỉ cần GitHub Pages; Three.js hoặc máy chủ riêng không bắt buộc cho phiên bản sảnh 3D CSS này. Nhận diện bàn tay bằng webcam là tính năng mở rộng riêng, cần thêm thư viện nhận diện và quyền camera.
+
+- Trong trình chỉnh sửa sảnh 3D, trường “Nội dung các trang riêng” cho phép sửa tiêu đề, phụ đề và nội dung của cả sáu trang đích bằng JSON. Trang đích đọc cấu hình đã lưu trên cùng trình duyệt hoặc cấu hình mặc định trong `config.js`.

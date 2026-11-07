@@ -7,6 +7,7 @@ const ACCOUNT_KEY = "remembered-guest-name";
 const RSVP_WEB_APP_URL = "https://script.google.com/macros/s/AKfycby0xLcANRpEN6RmVUS4yaVj58iC2EPPV0ddPoB9z9KDH1sZQC9mgZwb4-XwYqo2ZfZ1/exec";
 let currentConfig = { ...CONFIG };
 let currentGuestName = "";
+window.getYearbookConfig = () => currentConfig;
 function openConfigDB() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -125,6 +126,10 @@ function fillEditor() {
   $("editBrandText").value = currentConfig.brandText || "OUR LITTLE MOMENT";
   $("editMainEyebrow").value = currentConfig.mainEyebrow || "";
   $("editGalleryEyebrow").value = currentConfig.galleryEyebrow || "MEMORIES IN FRAMES";
+  $("editWorldTitle").value = currentConfig.worldTitle || "Bảo tàng thanh xuân";
+  $("editWorldGlow").value = currentConfig.worldGlow || "#d6ad79";
+  $("editWorldItems").value = (currentConfig.worldItems || []).map(x => [x.title,x.description,x.url,x.icon || "✳"].join(" | ")).join("\n");
+  $("editWorldPages").value = JSON.stringify(currentConfig.worldPages || {}, null, 2);
   $("editGalleryTitle").value = currentConfig.galleryTitle || "Một chút|thanh xuân";
   $("editGalleryCopy").value = currentConfig.galleryCopy || "Những khoảnh khắc mong được cùng bạn viết tiếp.";
   $("editConfirmTitle").value = currentConfig.confirmTitle || "Bạn xác nhận tham gia nhé?";
@@ -204,6 +209,7 @@ function downloadConfig() {
 applyConfig();
 loadSavedConfig().then(async () => {
   applyConfig();
+  window.dispatchEvent(new Event("kyyeu-config-ready"));
   soundEnabled = currentConfig.soundEnabled !== false && localStorage.getItem("kyyeu-sound") !== "off";
   soundVolume = (currentConfig.soundVolume ?? 65) / 100;
   updateSoundButton();
@@ -289,7 +295,11 @@ $("adminForm").addEventListener("submit", async (event) => {
       siteTitle: $("editSiteTitle").value.trim(), gateButtonText: $("editGateButton").value.trim(),
       gateTinyNote: $("editGateTinyNote").value.trim(), brandText: $("editBrandText").value.trim(),
       galleryEyebrow: $("editGalleryEyebrow").value.trim(), galleryTitle: $("editGalleryTitle").value.trim(),
-      galleryCopy: $("editGalleryCopy").value.trim(), confirmTitle: $("editConfirmTitle").value.trim(),
+      galleryCopy: $("editGalleryCopy").value.trim(),
+      worldTitle: $("editWorldTitle").value.trim(), worldGlow: $("editWorldGlow").value,
+      worldItems: $("editWorldItems").value.split(/\r?\n/).map(line => line.split("|").map(s => s.trim())).filter(parts => parts[0] && parts[2]).map(parts => ({ title: parts[0], description: parts[1] || "Khám phá kỷ niệm", url: parts[2], icon: parts[3] || "✳" })),
+      worldPages: JSON.parse($("editWorldPages").value || "{}"),
+      confirmTitle: $("editConfirmTitle").value.trim(),
       confirmYesText: $("editConfirmYes").value.trim(), confirmNoText: $("editConfirmNo").value.trim(),
       confirmCopy: $("editConfirmCopy").value.trim(), confirmNote: $("editConfirmNote").value.trim(), gateEyebrow: $("editGateEyebrow").value.trim(),
       gateTitle: $("editGateTitle").value.trim(), gateCopy: $("editGateCopy").value.trim(),
@@ -317,6 +327,7 @@ $("adminForm").addEventListener("submit", async (event) => {
     };
     await saveConfigToDB(currentConfig);
     applyConfig();
+    if (window.renderWorld3D) window.renderWorld3D();
     ["editCover", "editBackground", "editGateBackground", "editGalleryBackground", "editGallery1", "editGallery2", "editGallery3"].forEach(id => { $(id).value = ""; });
     soundEnabled = currentConfig.soundEnabled !== false;
     soundVolume = (currentConfig.soundVolume ?? 65) / 100;

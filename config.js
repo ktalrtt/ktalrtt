@@ -16,6 +16,24 @@ const CONFIG = {
   coverImage: "assets/cover.svg",
   backgroundImage: "",
   fontFamily: "DM Sans",
+  worldTitle: "Bảo tàng thanh xuân",
+  worldGlow: "#d6ad79",
+  worldItems: [
+    { title: "Album ảnh", description: "Những khung hình thanh xuân", url: "pages/album.html", icon: "▧" },
+    { title: "Thành viên", description: "Những gương mặt thân quen", url: "pages/members.html", icon: "✳" },
+    { title: "Video thanh xuân", description: "Chuyển động của những ngày xưa", url: "pages/videos.html", icon: "▶" },
+    { title: "Kỷ niệm", description: "Chuyện nhỏ không thể quên", url: "pages/memories.html", icon: "✧" },
+    { title: "Lời nhắn", description: "Điều muốn nói với nhau", url: "pages/messages.html", icon: "♡" },
+    { title: "Hành trình lớp", description: "Từ ngày đầu đến hôm nay", url: "pages/journey.html", icon: "⌁" }
+  ],
+  worldPages: {
+    album: { title: "Album ảnh", subtitle: "Những khung hình lưu giữ thanh xuân", body: "Thêm ảnh kỷ yếu, ảnh lớp và những khoảnh khắc đáng nhớ vào khu vực này." },
+    members: { title: "Thành viên lớp", subtitle: "Mỗi người là một mảnh ghép", body: "Giới thiệu từng thành viên, biệt danh, câu nói và những điều khiến lớp mình đặc biệt." },
+    videos: { title: "Video thanh xuân", subtitle: "Những ngày tháng chuyển động", body: "Đặt video tổng kết, clip hậu trường và những thước phim của lớp tại đây." },
+    memories: { title: "Kỷ niệm", subtitle: "Chuyện nhỏ không thể quên", body: "Ghi lại những chuyến đi, trò đùa, buổi học và khoảnh khắc chỉ lớp mình hiểu." },
+    messages: { title: "Lời nhắn", subtitle: "Gửi lại một điều muốn nói", body: "Lưu lời chúc, lời cảm ơn và những điều muốn nhắn gửi đến bạn bè, thầy cô." },
+    journey: { title: "Hành trình lớp", subtitle: "Từ ngày đầu đến ngày chia tay", body: "Kể lại hành trình của lớp theo từng năm học, cột mốc và sự kiện đáng nhớ." }
+  },
   gallery: [
     { image: "assets/memory-1.svg", caption: "the little things" },
     { image: "assets/memory-2.svg", caption: "our golden days" },

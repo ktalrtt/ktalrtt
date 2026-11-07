@@ -29,13 +29,14 @@
 
   <main id="invitation" class="invitation hidden">
     <nav class="topbar"><span class="brand" id="brandText">OUR LITTLE MOMENT <i>✳</i></span><div class="topbar-actions"><button id="backBtn" class="text-button" type="button">← Quay lại</button><button id="soundToggle" class="text-button sound-toggle" type="button" aria-pressed="true">♫ Âm thanh: bật</button><button id="logoutBtn" class="text-button logout-button" type="button">Đăng xuất ↗</button></div></nav>
-
-    <section id="memoryUniverse" class="memory-universe" aria-label="Sảnh kỷ yếu 3D">
-      <div class="universe-heading"><span class="universe-kicker">OUR CLASS · OUR STORY</span><h2>Chạm vào <em>miền ký ức</em></h2><p>Kéo chuột để xoay không gian · Cuộn để tiến gần · Chọn khung ảnh để xem kỷ yếu</p></div>
-      <canvas aria-label="Không gian triển lãm kỷ yếu 3D"></canvas>
-      <div class="universe-hud"><span class="hud-dot"></span> MEMORY HALL <span>3D EXPERIENCE</span></div>
-      <div class="universe-controls"><button type="button" data-action="explore">⟳ Xoay không gian</button><button type="button" data-action="gallery">Xem album ↓</button><button type="button" id="handMode">✋ Điều khiển bằng tay</button></div>
-      <p class="universe-status" aria-live="polite">Bạn có thể kéo chuột hoặc chạm để khám phá sảnh.</p>
+    <section id="worldLobby" class="world-lobby" aria-label="Sảnh kỷ yếu 3D">
+      <div class="world-hud"><div><p class="eyebrow">OUR CLASS · IMMERSIVE YEARBOOK</p><h1 id="worldTitle">Bảo tàng <em>thanh xuân</em></h1><p id="worldHint">Kéo để xoay 360° · Chọn một không gian để bước vào</p></div><div class="world-controls"><button type="button" id="worldLeft" aria-label="Xoay trái">↶</button><button type="button" id="worldRight" aria-label="Xoay phải">↷</button><button type="button" id="worldReset">Về giữa</button></div></div>
+      <div class="world-stage" id="worldStage" tabindex="0" aria-label="Không gian 3D, kéo chuột hoặc vuốt để xoay">
+        <div class="world-sky"></div><div class="world-floor"></div><div class="world-ring"></div>
+        <div class="world-orbit" id="worldOrbit"></div>
+        <div class="world-center"><span>✳</span><strong>THE DAYS<br>WE KEEP</strong><small>OUR LITTLE UNIVERSE</small></div>
+      </div>
+      <div class="world-bottom"><span><i></i> 360° INTERACTIVE SPACE</span><span>DRAG / SWIPE TO EXPLORE</span></div>
     </section>
     <section class="hero">
       <div class="hero-content">
@@ -56,7 +57,7 @@
         <span class="sparkle s1">✳</span><span class="sparkle s2">✧</span>
       </div>
     </section>
-    <section id="gallerySection" class="gallery-section">
+    <section class="gallery-section">
       <div class="section-heading"><p class="eyebrow" id="galleryEyebrow">MEMORIES IN FRAMES</p><h2 id="galleryTitle">Một chút <em>thanh xuân</em></h2><p id="galleryCopy">Những khoảnh khắc mong được cùng bạn viết tiếp.</p></div>
       <div id="gallery" class="gallery"></div>
     </section>
@@ -131,12 +132,13 @@
         <label>Âm lượng hiệu ứng <input id="editSoundVolume" type="range" min="0" max="100" value="65"></label>
         <label>Kiểu chuyển động<select id="editMotionStyle"><option value="luxury">Sang trọng – nhiều hiệu ứng</option><option value="soft">Nhẹ nhàng – tinh tế</option><option value="off">Tắt toàn bộ hiệu ứng</option></select></label>
       </div>
+      <div class="settings-box wide world-editor-box"><h3>Sảnh 3D · nội dung xung quanh</h3><p>Chỉnh tên, mô tả và đường dẫn từng khu vực. Mỗi đường dẫn sẽ mở một trang web riêng.</p><label class="wide">Danh sách khu vực (mỗi dòng: Tên | Mô tả | URL | Biểu tượng)<textarea id="editWorldItems" rows="8" placeholder="Album ảnh | Những khung hình thanh xuân | pages/album.html | ▧"></textarea></label><label>Tiêu đề sảnh<input id="editWorldTitle" type="text"></label><label>Màu ánh sáng sảnh<input id="editWorldGlow" type="color" value="#d6ad79"></label><label class="wide">Nội dung các trang riêng (JSON: title, subtitle, body)<textarea id="editWorldPages" rows="12"></textarea></label></div>
       <div class="admin-actions wide"><button class="rsvp" type="submit">Lưu thay đổi trên máy này</button><button id="exportConfig" class="secondary-action" type="button">Tải config.js để cập nhật GitHub</button></div>
       <p class="admin-help wide">Bạn có thể chỉnh toàn bộ chữ, màu sắc, nền sảnh, nền thiệp, nền thư viện ảnh, ảnh và bật/tắt hiệu ứng, âm thanh ngay tại đây. Tên đăng nhập được nhớ trên thiết bị nếu bật tùy chọn ở màn hình đầu. Lưu trên máy này chỉ hiển thị ở trình duyệt hiện tại. Muốn mọi người đều thấy, hãy tải config.js rồi thay file cũ trong GitHub. Ảnh sẽ tự động được thu nhỏ và nén (mục tiêu tối đa khoảng 450 KB/ảnh) trước khi lưu. Lưu trên máy này áp dụng ngay ở trình duyệt hiện tại; tải config.js để đưa thay đổi lên GitHub Pages cho mọi người cùng thấy.</p>
     </form>
   </section>
   <script src="config.js"></script>
   <script src="script.js"></script>
-  <script type="module" src="immersive.js"></script>
+  <script src="world3d.js"></script>
 </body>
 </html>
