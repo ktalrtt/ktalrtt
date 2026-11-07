@@ -283,7 +283,7 @@ h1,h2,.world-hud h1,.room-logo b,.portal-info strong{font-family:"Playfair Displ
 .world-hud p:not(.eyebrow){color:#806c61!important}
 .world-controls button{background:#fff9f2!important;color:#70584f!important;border:1px solid #d8b8a7!important;box-shadow:0 2px 8px #795a4820}
 .world-controls button:hover{background:#f2d9d0!important}
-.world-stage{background:linear-gradient(180deg,#f5d9ca 0%,#f4e5d6 58%,#c9aa8f 100%)!important;border:1px solid #d5b6a1!important;box-shadow:0 12px 28px #73533b20!important;contain:paint}
+.world-stage{background:linear-gradient(180deg,#f5d9ca 0%,#f4e5d6 58%,#c9aa8f 100%)!important;border:1px solid #d5b6a1!important;box-shadow:0 12px 28px #73533b20!important}
 .room-backdrop{border:0!important;border-radius:0!important;background:linear-gradient(180deg,#f4d9c8 0%,#f7e9d8 47%,#e8cbb5 100%)!important;box-shadow:none!important}
 .room-backdrop:before{inset:0!important;opacity:.32!important;background-image:repeating-linear-gradient(90deg,transparent 0 120px,#ffffff24 121px 122px),linear-gradient(180deg,#fff6,transparent 30%,#b9876c18)!important}
 .room-backdrop:after{content:"";position:absolute;left:8%;right:8%;top:13%;height:70px;border-top:2px solid #b9876c88;border-radius:50%;background:radial-gradient(circle at 8% 60%,#c77f79 0 5px,transparent 6px),radial-gradient(circle at 20% 85%,#e6b77e 0 5px,transparent 6px),radial-gradient(circle at 35% 96%,#a6b49a 0 5px,transparent 6px),radial-gradient(circle at 50% 100%,#d78c91 0 5px,transparent 6px),radial-gradient(circle at 65% 96%,#e6b77e 0 5px,transparent 6px),radial-gradient(circle at 80% 85%,#a6b49a 0 5px,transparent 6px),radial-gradient(circle at 92% 60%,#c77f79 0 5px,transparent 6px);pointer-events:none}
