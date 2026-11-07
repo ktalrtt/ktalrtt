@@ -239,3 +239,35 @@ body{color:var(--text-color)}.eyebrow,.detail-label,.brand i,.gallery-item figca
 .room-logo b{white-space:pre-line;text-align:center}
 
 .room-ceiling{top:-135%}
+
+/* Youthful yearbook atmosphere + performance pass (Nov 2026). */
+:root{--site-font:"Be Vietnam Pro",sans-serif;--world-glow:#ff8acb}
+html{scroll-behavior:auto}
+body{font-family:"Be Vietnam Pro",Arial,sans-serif;font-synthesis:none;text-rendering:optimizeLegibility}
+button,input,textarea,select{font-family:inherit}
+h1,h2,.world-hud h1,.room-logo b,.portal-info strong{font-family:"Playfair Display","Be Vietnam Pro",serif}
+.world-lobby{background:radial-gradient(ellipse at 48% 52%,rgba(130,65,168,.38),transparent 42%),radial-gradient(ellipse at 12% 16%,rgba(255,102,178,.20),transparent 32%),radial-gradient(ellipse at 88% 18%,rgba(105,195,255,.16),transparent 30%),linear-gradient(180deg,#110d27 0%,#10152d 48%,#080b1b 100%)}
+.world-lobby:after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.16;background:linear-gradient(115deg,transparent 15%,#ffb8df 48%,transparent 72%);mask-image:linear-gradient(180deg,transparent,black 45%,transparent)}
+.world-stage{border:1px solid #f3c2ff35;border-radius:26px;background:radial-gradient(ellipse at 50% 50%,#302052,#111a35 58%,#080c1c);box-shadow:inset 0 0 70px #030611,0 22px 55px #0007}
+.world-stage:before{content:"";position:absolute;inset:0;pointer-events:none;z-index:2;background-image:radial-gradient(2px 2px at 13% 22%,#fff 98%,transparent),radial-gradient(1px 1px at 27% 68%,#ffd9f1 98%,transparent),radial-gradient(2px 2px at 74% 19%,#a9eaff 98%,transparent),radial-gradient(1px 1px at 88% 74%,#fff 98%,transparent);background-size:280px 210px,360px 270px,430px 320px,310px 250px;opacity:.65}
+.room-nebula{filter:blur(18px)!important;opacity:.14}
+.room-backdrop{border-color:#ffc7e633;background:radial-gradient(ellipse at 50% 42%,#a34e9b66 0%,#34316aaa 36%,#0a1830 78%)!important;box-shadow:inset 0 0 90px #030611!important}
+.room-backdrop:before{opacity:.55}
+.room-floor{background:repeating-radial-gradient(ellipse at center,transparent 0 64px,#e9a9ff20 65px 67px),linear-gradient(90deg,transparent,#8b5dca20,transparent)!important;box-shadow:0 0 65px #854aff18!important}
+.room-ceiling{background:repeating-radial-gradient(ellipse at center,transparent 0 110px,#e9d3ff14 111px 112px),radial-gradient(ellipse,#a85eaa25,transparent 65%)!important}
+.room-portal{filter:drop-shadow(0 12px 25px #02040c99)!important}
+.portal-inner{backdrop-filter:none!important;background:linear-gradient(145deg,#fff2 0%,#4a2c59e8 48%,#11172beF)!important;border:1px solid #ffc8e9aa!important;box-shadow:0 12px 28px #05071388,inset 0 1px #fff7!important;transition:transform .22s ease,border-color .22s ease}
+.room-portal:hover .portal-inner{transform:translateY(-7px);border-color:#fff!important}
+.portal-image{object-fit:cover;loading:lazy}
+.portal-info{background:linear-gradient(180deg,#120f24dd,#0b1025f2)!important}
+.portal-info small{color:#ffb9df!important;letter-spacing:.16em}
+.portal-info em{color:#a8e9ff!important}
+.room-logo{filter:drop-shadow(0 0 18px #ff85d966)}
+.room-logo b{font-size:clamp(23px,3vw,34px);line-height:1.08;letter-spacing:.08em;color:#fff2fa}
+.room-logo small{color:#bcecff!important;letter-spacing:.2em}
+.world-controls button{backdrop-filter:none!important;background:#241b3dcc}
+.world-controls button:hover{background:#713f81}
+.cursor-glow{display:none!important}
+.cursor-bubble{pointer-events:none}
+@media(max-width:760px){.world-stage{border-radius:17px}.world-lobby{background:radial-gradient(ellipse at 50% 42%,#462657 0%,#11162e 56%,#080b1b 100%)}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
