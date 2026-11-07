@@ -329,3 +329,26 @@ h1,h2,.world-hud h1,.room-logo b,.portal-info strong{font-family:"Playfair Displ
  .room-portal{filter:none!important}
 }
 @media(prefers-reduced-motion:reduce){.room-portal,.portal-inner{transition:none!important}}
+
+
+/* PERFORMANCE PRESETS: user-selectable effects on the welcome screen */
+.performance-picker{margin:20px 0 16px;text-align:left}
+.performance-title{margin:0 0 9px;color:#9a7770;font-size:10px;font-weight:800;letter-spacing:.16em;text-align:center}
+.performance-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.performance-option{position:relative;display:flex;min-width:0;min-height:100px;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:10px 5px;border:1px solid #dfc9bc;border-radius:13px;background:#fffaf5;color:#6c5149;text-align:center;cursor:pointer;transition:transform .18s,border-color .18s,background .18s}
+.performance-option input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.performance-option:has(input:checked){border:2px solid #b77d78;background:#f8e8e1;box-shadow:0 4px 14px #9b6a5c20}
+.performance-option:focus-within{outline:2px solid #b77d78;outline-offset:3px}
+.performance-option strong{font-size:12px}
+.performance-option small{font-size:9px;line-height:1.35;color:#987f74}
+.performance-icon{font-size:20px}
+html[data-performance="low"] .cinematic-transition{display:none!important}
+html[data-performance="low"] .room-portal,html[data-performance="low"] .portal-inner{transition:none!important}
+html[data-performance="low"] .room-portal:hover .portal-inner{transform:none!important}
+html[data-performance="low"] .room-vignette,html[data-performance="low"] .world-stars,html[data-performance="low"] .world-orbit-line{display:none!important}
+html[data-performance="low"] .room-logo{box-shadow:none!important}
+html[data-performance="balanced"] .cinematic-particles i:nth-child(2n){display:none}
+html[data-performance="balanced"] .room-nebula{display:none!important}
+html[data-performance="high"] .room-portal{filter:drop-shadow(0 10px 18px #76543c22)}
+html[data-performance="high"] .portal-inner{transition:transform .28s ease,box-shadow .28s ease}
+@media(max-width:420px){.performance-option{min-height:92px;padding:8px 3px}.performance-option strong{font-size:11px}.performance-option small{font-size:8px}}
