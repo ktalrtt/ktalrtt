@@ -230,6 +230,7 @@ loadSavedConfig().then(async () => {
     $("classicInvitation")?.classList.add("hidden");
     const isAdmin = sessionStorage.getItem(ADMIN_SESSION_KEY) === "1";
     $("adminPanel").classList.toggle("hidden", !isAdmin);
+    $("quickEdit")?.classList.toggle("hidden", !isAdmin);
     if (isAdmin) fillEditor();
   }
 });
@@ -273,6 +274,7 @@ $("nameForm").addEventListener("submit", async (event) => {
   sessionStorage.setItem("kyyeu-guest-name", name);
   if (isAdmin) sessionStorage.setItem(ADMIN_SESSION_KEY, "1"); else sessionStorage.removeItem(ADMIN_SESSION_KEY);
   $("adminPanel").classList.toggle("hidden", !isAdmin);
+  $("quickEdit")?.classList.toggle("hidden", !isAdmin);
   if (isAdmin) fillEditor();
   await runCinematicTransition("enter", () => {
     $("gate").classList.add("hidden");
@@ -300,6 +302,7 @@ $("logoutBtn").addEventListener("click", async () => {
     sessionStorage.removeItem(ADMIN_SESSION_KEY);
     $("invitation").classList.add("hidden");
     $("adminPanel").classList.add("hidden");
+    $("quickEdit")?.classList.add("hidden");
     $("confirmModal").classList.add("hidden");
     document.body.classList.remove("modal-open");
     $("gate").classList.remove("hidden");
@@ -370,6 +373,8 @@ $("adminForm").addEventListener("submit", async (event) => {
   }
 });
 $("exportConfig").addEventListener("click", downloadConfig);
+
+$("quickEdit")?.addEventListener("click", () => { $("adminPanel")?.classList.remove("hidden"); $("adminPanel")?.scrollIntoView({behavior:"smooth",block:"start"}); });
 
 /* Main lobby / restored classic invitation navigation. */
 $("openInvitation")?.addEventListener("click", () => {
