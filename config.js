@@ -16,7 +16,7 @@ const CONFIG = {
   coverImage: "assets/cover.svg",
   backgroundImage: "",
   fontFamily: "DM Sans",
-  worldTitle: "Bảo tàng thanh xuân",
+  worldTitle: "Sảnh chính",
   worldGlow: "#d6ad79",
   worldItems: [
     { title: "Album ảnh", description: "Những khung hình thanh xuân", url: "pages/album.html", icon: "▧" },
