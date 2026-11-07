@@ -165,6 +165,10 @@ function fillEditor() {
   $("editMotionEnabled").checked = currentConfig.motionEnabled !== false;
   $("editSoundEnabled").checked = currentConfig.soundEnabled !== false;
   $("editSoundVolume").value = currentConfig.soundVolume ?? 65;
+  $("editMusicUrl").value = currentConfig.musicUrl || "";
+  $("editMusicEnabled").checked = currentConfig.musicEnabled !== false;
+  $("editMusicVolume").value = currentConfig.musicVolume ?? 35;
+  $("editMusicClear").checked = false;
   $("editMotionStyle").value = currentConfig.motionStyle || "luxury";
 }
 async function readImage(file) {
@@ -204,6 +208,24 @@ async function readImage(file) {
     reader.onerror = () => reject(new Error("Không thể hoàn tất việc nén ảnh."));
     reader.readAsDataURL(blob);
   });
+}
+async function readMusic(file) {
+  if (!file) return null;
+  if (!file.type.startsWith("audio/")) throw new Error("Vui lòng chọn tệp âm thanh hợp lệ.");
+  if (file.size > 1.5 * 1024 * 1024) throw new Error("Nhạc tải trực tiếp tối đa 1,5 MB. Hãy dùng URL MP3 công khai cho tệp lớn.");
+  return await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(new Error("Không đọc được tệp nhạc."));reader.readAsDataURL(file);});
+}
+function applyBackgroundMusic() {
+  const audio=$("bgMusic"); if(!audio)return;
+  const source=currentConfig.musicData || currentConfig.musicUrl || "";
+  if(audio.dataset.source!==source){audio.pause();audio.removeAttribute("src");audio.src=source;audio.dataset.source=source;audio.load();}
+  audio.volume=Math.max(0,Math.min(1,(currentConfig.musicVolume??35)/100));
+}
+async function startBackgroundMusic() {
+  const audio=$("bgMusic"); if(!audio || currentConfig.musicEnabled===false)return;
+  applyBackgroundMusic();
+  if(!audio.src)return;
+  try{await audio.play();}catch(_){const b=$("soundToggle");if(b)b.title="Nhấn để phát nhạc nền";}
 }
 function downloadConfig() {
   const source = "/* File được xuất từ trình chỉnh sửa thiệp kỷ yếu */\nconst CONFIG = " + JSON.stringify(currentConfig, null, 2) + ";\n";
@@ -318,7 +340,7 @@ $("adminForm").addEventListener("submit", async (event) => {
     const background = await readImage($("editBackground").files[0]);
     const gateBackground = await readImage($("editGateBackground").files[0]);
     const galleryBackground = await readImage($("editGalleryBackground").files[0]);
-    const worldBackground = await readImage($("editWorldBackground").files[0]);
+    const worldBackground = await readImage($("editWorldBackground").files[0]);\n    const musicData = await readMusic($("editMusicFile").files[0]);
     const worldItemUploads = await Promise.all([1,2,3,4,5,6].map(i => readImage($(`editWorldItem${i}`).files[0])));
     const galleryUploads = await Promise.all([1, 2, 3].map(i => readImage($(`editGallery${i}`).files[0])));
     currentConfig = { ...currentConfig,
@@ -347,7 +369,7 @@ $("adminForm").addEventListener("submit", async (event) => {
       pageOverlay: Number($("editPageOverlay").value) / 100,
       galleryOverlay: Number($("editGalleryOverlay").value) / 100,
       motionEnabled: $("editMotionEnabled").checked, soundEnabled: $("editSoundEnabled").checked,
-      soundVolume: Number($("editSoundVolume").value), motionStyle: $("editMotionStyle").value,
+      soundVolume: Number($("editSoundVolume").value), motionStyle: $("editMotionStyle").value,\n      musicUrl: $("editMusicUrl").value.trim(), musicEnabled: $("editMusicEnabled").checked, musicVolume: Number($("editMusicVolume").value),\n      ...( $("editMusicClear").checked ? { musicData: "" } : {} ), ...(musicData ? { musicData, musicUrl: "" } : {}),
       ...(cover ? { coverImage: cover } : {}), ...(background ? { backgroundImage: background } : {}),
       ...(gateBackground ? { gateBackgroundImage: gateBackground } : {}),
       ...(galleryBackground ? { galleryBackgroundImage: galleryBackground } : {}),
@@ -360,12 +382,12 @@ $("adminForm").addEventListener("submit", async (event) => {
     await saveConfigToDB(currentConfig);
     applyConfig();
     if (window.renderWorld3D) window.renderWorld3D();
-    ["editCover", "editBackground", "editGateBackground", "editGalleryBackground", "editGallery1", "editGallery2", "editGallery3", "editWorldBackground", "editWorldItem1", "editWorldItem2", "editWorldItem3", "editWorldItem4", "editWorldItem5", "editWorldItem6"].forEach(id => { $(id).value = ""; });
+    ["editCover", "editBackground", "editGateBackground", "editGalleryBackground", "editGallery1", "editGallery2", "editGallery3", "editWorldBackground", "editWorldItem1", "editWorldItem2", "editWorldItem3", "editWorldItem4", "editWorldItem5", "editWorldItem6", "editMusicFile"].forEach(id => { $(id).value = ""; });
     soundEnabled = currentConfig.soundEnabled !== false;
     soundVolume = (currentConfig.soundVolume ?? 65) / 100;
     localStorage.setItem("kyyeu-sound", soundEnabled ? "on" : "off");
     updateSoundButton();
-    alert("Đã lưu thay đổi trên trình duyệt này!");
+    applyBackgroundMusic();\n    alert("Đã lưu trên trình duyệt này. Để mọi người cùng thấy, hãy tải config.js và cập nhật file trên GitHub.");
   } catch (error) {
     console.error(error);
     alert(error.name === "QuotaExceededError"
@@ -442,7 +464,7 @@ $("soundToggle")?.addEventListener("click", () => {
   soundEnabled = !soundEnabled;
   localStorage.setItem("kyyeu-sound", soundEnabled ? "on" : "off");
   updateSoundButton();
-  if (soundEnabled) playOpenSound();
+  if (soundEnabled) playOpenSound();\n  if (currentConfig.musicEnabled !== false) startBackgroundMusic();
 });
 updateSoundButton();
 document.addEventListener("click", event => {
