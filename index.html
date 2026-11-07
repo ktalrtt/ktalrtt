@@ -27,13 +27,29 @@
   <main id="invitation" class="invitation hidden">
     <nav class="topbar"><span class="brand" id="brandText">OUR LITTLE MOMENT <i>✳</i></span><div class="topbar-actions"><button id="logoutBtn" class="text-button logout-button" type="button">Đăng xuất ↗</button></div></nav>
     <section id="worldLobby" class="world-lobby" aria-label="Sảnh kỷ yếu 3D">
-      <div class="world-hud"><div class="world-heading"><p class="eyebrow">OUR CLASS · IMMERSIVE YEARBOOK</p><h1 id="worldTitle">Vũ trụ <em>thanh xuân</em></h1><p id="worldHint">Kéo hoặc vuốt để xoay 360° · Chọn một kỷ niệm để khám phá</p></div><div class="world-controls"><button type="button" id="worldLeft" aria-label="Xoay trái">↶</button><button type="button" id="worldRight" aria-label="Xoay phải">↷</button><button type="button" id="worldZoomOut" aria-label="Thu nhỏ">−</button><button type="button" id="worldZoomIn" aria-label="Phóng to">＋</button><button type="button" id="worldReset">Về giữa</button></div></div>
+      <div class="world-hud"><div class="world-heading"><p class="eyebrow">OUR CLASS · IMMERSIVE YEARBOOK</p><h1 id="worldTitle">Sảnh chính</h1><p id="worldHint">Bạn đang đứng giữa không gian kỷ yếu · Kéo để nhìn quanh 360°</p></div><div class="world-controls"><button type="button" id="worldLeft" aria-label="Xoay trái">↶</button><button type="button" id="worldRight" aria-label="Xoay phải">↷</button><button type="button" id="worldZoomOut" aria-label="Thu nhỏ">−</button><button type="button" id="worldZoomIn" aria-label="Phóng to">＋</button><button type="button" id="worldReset">Về giữa</button></div></div>
       <div class="world-stage" id="worldStage" tabindex="0" aria-label="Không gian 3D, kéo chuột hoặc vuốt để xoay">
         <div class="world-stars" aria-hidden="true"></div><div class="world-nebula nebula-one" aria-hidden="true"></div><div class="world-nebula nebula-two" aria-hidden="true"></div><div class="world-horizon" aria-hidden="true"></div><div class="world-floor" aria-hidden="true"></div><div class="world-orbit-line orbit-one" aria-hidden="true"></div><div class="world-orbit-line orbit-two" aria-hidden="true"></div><div class="world-vortex" aria-hidden="true"><span></span><i></i><b></b></div><div class="world-orbit" id="worldOrbit"></div><div class="world-center"><span>✦</span><strong>OUR<br>UNIVERSE</strong><small>MEMORIES FOREVER</small></div>
       </div>
-      <div class="world-bottom"><span><i></i> 360° INTERACTIVE UNIVERSE</span><span>DRAG / SWIPE · SCROLL TO ZOOM · CLICK TO ENTER</span><label class="world-zoom"><span>−</span><input id="worldZoomRange" type="range" min="62" max="165" value="100" aria-label="Mức thu phóng"><span id="worldZoomValue">100%</span></label></div>
+      <button type="button" id="openInvitation" class="open-invitation">✉ MỞ THƯ MỜI KỶ YẾU</button><div class="world-bottom"><span><i></i> 360° INTERACTIVE YEARBOOK</span><span>DRAG / SWIPE · SCROLL TO ZOOM · CLICK TO ENTER</span><label class="world-zoom"><span>−</span><input id="worldZoomRange" type="range" min="62" max="165" value="100" aria-label="Mức thu phóng"><span id="worldZoomValue">100%</span></label></div>
     </section>
-    <div class="legacy-hidden" aria-hidden="true"><button id="backBtn" type="button"></button><button id="soundToggle" type="button"></button><div id="mainEyebrow"></div><div id="helloLine"></div><div id="mainTitle"></div><div id="mainMessage"></div><div id="eventDate"></div><div id="eventPlace"></div><div id="footerNote"></div><div id="galleryEyebrow"></div><div id="galleryTitle"></div><div id="galleryCopy"></div><img id="coverImage" alt=""><div id="photoCaption"></div><div id="rsvpLink"></div><div id="gallery"></div><div class="gallery-section"></div></div>
+        <section id="classicInvitation" class="classic-invitation hidden" aria-label="Thư mời kỷ yếu">
+      <div class="classic-toolbar"><button type="button" id="returnLobby" class="classic-back">← Về sảnh chính</button><span>OUR LITTLE MOMENT ✳</span></div>
+      <section class="hero">
+        <div class="hero-content">
+          <p class="eyebrow" id="mainEyebrow">SAVE THE DATE · 2026</p>
+          <p class="hello" id="helloLine">Kính chào:</p>
+          <h1 id="mainTitle">Mời bạn đi<br><em>chụp kỷ yếu</em></h1>
+          <div class="rule"><span>✳</span></div>
+          <p class="message" id="mainMessage">Thanh xuân chỉ ghé qua một lần. Cùng nhau lưu giữ những khoảnh khắc rực rỡ nhất.</p>
+          <div class="details"><div><span class="detail-label">THỜI GIAN</span><strong id="eventDate">Sẽ sớm được bật mí</strong></div><div><span class="detail-label">ĐỊA ĐIỂM</span><strong id="eventPlace">Cùng nhau chọn nhé</strong></div></div>
+          <button id="rsvpLink" class="rsvp" type="button">Chấp nhận lời mời <span>↗</span></button>
+        </div>
+        <div class="hero-art"><div class="photo-frame"><img id="coverImage" src="assets/cover.svg" alt="Ảnh kỷ niệm"></div><span class="photo-caption" id="photoCaption">the days we'll remember</span><span class="sparkle s1">✳</span><span class="sparkle s2">✧</span></div>
+      </section>
+      <section id="gallerySection" class="gallery-section"><div class="section-heading"><p class="eyebrow" id="galleryEyebrow">MEMORIES IN FRAMES</p><h2 id="galleryTitle">Một chút <em>thanh xuân</em></h2><p id="galleryCopy">Những khoảnh khắc mong được cùng bạn viết tiếp.</p></div><div id="gallery" class="gallery"></div></section>
+      <footer><span>MADE WITH ♡ FOR OUR CLASS</span><span id="footerNote">Hẹn gặp bạn trong ngày thật vui!</span></footer>
+    </section><button id="soundToggle" class="sound-floating" type="button" aria-pressed="true">♫ Âm thanh: bật</button>
   </main>
 
   <section id="confirmModal" class="confirm-modal hidden" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
