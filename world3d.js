@@ -25,7 +25,7 @@
   const floor=document.createElement('div');floor.className='room-floor';room.append(floor);
   const ceiling=document.createElement('div');ceiling.className='room-ceiling';room.append(ceiling);
   items.forEach((it,i)=>{
-   const a=document.createElement('a');a.className='room-portal portal-'+(i%6);a.href=href(it.url);a.style.transform='rotateY('+((i*360/items.length))+'deg) translateZ(-790px) rotateY(180deg)';
+   const a=document.createElement('a');a.className='room-portal portal-'+(i%6);a.href=href(it.url);a.style.transform='rotateY('+((i*360/items.length))+'deg) translateZ(650px) rotateY(180deg)';
    const img=it.image||it.photo||'';
    a.innerHTML='<div class="portal-inner">'+(img?'<img class="portal-image" src="'+esc(img)+'" alt="">':'<div class="portal-art"><span>'+esc(it.icon||'✦')+'</span><i>✧</i></div>')+'<div class="portal-info"><small>MEMORY SPACE · 0'+(i+1)+'</small><strong>'+esc(it.title||'Kỷ niệm')+'</strong><span>'+esc(it.description||'Mở ra một miền ký ức')+'</span><em>CHẠM ĐỂ KHÁM PHÁ ↗</em></div></div>';
    if(a.href==='#')a.addEventListener('click',e=>e.preventDefault());
@@ -37,7 +37,7 @@
  }
  function update(){
   const r=$('immersiveRoom');if(!r)return;
-  r.style.transform='translateZ('+(zoom*0-80)+'px) rotateX('+pitch+'deg) rotateY('+yaw+'deg) scale('+zoom+')';
+  r.style.transform='translateZ(-80px) rotateX('+pitch+'deg) rotateY('+yaw+'deg) scale('+zoom+')';
   const z=$('worldZoomValue');if(z)z.textContent=Math.round(zoom*100)+'%';
   const range=$('worldZoomRange');if(range)range.value=String(Math.round(zoom*100));
  }
