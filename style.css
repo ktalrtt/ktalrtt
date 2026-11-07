@@ -237,3 +237,5 @@ body{color:var(--text-color)}.eyebrow,.detail-label,.brand i,.gallery-item figca
 @media(max-width:760px){.world-lobby{min-height:calc(100svh - 52px);padding:16px 12px;gap:10px}.world-hud{min-height:0;display:flex;align-items:flex-start}.world-heading{flex-basis:100%;min-width:0}.world-hud h1{font-size:29px}.world-controls{justify-content:flex-start}.world-stage{height:55svh;min-height:390px;flex:none;border-radius:18px}.world-bottom{justify-content:center;font-size:7px}.world-bottom>span:nth-child(2){display:none}.open-invitation{padding:12px 18px;font-size:11px}.room-portal{width:225px;height:295px;margin:-147px 0 0 -112px}.portal-info strong{font-size:18px}.portal-info span{font-size:10px}.classic-toolbar{padding:12px 16px}}
 
 .room-logo b{white-space:pre-line;text-align:center}
+
+.room-ceiling{top:-135%}
