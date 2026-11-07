@@ -28,7 +28,8 @@
    const a=document.createElement('a');a.className='room-portal portal-'+(i%6);a.href=href(it.url);a.style.transform='rotateY('+((i*360/items.length))+'deg) translateZ(650px) rotateY(180deg)';
    const img=it.image||it.photo||'';
    a.innerHTML='<div class="portal-inner">'+(img?'<img class="portal-image" src="'+esc(img)+'" alt="">':'<div class="portal-art"><span>'+esc(it.icon||'✦')+'</span><i>✧</i></div>')+'<div class="portal-info"><small>MEMORY SPACE · 0'+(i+1)+'</small><strong>'+esc(it.title||'Kỷ niệm')+'</strong><span>'+esc(it.description||'Mở ra một miền ký ức')+'</span><em>CHẠM ĐỂ KHÁM PHÁ ↗</em></div></div>';
-   const portalImage=a.querySelector('.portal-image');if(portalImage){portalImage.loading='lazy';portalImage.decoding='async';}\n   if(a.href==='#')a.addEventListener('click',e=>e.preventDefault());
+   const portalImage=a.querySelector('.portal-image');if(portalImage){portalImage.loading='lazy';portalImage.decoding='async';}
+   if(a.href==='#')a.addEventListener('click',e=>e.preventDefault());
    room.append(a);
   });
   stage.append(room);
