@@ -306,30 +306,58 @@ function runCinematicTransition(direction, onCovered) {
   }, mode === "high" ? 1850 : mode === "balanced" ? 1300 : 900));
 }
 
-$("nameForm").addEventListener("submit", async (event) => {
+$("nameForm")?.addEventListener("submit", async (event) => {
   event.preventDefault();
-  const name = $("guestName").value.trim();
-  if (!name) return;
-  try { if ($("rememberName").checked) await setRememberedName(name); else await setRememberedName(""); } catch (error) { console.warn("Không lưu được tên khách trên thiết bị:", error); }
+  const name = $("guestName")?.value?.trim();
+  if (!name) {
+    $("guestName")?.focus();
+    return;
+  }
+
+  // Không để IndexedDB chặn thao tác mở sảnh: lưu tên chạy nền, lỗi lưu không ảnh hưởng đăng nhập.
+  const remember = $("rememberName")?.checked;
+  Promise.resolve().then(() => setRememberedName(remember ? name : "")).catch(error => {
+    console.warn("Không lưu được tên khách trên thiết bị:", error);
+    try {
+      if (remember) localStorage.setItem(ACCOUNT_KEY, name);
+      else localStorage.removeItem(ACCOUNT_KEY);
+    } catch (_) {}
+  });
+
   currentGuestName = name;
   $("helloLine").textContent = `${currentConfig.greetingPrefix || "Kính chào:"} ${name}`;
-  const isAdmin = name.toLocaleLowerCase("vi-VN").normalize("NFC") === ADMIN_NAME.normalize("NFC");
-  sessionStorage.setItem(ENTERED_SESSION_KEY, "1");
-  sessionStorage.setItem("kyyeu-guest-name", name);
-  if (isAdmin) sessionStorage.setItem(ADMIN_SESSION_KEY, "1"); else sessionStorage.removeItem(ADMIN_SESSION_KEY);
-  $("adminPanel").classList.toggle("hidden", !isAdmin);
+  const normalizedName = name.toLocaleLowerCase("vi-VN").normalize("NFC");
+  const isAdmin = normalizedName === ADMIN_NAME.toLocaleLowerCase("vi-VN").normalize("NFC");
+  try {
+    sessionStorage.setItem(ENTERED_SESSION_KEY, "1");
+    sessionStorage.setItem("kyyeu-guest-name", name);
+    if (isAdmin) sessionStorage.setItem(ADMIN_SESSION_KEY, "1");
+    else sessionStorage.removeItem(ADMIN_SESSION_KEY);
+  } catch (error) {
+    console.warn("Không lưu được phiên đăng nhập:", error);
+  }
+  $("adminPanel")?.classList.toggle("hidden", !isAdmin);
   $("quickEdit")?.classList.toggle("hidden", !isAdmin);
-  if (isAdmin) fillEditor();
-  const openingTransition = runCinematicTransition("enter", () => {
-    $("gate").classList.add("hidden");
-    $("invitation").classList.remove("hidden");
+  if (isAdmin) {
+    try { fillEditor(); } catch (error) { console.warn("Không tải được trình chỉnh sửa:", error); }
+  }
+
+  const showLobby = () => {
+    $("gate")?.classList.add("hidden");
+    $("invitation")?.classList.remove("hidden");
     $("worldLobby")?.classList.remove("hidden");
     $("classicInvitation")?.classList.add("hidden");
     window.scrollTo({ top: 0, behavior: "auto" });
-  });
-  playOpenSound();
-  startBackgroundMusic();
-  await openingTransition;
+  };
+  try {
+    const openingTransition = runCinematicTransition("enter", showLobby);
+    playOpenSound();
+    startBackgroundMusic();
+    await openingTransition;
+  } catch (error) {
+    console.error("Lỗi hiệu ứng mở sảnh, chuyển sang chế độ trực tiếp:", error);
+    showLobby();
+  }
 });
 $("backBtn")?.addEventListener("click", async () => {
   await runCinematicTransition("leave", () => {
