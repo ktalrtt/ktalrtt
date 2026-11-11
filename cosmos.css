@@ -1,0 +1,133 @@
+/* OPEN COSMOS LOBBY — overrides for the main yearbook hall */
+:root{
+  --cosmos-ink:#f4efff;--cosmos-muted:#c7b9e9;--cosmos-violet:#a98bff;
+  --cosmos-cyan:#83e7ff;--cosmos-gold:#ffe3a6;
+}
+body:has(#worldLobby){background:#050516;color:var(--cosmos-ink)}
+#worldLobby.world-lobby{
+  position:relative;isolation:isolate;min-height:calc(100svh - 76px);
+  overflow:hidden;padding:clamp(22px,4vw,54px) clamp(16px,5vw,72px) 30px;
+  background:
+    radial-gradient(ellipse at 50% 48%,#3c236d80 0,transparent 34%),
+    radial-gradient(ellipse at 14% 18%,#193b7180 0,transparent 35%),
+    radial-gradient(ellipse at 88% 72%,#612b7a70 0,transparent 34%),
+    linear-gradient(145deg,#050817 0%,#100d2b 48%,#07091d 100%);
+}
+#worldLobby:before,#worldLobby:after{
+  content:"";position:absolute;z-index:-1;pointer-events:none;border-radius:50%;
+  filter:blur(1px);mix-blend-mode:screen;
+}
+#worldLobby:before{
+  width:min(76vw,900px);aspect-ratio:1;left:50%;top:54%;
+  transform:translate(-50%,-50%);
+  background:conic-gradient(from 20deg,transparent,#7b62ff22,transparent,#4ddcff22,transparent,#e9a7ff22,transparent);
+  mask:radial-gradient(circle,transparent 39%,#000 40%,#000 41%,transparent 62%);
+  animation:cosmosOrbit 48s linear infinite;
+}
+#worldLobby:after{
+  inset:0;opacity:.42;
+  background-image:radial-gradient(1px 1px at 8% 17%,#fff 98%,transparent),radial-gradient(2px 2px at 22% 72%,#c5d7ff 98%,transparent),radial-gradient(1px 1px at 36% 31%,#fff 98%,transparent),radial-gradient(2px 2px at 54% 13%,#fff 98%,transparent),radial-gradient(1px 1px at 69% 68%,#fff 98%,transparent),radial-gradient(2px 2px at 82% 24%,#d8baff 98%,transparent),radial-gradient(1px 1px at 94% 81%,#fff 98%,transparent);
+  background-size:370px 290px;animation:cosmosTwinkle 7s ease-in-out infinite alternate;
+}
+#worldLobby .world-hud{position:relative;z-index:5;display:flex;justify-content:space-between;align-items:flex-start;gap:24px}
+#worldLobby .world-heading .eyebrow{color:#b8a5ff;text-shadow:0 0 18px #9b75ff88}
+#worldLobby .world-heading h1{color:#fff;font-size:clamp(36px,6vw,68px);text-shadow:0 0 30px #9c7dff88;margin:10px 0}
+#worldLobby .world-heading p:last-child{color:#c9c1e6;max-width:560px;line-height:1.7}
+#worldLobby .world-controls{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+#worldLobby .world-controls button{
+  border:1px solid #c5b5ff55;background:#171333aa;color:#f5edff;
+  border-radius:999px;padding:10px 14px;backdrop-filter:blur(12px);
+}
+#worldLobby .world-controls button:hover{background:#6544a8;box-shadow:0 0 24px #9b75ff55}
+#worldLobby .world-stage{
+  position:relative;height:clamp(470px,67vh,760px);min-height:430px;margin:12px auto 0;
+  overflow:hidden;border:0;border-radius:0;background:transparent;box-shadow:none;
+  perspective:none;touch-action:pan-y;
+}
+#worldLobby .world-stage:before{
+  content:"";position:absolute;inset:5% 12%;pointer-events:none;
+  background:radial-gradient(ellipse at center,#a27aff25 0,transparent 58%);
+  filter:blur(28px);
+}
+#worldLobby .world-stars,#worldLobby .world-nebula,#worldLobby .world-horizon,
+#worldLobby .world-floor,#worldLobby .world-orbit-line,#worldLobby .world-vortex,
+#worldLobby .world-center{pointer-events:none}
+#worldLobby .world-horizon,#worldLobby .world-floor{display:none!important}
+#worldLobby .world-orbit-line{border-color:#a9a0ff26;box-shadow:0 0 30px #967aff20}
+#worldLobby .world-vortex{opacity:.5;filter:drop-shadow(0 0 34px #a76dff)}
+#worldLobby .immersive-room{
+  position:absolute!important;inset:0!important;width:100%;height:100%;
+  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));
+  align-content:center;align-items:center;justify-items:center;
+  gap:clamp(14px,2.5vw,30px);padding:clamp(18px,5vw,62px);
+  transform:none!important;transform-style:flat!important;perspective:none!important;
+}
+#worldLobby .room-backdrop,#worldLobby .room-floor,#worldLobby .room-ceiling,
+#worldLobby .room-vignette{display:none!important}
+#worldLobby .room-galaxy{
+  position:absolute!important;inset:8% 18%!important;z-index:0;opacity:.75;
+  transform:none!important;pointer-events:none;
+}
+#worldLobby .room-portal{
+  position:relative!important;inset:auto!important;left:auto!important;top:auto!important;
+  display:block;width:min(100%,270px);height:clamp(190px,24vh,250px);
+  margin:0!important;transform:none!important;transform-style:flat!important;
+  border:1px solid #c9b9ff88;border-radius:24px;overflow:hidden;
+  color:#fff;text-decoration:none;background:linear-gradient(145deg,#ffffff20,#120d2ecc);
+  box-shadow:0 18px 60px #0008,0 0 28px #9572ff22,inset 0 1px #ffffff55;
+  backdrop-filter:blur(13px);transition:transform .35s ease,box-shadow .35s ease,border-color .35s ease;
+}
+#worldLobby .room-portal:hover{
+  transform:translateY(-9px) scale(1.035)!important;border-color:#d8caff;
+  box-shadow:0 25px 70px #0009,0 0 38px #a78aff77,inset 0 1px #ffffff88;
+}
+#worldLobby .portal-inner{position:relative;width:100%;height:100%;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden}
+#worldLobby .portal-inner:before{
+  content:"";position:absolute;inset:0;z-index:1;
+  background:linear-gradient(180deg,#08091b05 10%,#08091b30 42%,#08091bea 100%);
+}
+#worldLobby .portal-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.8;filter:saturate(1.18)}
+#worldLobby .portal-art{position:absolute;inset:0;display:grid;place-items:center;background:radial-gradient(circle at 50% 40%,#8b70df88,#171638 70%)}
+#worldLobby .portal-art span{font-size:clamp(54px,7vw,86px);color:#fff;text-shadow:0 0 24px #d8caff,0 0 55px #a477ff}
+#worldLobby .portal-info{position:relative;z-index:2;padding:17px 18px;display:grid;gap:7px}
+#worldLobby .portal-info small{color:#c9b9ff;font-size:9px;letter-spacing:.18em}
+#worldLobby .portal-info strong{font:600 23px "Playfair Display",Georgia,serif;color:#fff}
+#worldLobby .portal-info>span{font-size:11px;color:#d9d0ef}
+#worldLobby .portal-info em{font-style:normal;font-size:9px;letter-spacing:.12em;color:#aeeeff;margin-top:4px}
+#worldLobby .world-center{position:absolute;z-index:1;left:50%;top:50%;transform:translate(-50%,-50%);opacity:.23}
+#worldLobby .open-invitation{
+  position:relative;z-index:4;display:block;margin:8px auto 0;padding:15px 26px;
+  border:1px solid #d8c7ff99;border-radius:999px;color:#fff;
+  background:linear-gradient(100deg,#6043a7,#285a8c);letter-spacing:.1em;
+  box-shadow:0 0 28px #967aff55,0 12px 35px #0005;
+}
+#worldLobby .world-bottom{position:relative;z-index:4;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;color:#b8b0d6;font-size:9px;letter-spacing:.14em}
+#worldLobby .world-bottom>span:first-child i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#85f5d0;box-shadow:0 0 12px #85f5d0;margin-right:8px}
+#worldLobby .world-zoom{display:flex;align-items:center;gap:10px}
+#worldLobby .world-zoom input{accent-color:#b89cff}
+#worldLobby .world-bottom>span:nth-child(2){display:none}
+#worldLobby .world-stars{opacity:.8}
+#worldLobby .world-nebula{filter:blur(18px);opacity:.8}
+#worldLobby .world-nebula.nebula-one{background:radial-gradient(ellipse,#7053b944,transparent 68%)}
+#worldLobby .world-nebula.nebula-two{background:radial-gradient(ellipse,#4a9fca33,transparent 68%)}
+#worldLobby .world-controls button,#worldLobby .open-invitation{cursor:pointer}
+@keyframes cosmosOrbit{to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes cosmosTwinkle{from{opacity:.2}to{opacity:.65}}
+@media(max-width:760px){
+  #worldLobby .world-hud{display:block}
+  #worldLobby .world-controls{justify-content:flex-start;margin-top:12px}
+  #worldLobby .world-stage{height:auto;min-height:0;padding:16px 0}
+  #worldLobby .immersive-room{position:relative!important;inset:auto!important;height:auto;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:18px 4px}
+  #worldLobby .room-portal{width:100%;height:190px}
+  #worldLobby .portal-info{padding:12px}
+  #worldLobby .portal-info strong{font-size:19px}
+  #worldLobby .world-bottom{justify-content:center;text-align:center}
+}
+@media(max-width:430px){
+  #worldLobby .immersive-room{grid-template-columns:1fr;padding:14px 20px}
+  #worldLobby .room-portal{max-width:340px;height:205px}
+}
+@media(prefers-reduced-motion:reduce){
+  #worldLobby:before,#worldLobby:after{animation:none!important}
+  #worldLobby .room-portal{transition:none!important}
+}
