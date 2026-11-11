@@ -915,22 +915,3 @@ html[data-performance="high"] .world-stage:before{animation:none!important}
 @media(prefers-reduced-motion:reduce){
   .room-galaxy,.galaxy-heart{animation:none!important}
 }
-
-/* FINAL FIX: constellation memories surrounding one central galaxy */
-.world-stage{overflow:hidden!important;contain:layout!important;}
-.immersive-room{pointer-events:none!important;}
-.room-portal{pointer-events:auto!important;z-index:8!important;left:50%;top:50%;width:clamp(104px,12vw,150px)!important;height:clamp(138px,16vw,184px)!important;margin:0!important;cursor:pointer!important;text-decoration:none!important;transform-style:preserve-3d!important;filter:drop-shadow(0 8px 22px #030615bb)!important;}
-.room-portal:focus-visible{outline:3px solid #fff!important;outline-offset:5px;border-radius:16px;}
-.room-portal .portal-inner{width:100%;height:100%;pointer-events:auto!important;border:1px solid #c6c9ffbb!important;background:linear-gradient(155deg,#25234feF,#10162cf5)!important;box-shadow:0 0 22px #a18bff44,inset 0 1px #fff5!important;}
-.portal-image,.portal-art{height:62%!important;object-fit:cover!important;}
-.portal-info{height:38%!important;display:flex!important;justify-content:center!important;gap:3px!important;padding:5px!important;background:linear-gradient(180deg,#171b39f5,#0c1026f8)!important;}
-.portal-info small{font-size:6px!important}.portal-info strong{font-size:clamp(10px,1vw,13px)!important}.portal-info span{font-size:7px!important}.portal-info em{font-size:6px!important;}
-.room-galaxy{left:50%!important;top:50%!important;width:clamp(230px,34vw,420px)!important;height:clamp(230px,34vw,420px)!important;margin:0!important;transform:translate(-50%,-50%) translateZ(35px)!important;z-index:3!important;}
-.galaxy-core{position:absolute;left:50%;top:50%;width:12%;height:12%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,#fff 0 8%,#c9c2ff 20%,#9b7cff99 48%,transparent 75%);box-shadow:0 0 28px 12px #c7b7ff88,0 0 90px 30px #987aff55;}
-.galaxy-heart{top:28%!important;font-size:clamp(36px,5vw,62px)!important;}
-.galaxy-caption{position:absolute;left:50%;top:69%;transform:translateX(-50%);font:700 9px/1.2 'Be Vietnam Pro',sans-serif;letter-spacing:.22em;color:#f1eaff;text-shadow:0 0 14px #c9aaff;white-space:nowrap;}
-.room-logo{top:50%!important;left:50%!important;z-index:5!important;pointer-events:none!important;background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;filter:drop-shadow(0 0 15px #c6aaff)!important;}
-.room-logo span{font-size:18px!important}.room-logo b{font-size:clamp(13px,1.5vw,19px)!important;}.room-logo small{font-size:6px!important;letter-spacing:.14em!important;}
-.room-backdrop{pointer-events:none!important;}
-.world-stage.is-dragging .room-portal{pointer-events:none!important;}
-@media(max-width:760px){.room-portal{width:94px!important;height:126px!important}.room-galaxy{width:190px!important;height:190px!important}.portal-info span,.portal-info em{display:none!important}.room-logo b{font-size:12px!important}}
