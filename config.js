@@ -17,7 +17,9 @@ const CONFIG = {
   backgroundImage: "",
   fontFamily: "Be Vietnam Pro",
   worldTitle: "Sảnh chính",
-  worldGlow: "#d6ad79",
+  worldGlow: "#a78bfa",
+  worldCenterTitle: "OUR UNIVERSE | OUR MEMORIES",
+  worldCenterSubtitle: "MỖI KỶ NIỆM LÀ MỘT VÌ SAO",
   worldItems: [
     { title: "Album ảnh", description: "Những khung hình thanh xuân", url: "pages/album.html", icon: "▧" },
     { title: "Thành viên", description: "Những gương mặt thân quen", url: "pages/members.html", icon: "✳" },
