@@ -915,3 +915,78 @@ html[data-performance="high"] .world-stage:before{animation:none!important}
 @media(prefers-reduced-motion:reduce){
   .room-galaxy,.galaxy-heart{animation:none!important}
 }
+
+
+/* COSMIC OPEN LOBBY — boundless space, no enclosing room geometry */
+.world-lobby{
+  position:relative!important;
+  isolation:isolate!important;
+  min-height:min(900px,calc(100svh - 76px))!important;
+  padding:clamp(18px,3vw,42px)!important;
+  gap:16px!important;
+  background:
+    radial-gradient(ellipse at 50% 62%,#36207855 0,transparent 48%),
+    radial-gradient(ellipse at 16% 20%,#1c75a544 0,transparent 36%),
+    radial-gradient(ellipse at 86% 26%,#a13dba33 0,transparent 34%),
+    linear-gradient(145deg,#050817,#0a1030 48%,#100923)!important;
+}
+.world-lobby:before{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background-image:
+    radial-gradient(2px 2px at 8% 18%,#fff 98%,transparent),
+    radial-gradient(1px 1px at 21% 72%,#c9d9ff 98%,transparent),
+    radial-gradient(2px 2px at 38% 28%,#fff 98%,transparent),
+    radial-gradient(1px 1px at 61% 14%,#fff 98%,transparent),
+    radial-gradient(2px 2px at 79% 64%,#e5c9ff 98%,transparent),
+    radial-gradient(1px 1px at 93% 32%,#fff 98%,transparent);
+  background-size:240px 190px,310px 270px,360px 250px,290px 220px,330px 280px,260px 230px;
+  opacity:.85;animation:cosmicStarDrift 90s linear infinite;
+}
+.world-heading h1,.world-heading p{color:#fff!important;text-shadow:0 0 20px #a78bfa66}
+.world-heading .eyebrow{color:#d9b8ff!important}
+.world-controls button,.open-invitation{
+  border:1px solid #bba5ff66!important;background:#171638bb!important;color:#fff!important;
+  box-shadow:0 0 24px #8b5cf633,inset 0 1px #ffffff22!important;
+  backdrop-filter:blur(12px);
+}
+.world-stage{
+  width:100%!important;max-width:none!important;min-height:clamp(430px,62vh,760px)!important;
+  flex:1 1 auto!important;overflow:hidden!important;perspective:1400px!important;
+  background:radial-gradient(ellipse at 50% 54%,#26175c44,transparent 52%)!important;
+  border:0!important;box-shadow:none!important;border-radius:0!important;
+}
+.immersive-room{pointer-events:none!important}
+.room-backdrop{
+  width:3600px!important;height:2600px!important;margin:-1300px 0 0 -1800px!important;
+  border:0!important;border-radius:50%!important;
+  background:
+    radial-gradient(ellipse at 50% 48%,#6242b044 0,transparent 34%),
+    radial-gradient(ellipse at 30% 40%,#df54d522 0,transparent 28%),
+    radial-gradient(ellipse at 70% 56%,#34bde522 0,transparent 30%)!important;
+  box-shadow:none!important;
+}
+.room-backdrop:before{opacity:1!important;inset:0!important}
+.room-floor,.room-ceiling{display:none!important}
+.room-nebula{inset:0!important;filter:blur(50px)!important;opacity:.9}
+.room-vignette{background:radial-gradient(ellipse at center,transparent 32%,#05081744 100%)!important}
+.room-logo{top:51%!important}
+.room-galaxy{width:clamp(260px,34vw,460px)!important;height:clamp(260px,34vw,460px)!important;opacity:.95}
+.room-portal{filter:drop-shadow(0 0 28px #a78bfa88)!important}
+.portal-inner{
+  background:linear-gradient(150deg,#ffffff24,#1c1748dc 52%,#080d28ee)!important;
+  border:1px solid #d6c4ffbb!important;border-radius:20px!important;
+  box-shadow:0 0 34px #986bff66,inset 0 0 28px #e2c7ff22!important;
+  backdrop-filter:blur(14px)!important;
+}
+.portal-inner:after{border-color:#ffffff55!important;border-radius:14px!important}
+.portal-info strong{color:#fff!important;text-shadow:0 0 14px #d5baff88}
+.portal-info small,.portal-info em{color:#d9c5ff!important}
+.world-bottom{color:#e6dcff!important}
+.world-bottom>span i{background:#83f4d1!important;box-shadow:0 0 12px #83f4d1!important}
+@keyframes cosmicStarDrift{to{background-position:240px 190px,-310px 270px,360px -250px,-290px 220px,330px -280px,-260px 230px}}
+@media(max-width:760px){
+ .world-lobby{min-height:calc(100svh - 76px)!important;padding:14px!important}
+ .world-stage{min-height:430px!important;height:58svh!important}
+ .room-portal{filter:drop-shadow(0 0 18px #a78bfa88)!important}
+}
+@media(prefers-reduced-motion:reduce){.world-lobby:before{animation:none!important}}
