@@ -776,3 +776,161 @@ html[data-performance="high"] .world-stage:before{animation:none!important}
  .world-stage{height:52svh!important;min-height:340px!important;max-height:500px!important;flex:none!important}
  .world-bottom{justify-content:center!important}
 }
+
+
+/* FINAL STABILITY + VIDEO 3 COSMIC HEART LOBBY */
+.world-lobby{
+  box-sizing:border-box!important;
+  min-height:0!important;
+  flex:1 1 auto!important;
+  overflow:hidden!important;
+}
+.world-hud,.world-controls,.world-bottom,.open-invitation{
+  flex-shrink:0!important;
+}
+.world-hud{z-index:20!important}
+.world-controls{z-index:35!important;isolation:isolate!important}
+.world-stage{
+  box-sizing:border-box!important;
+  contain:layout style!important; /* paint containment clips 3D layers and can cause white flashes */
+  isolation:isolate!important;
+  position:relative!important;
+  z-index:1!important;
+  flex:1 1 0!important;
+  width:min(100%,1250px)!important;
+  height:auto!important;
+  min-height:360px!important;
+  max-height:none!important;
+  overflow:hidden!important;
+  perspective:1100px!important;
+  perspective-origin:50% 50%!important;
+  transform:translateZ(0);
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  touch-action:none!important;
+  overscroll-behavior:contain;
+}
+.immersive-room{
+  inset:0!important;
+  pointer-events:none!important;
+  transform-style:preserve-3d!important;
+  backface-visibility:hidden!important;
+  -webkit-backface-visibility:hidden!important;
+  will-change:transform;
+}
+.room-backdrop,.room-floor,.room-ceiling,.room-portal,.portal-inner{
+  backface-visibility:hidden!important;
+  -webkit-backface-visibility:hidden!important;
+}
+.room-portal{
+  width:clamp(118px,13vw,168px)!important;
+  height:clamp(158px,19vw,220px)!important;
+  margin:clamp(-110px,-9.5vw,-79px) 0 0 clamp(-84px,-6.5vw,-59px)!important;
+  filter:drop-shadow(0 10px 26px #050817aa)!important;
+  transform-style:preserve-3d;
+}
+.portal-inner{
+  padding:6px!important;
+  border-radius:15px!important;
+  box-shadow:0 8px 24px #02061788,inset 0 1px #fff4!important;
+}
+.portal-image,.portal-art{height:64%!important;border-radius:10px!important}
+.portal-info{gap:4px!important;padding:7px 5px!important}
+.portal-info small{font-size:6px!important;letter-spacing:.12em!important}
+.portal-info strong{font-size:clamp(11px,1.15vw,15px)!important;line-height:1.12!important}
+.portal-info span{font-size:8px!important;line-height:1.2!important}
+.portal-info em{font-size:6px!important;letter-spacing:.08em!important;margin-top:1px!important}
+.room-logo{
+  top:53%!important;
+  z-index:4!important;
+  padding:0!important;
+  border:0!important;
+  outline:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  filter:none!important;
+  text-shadow:0 0 18px #fff,0 0 44px #9d7cff!important;
+}
+.room-logo b{font-size:clamp(17px,2.1vw,27px)!important;letter-spacing:.1em!important}
+.room-logo small{font-size:8px!important}
+.room-galaxy{
+  position:absolute;left:50%;top:54%;
+  width:clamp(190px,28vw,360px);height:clamp(190px,28vw,360px);
+  margin:-.5em 0 0 -.5em;
+  transform:translate(-50%,-50%) translateZ(10px);
+  transform-style:preserve-3d;
+  pointer-events:none;z-index:2;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 50% 50%,#fff 0 1.2%,#d9d5ff 2%,#a98bff55 8%,transparent 24%),
+    conic-gradient(from 20deg,transparent 0 12%,#8e7aff22 17%,transparent 25%,#fff3 33%,transparent 42%,#8f7bff22 54%,transparent 66%,#e6c7ff33 76%,transparent 88%);
+  filter:drop-shadow(0 0 22px #9b80ff88);
+  animation:galaxyDrift 28s linear infinite;
+}
+.galaxy-halo{
+  position:absolute;inset:9%;border-radius:50%;
+  border:1px solid #c9c5ff55;
+  box-shadow:0 0 25px #8d8aff55,inset 0 0 35px #9d8cff44;
+  transform:rotateX(68deg) rotateZ(-18deg);
+}
+.galaxy-spiral{
+  position:absolute;inset:17%;border-radius:50%;
+  background:repeating-radial-gradient(ellipse at 50% 50%,transparent 0 13px,#e9e4ff35 14px 15px,transparent 17px 27px);
+  transform:rotateX(68deg) rotateZ(28deg);
+  filter:blur(.4px);
+}
+.galaxy-heart{
+  position:absolute;left:50%;top:50%;
+  transform:translate(-50%,-50%) translateZ(22px);
+  color:#fff;font:normal clamp(48px,7vw,88px)/1 Georgia,serif;
+  text-shadow:0 0 8px #fff,0 0 24px #ff9de9,0 0 55px #a77cff;
+  animation:heartPulse 2.8s ease-in-out infinite;
+}
+.galaxy-spark{
+  position:absolute;inset:-8%;
+  border-radius:50%;
+  background:
+   radial-gradient(2px 2px at 18% 28%,#fff 98%,transparent),
+   radial-gradient(2px 2px at 76% 18%,#fff 98%,transparent),
+   radial-gradient(1px 1px at 82% 72%,#d9d5ff 98%,transparent),
+   radial-gradient(2px 2px at 25% 82%,#fff 98%,transparent),
+   radial-gradient(1px 1px at 52% 8%,#fff 98%,transparent);
+  background-size:100% 100%;
+  filter:drop-shadow(0 0 5px #fff);
+}
+@keyframes galaxyDrift{to{rotate:360deg}}
+@keyframes heartPulse{0%,100%{scale:.96;opacity:.88}50%{scale:1.06;opacity:1}}
+.world-stage.is-dragging .room-galaxy,
+.world-stage.is-dragging .galaxy-heart{animation-play-state:paused!important}
+.room-vignette{pointer-events:none!important}
+.world-stage:before{pointer-events:none!important}
+@media(max-width:760px){
+  .world-lobby{min-height:0!important}
+  .world-stage{min-height:340px!important;flex:1 1 0!important}
+  .room-portal{width:112px!important;height:154px!important;margin:-77px 0 0 -56px!important}
+  .portal-info span,.portal-info em{display:none!important}
+  .room-galaxy{width:190px;height:190px}
+}
+@media(prefers-reduced-motion:reduce){
+  .room-galaxy,.galaxy-heart{animation:none!important}
+}
+
+/* FINAL FIX: constellation memories surrounding one central galaxy */
+.world-stage{overflow:hidden!important;contain:layout!important;}
+.immersive-room{pointer-events:none!important;}
+.room-portal{pointer-events:auto!important;z-index:8!important;left:50%;top:50%;width:clamp(104px,12vw,150px)!important;height:clamp(138px,16vw,184px)!important;margin:0!important;cursor:pointer!important;text-decoration:none!important;transform-style:preserve-3d!important;filter:drop-shadow(0 8px 22px #030615bb)!important;}
+.room-portal:focus-visible{outline:3px solid #fff!important;outline-offset:5px;border-radius:16px;}
+.room-portal .portal-inner{width:100%;height:100%;pointer-events:auto!important;border:1px solid #c6c9ffbb!important;background:linear-gradient(155deg,#25234feF,#10162cf5)!important;box-shadow:0 0 22px #a18bff44,inset 0 1px #fff5!important;}
+.portal-image,.portal-art{height:62%!important;object-fit:cover!important;}
+.portal-info{height:38%!important;display:flex!important;justify-content:center!important;gap:3px!important;padding:5px!important;background:linear-gradient(180deg,#171b39f5,#0c1026f8)!important;}
+.portal-info small{font-size:6px!important}.portal-info strong{font-size:clamp(10px,1vw,13px)!important}.portal-info span{font-size:7px!important}.portal-info em{font-size:6px!important;}
+.room-galaxy{left:50%!important;top:50%!important;width:clamp(230px,34vw,420px)!important;height:clamp(230px,34vw,420px)!important;margin:0!important;transform:translate(-50%,-50%) translateZ(35px)!important;z-index:3!important;}
+.galaxy-core{position:absolute;left:50%;top:50%;width:12%;height:12%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,#fff 0 8%,#c9c2ff 20%,#9b7cff99 48%,transparent 75%);box-shadow:0 0 28px 12px #c7b7ff88,0 0 90px 30px #987aff55;}
+.galaxy-heart{top:28%!important;font-size:clamp(36px,5vw,62px)!important;}
+.galaxy-caption{position:absolute;left:50%;top:69%;transform:translateX(-50%);font:700 9px/1.2 'Be Vietnam Pro',sans-serif;letter-spacing:.22em;color:#f1eaff;text-shadow:0 0 14px #c9aaff;white-space:nowrap;}
+.room-logo{top:50%!important;left:50%!important;z-index:5!important;pointer-events:none!important;background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;filter:drop-shadow(0 0 15px #c6aaff)!important;}
+.room-logo span{font-size:18px!important}.room-logo b{font-size:clamp(13px,1.5vw,19px)!important;}.room-logo small{font-size:6px!important;letter-spacing:.14em!important;}
+.room-backdrop{pointer-events:none!important;}
+.world-stage.is-dragging .room-portal{pointer-events:none!important;}
+@media(max-width:760px){.room-portal{width:94px!important;height:126px!important}.room-galaxy{width:190px!important;height:190px!important}.portal-info span,.portal-info em{display:none!important}.room-logo b{font-size:12px!important}}

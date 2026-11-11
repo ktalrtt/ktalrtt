@@ -26,14 +26,21 @@
    }
   const room=document.createElement('div');room.className='immersive-room';room.id='immersiveRoom';
   const back=document.createElement('div');back.className='room-backdrop';back.innerHTML='<div class="room-nebula"></div><div class="room-logo"><span>✦</span><b></b><small></small></div>';back.querySelector('b').textContent=(c.worldCenterTitle||'THANH XUÂN | GIỮA NGÂN HÀ').replace(/\s*\|\s*/g,'\n');back.querySelector('small').textContent=c.worldCenterSubtitle||'MỖI KỶ NIỆM LÀ MỘT VÌ SAO';room.append(back);
+  const galaxy=document.createElement('div');
+  galaxy.className='room-galaxy';
+  galaxy.setAttribute('aria-hidden','true');
+  galaxy.innerHTML='<div class="galaxy-halo"></div><div class="galaxy-spiral"></div><div class="galaxy-core"></div><div class="galaxy-heart">♥</div><div class="galaxy-spark"></div><div class="galaxy-caption">NGÂN HÀ KỶ NIỆM</div>';
+  room.append(galaxy);
   const floor=document.createElement('div');floor.className='room-floor';room.append(floor);
   const ceiling=document.createElement('div');ceiling.className='room-ceiling';room.append(ceiling);
+  const constellation=[[19,28],[50,15],[81,28],[81,72],[50,85],[19,72]];
   items.forEach((it,i)=>{
-   const a=document.createElement('a');a.className='room-portal portal-'+(i%6);a.href=href(it.url);a.style.transform='rotateY('+((i*360/items.length))+'deg) translateZ(650px) rotateY(180deg)';
+   const a=document.createElement('a');a.className='room-portal portal-'+(i%6);a.href=href(it.url);
+   const pos=constellation[i%constellation.length];a.style.left=pos[0]+'%';a.style.top=pos[1]+'%';a.style.transform='translate(-50%,-50%) translateZ(115px)';
    const img=it.image||it.photo||'';
    a.innerHTML='<div class="portal-inner">'+(img?'<img class="portal-image" src="'+esc(img)+'" alt="">':'<div class="portal-art"><span>'+esc(it.icon||'✦')+'</span><i>✧</i></div>')+'<div class="portal-info"><small>COSMIC MEMORY · 0'+(i+1)+'</small><strong>'+esc(it.title||'Kỷ niệm')+'</strong><span>'+esc(it.description||'Mở ra một vùng ký ức')+'</span><em>CHẠM ĐỂ KHÁM PHÁ ↗</em></div></div>';
-   const portalImage=a.querySelector('.portal-image');if(portalImage){portalImage.loading='lazy';portalImage.decoding='async';}
-   if(a.href==='#')a.addEventListener('click',e=>e.preventDefault());
+   const portalImage=a.querySelector('.portal-image');if(portalImage){portalImage.loading='eager';portalImage.decoding='async';}
+   a.addEventListener('click',e=>{if(a.getAttribute('href')==='#'){e.preventDefault();return;}e.stopPropagation();});
    room.append(a);
   });
   stage.append(room);
@@ -43,18 +50,20 @@
  }
  function update(){
   const r=$('immersiveRoom');if(!r)return;
-  r.style.transform='translate3d(0,0,-80px) rotateX('+pitch+'deg) rotateY('+yaw+'deg) scale('+zoom+')';
+  const nextTransform='translate3d(0,0,-80px) rotateX('+pitch+'deg) rotateY('+yaw+'deg) scale('+zoom+')';
+  if(r.style.transform!==nextTransform) r.style.transform=nextTransform;
   const z=$('worldZoomValue');if(z)z.textContent=Math.round(zoom*100)+'%';
   const range=$('worldZoomRange');if(range)range.value=String(Math.round(zoom*100));
  }
- function down(e){if(e.target.closest('.room-portal'))return;drag=true;pid=e.pointerId;lastX=e.clientX;lastY=e.clientY;vx=vy=0;stage.classList.add('is-dragging');try{stage.setPointerCapture(pid)}catch(_){}if(raf)cancelAnimationFrame(raf);if(moveRaf){cancelAnimationFrame(moveRaf);moveRaf=0;}}
- function move(e){if(!drag||e.pointerId!==pid)return;pendingX=e.clientX;pendingY=e.clientY;if(moveRaf)return;moveRaf=requestAnimationFrame(()=>{moveRaf=0;const dx=pendingX-lastX,dy=pendingY-lastY;lastX=pendingX;lastY=pendingY;yaw+=dx*.18;pitch=Math.max(-55,Math.min(55,pitch-dy*.15));vx=dx*.18;vy=-dy*.15;update();});}
+ function down(e){if(e.target.closest('.room-portal, .world-controls, .world-bottom, button, input, a'))return;if(e.button!==0)return;drag=true;pid=e.pointerId;lastX=e.clientX;lastY=e.clientY;vx=vy=0;stage.classList.add('is-dragging');try{stage.setPointerCapture(pid)}catch(_){}if(raf)cancelAnimationFrame(raf);if(moveRaf){cancelAnimationFrame(moveRaf);moveRaf=0;}}
+ function move(e){if(!drag||e.pointerId!==pid)return;e.preventDefault();pendingX=e.clientX;pendingY=e.clientY;if(moveRaf)return;moveRaf=requestAnimationFrame(()=>{moveRaf=0;const dx=pendingX-lastX,dy=pendingY-lastY;lastX=pendingX;lastY=pendingY;yaw+=dx*.18;pitch=Math.max(-55,Math.min(55,pitch-dy*.15));vx=dx*.18;vy=-dy*.15;update();});}
  function up(){
   if(!drag)return;
   drag=false;pid=null;vx=vy=0;
   stage.classList.remove('is-dragging');
   if(moveRaf){cancelAnimationFrame(moveRaf);moveRaf=0;}
  }
+ if('ResizeObserver' in window){const stageObserver=new ResizeObserver(()=>{if(stage.clientWidth&&stage.clientHeight)update();});stageObserver.observe(stage);}
  stage.addEventListener('pointerdown',down);stage.addEventListener('pointermove',move);stage.addEventListener('pointerup',up);stage.addEventListener('pointercancel',up);stage.addEventListener('lostpointercapture',up);
  stage.addEventListener('wheel',e=>{e.preventDefault();zoom=Math.max(.78,Math.min(1.35,zoom+(e.deltaY<0?.05:-.05)));update()},{passive:false});
  $('worldZoomIn')?.addEventListener('click',()=>{zoom=Math.min(1.35,zoom+.08);update()});

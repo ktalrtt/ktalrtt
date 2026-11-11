@@ -348,6 +348,14 @@ $("nameForm")?.addEventListener("submit", async (event) => {
     $("worldLobby")?.classList.remove("hidden");
     $("classicInvitation")?.classList.add("hidden");
     window.scrollTo({ top: 0, behavior: "auto" });
+    // Render lai sau khi san thoat trang thai display:none de lay dung kich thuoc khung 3D.
+    requestAnimationFrame(() => {
+      if (window.renderWorld3D) window.renderWorld3D();
+    });
+    // Render lại sau khi sảnh thoát trạng thái display:none để lấy đúng kích thước khung 3D.
+    requestAnimationFrame(() => {
+      if (window.renderWorld3D) window.renderWorld3D();
+    });
   };
   try {
     const openingTransition = runCinematicTransition("enter", showLobby);
