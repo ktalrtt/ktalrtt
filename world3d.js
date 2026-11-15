@@ -1,74 +1,129 @@
-/* Sảnh vũ trụ 360° — dựng ổn định một lần, hạn chế nhấp nháy khi cập nhật cấu hình. */
+/* Sảnh vũ trụ mở: các cổng ký ức nổi tự do, không còn vật thể ở tâm hay tường bao quanh. */
 (() => {
- const $=id=>document.getElementById(id), stage=$('worldStage');
- if(!stage)return;
- const fallback=[
-  {title:'Album ảnh',description:'Những khung hình thanh xuân',url:'pages/album.html',icon:'▧'},
-  {title:'Thành viên',description:'Những gương mặt thân quen',url:'pages/members.html',icon:'✦'},
-  {title:'Video thanh xuân',description:'Chuyển động của ngày xưa',url:'pages/videos.html',icon:'▶'},
-  {title:'Kỷ niệm',description:'Chuyện nhỏ không thể quên',url:'pages/memories.html',icon:'✧'},
-  {title:'Lời nhắn',description:'Điều muốn nói với nhau',url:'pages/messages.html',icon:'♡'},
-  {title:'Hành trình lớp',description:'Từ ngày đầu đến hôm nay',url:'pages/journey.html',icon:'⌁'}
- ];
- let yaw=0,pitch=0,zoom=1,drag=false,lastX=0,lastY=0,pid=null,raf=0,moveRaf=0,pendingX=0,pendingY=0,vx=0,vy=0,hasRendered=false;
- const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- const cfg=()=>window.getYearbookConfig?window.getYearbookConfig():{};
- const base=()=>new URL('.',document.querySelector('script[src$="world3d.js"]')?.src||location.href);
- function href(v){if(!v||v==='#')return '#';if(/^(https?:|mailto:|tel:)/i.test(v))return v;return new URL(String(v).replace(/^\/+/,''),base()).href;}
- function render(){
-  const c=cfg(),items=Array.isArray(c.worldItems)&&c.worldItems.length?c.worldItems:fallback;
-  $('worldTitle').textContent=c.worldTitle||'Vũ trụ thanh xuân';
-  document.documentElement.style.setProperty('--world-glow',c.worldGlow||'#df70ff');
-   if(hasRendered){
-    const old=stage.querySelector('.immersive-room');
-    if(old) old.remove();
-    stage.querySelector('.room-vignette')?.remove();
-   }
-  const room=document.createElement('div');room.className='immersive-room';room.id='immersiveRoom';
-  const back=document.createElement('div');back.className='room-backdrop';back.innerHTML='<div class="room-nebula"></div><div class="room-logo"><span>✦</span><b></b><small></small></div>';back.querySelector('b').textContent=(c.worldCenterTitle||'THANH XUÂN | GIỮA NGÂN HÀ').replace(/\s*\|\s*/g,'\n');back.querySelector('small').textContent=c.worldCenterSubtitle||'MỖI KỶ NIỆM LÀ MỘT VÌ SAO';room.append(back);
-  const galaxy=document.createElement('div');
-  galaxy.className='room-galaxy';
-  galaxy.setAttribute('aria-hidden','true');
-  galaxy.innerHTML='<div class="galaxy-halo"></div><div class="galaxy-spiral"></div><div class="galaxy-heart">♥</div><div class="galaxy-spark"></div>';
-  room.append(galaxy);
-  const floor=document.createElement('div');floor.className='room-floor';room.append(floor);
-  const ceiling=document.createElement('div');ceiling.className='room-ceiling';room.append(ceiling);
-  items.forEach((it,i)=>{
-   const a=document.createElement('a');a.className='room-portal portal-'+(i%6);a.href=href(it.url);a.style.transform='rotateY('+((i*360/items.length))+'deg) translateZ(650px) rotateY(180deg)';
-   const img=it.image||it.photo||'';
-   a.innerHTML='<div class="portal-inner">'+(img?'<img class="portal-image" src="'+esc(img)+'" alt="">':'<div class="portal-art"><span>'+esc(it.icon||'✦')+'</span><i>✧</i></div>')+'<div class="portal-info"><small>COSMIC MEMORY · 0'+(i+1)+'</small><strong>'+esc(it.title||'Kỷ niệm')+'</strong><span>'+esc(it.description||'Mở ra một vùng ký ức')+'</span><em>CHẠM ĐỂ KHÁM PHÁ ↗</em></div></div>';
-   const portalImage=a.querySelector('.portal-image');if(portalImage){portalImage.loading='lazy';portalImage.decoding='async';}
-   if(a.href==='#')a.addEventListener('click',e=>e.preventDefault());
-   room.append(a);
+  const $ = id => document.getElementById(id);
+  const stage = $("worldStage");
+  if (!stage) return;
+
+  const defaults = [
+    ["Album ảnh","Những khung hình thanh xuân","pages/album.html","▧"],
+    ["Thành viên","Những gương mặt thân quen","pages/members.html","✦"],
+    ["Video thanh xuân","Chuyển động của ngày xưa","pages/videos.html","▶"],
+    ["Kỷ niệm","Chuyện nhỏ không thể quên","pages/memories.html","✧"],
+    ["Lời nhắn","Điều muốn nói với nhau","pages/messages.html","♡"],
+    ["Hành trình lớp","Từ ngày đầu đến hôm nay","pages/journey.html","⌁"]
+  ];
+  let yaw = 0, pitch = 0, zoom = 1, dragging = false, pointerId = null;
+  let lastX = 0, lastY = 0, startX = 0, startY = 0, moved = false;
+  const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[c]);
+  const config = () => window.getYearbookConfig ? window.getYearbookConfig() : {};
+  const base = () => new URL(".", document.querySelector('script[src$="world3d.js"]')?.src || location.href);
+  function resolveHref(value, index) {
+    const fallback = defaults[index % defaults.length][2];
+    const raw = String(value || fallback).trim();
+    if (/^(https?:|mailto:|tel:)/i.test(raw)) return raw;
+    if (raw === "#") return new URL(fallback, base()).href;
+    try { return new URL(raw.replace(/^\/+/, ""), base()).href; }
+    catch (_) { return new URL(fallback, base()).href; }
+  }
+  function render() {
+    const c = config();
+    const items = Array.isArray(c.worldItems) && c.worldItems.length ? c.worldItems : defaults.map(x => ({
+      title:x[0], description:x[1], url:x[2], icon:x[3]
+    }));
+    $("worldTitle").textContent = c.worldTitle || "Sảnh chính";
+    document.documentElement.style.setProperty("--world-glow", c.worldGlow || "#a78bfa");
+    stage.querySelector(".immersive-room")?.remove();
+    stage.querySelector(".room-vignette")?.remove();
+
+    const room = document.createElement("div");
+    room.className = "immersive-room";
+    room.id = "immersiveRoom";
+    const ambient = document.createElement("div");
+    ambient.className = "cosmic-depth";
+    ambient.setAttribute("aria-hidden", "true");
+    room.append(ambient);
+
+    items.forEach((item, index) => {
+      const title = item.title || defaults[index % defaults.length][0];
+      const description = item.description || "Mở ra một vùng ký ức";
+      const icon = item.icon || defaults[index % defaults.length][3];
+      const link = document.createElement("a");
+      link.className = "room-portal";
+      link.href = resolveHref(item.url, index);
+      link.target = "_self";
+      link.setAttribute("aria-label", "Mở trang " + title);
+      link.style.setProperty("--portal-index", index);
+      const image = item.image || item.photo || "";
+      link.innerHTML =
+        '<div class="portal-inner">' +
+          (image
+            ? '<img class="portal-image" src="' + esc(image) + '" alt="" loading="lazy" decoding="async">'
+            : '<div class="portal-art"><span>' + esc(icon) + '</span><i>✧</i></div>') +
+          '<div class="portal-info">' +
+            '<small>MEMORY GATE · ' + String(index + 1).padStart(2,"0") + '</small>' +
+            '<strong>' + esc(title) + '</strong>' +
+            '<span>' + esc(description) + '</span>' +
+            '<em>MỞ KHÁM PHÁ ↗</em>' +
+          '</div>' +
+        '</div>';
+      room.append(link);
+    });
+    stage.append(room);
+    update();
+  }
+
+  function update() {
+    const room = $("immersiveRoom");
+    if (!room) return;
+    room.style.transform = "translate3d(0,0,0) rotateX(" + pitch + "deg) rotateY(" + yaw + "deg) scale(" + zoom + ")";
+    const label = $("worldZoomValue");
+    if (label) label.textContent = Math.round(zoom * 100) + "%";
+    const range = $("worldZoomRange");
+    if (range) range.value = String(Math.round(zoom * 100));
+  }
+  function down(event) {
+    if (event.button !== 0 || event.target.closest(".room-portal")) return;
+    dragging = true; moved = false; pointerId = event.pointerId;
+    startX = lastX = event.clientX; startY = lastY = event.clientY;
+    stage.classList.add("is-dragging");
+    try { stage.setPointerCapture(pointerId); } catch (_) {}
+  }
+  function move(event) {
+    if (!dragging || event.pointerId !== pointerId) return;
+    const dx = event.clientX - lastX, dy = event.clientY - lastY;
+    if (Math.abs(event.clientX - startX) + Math.abs(event.clientY - startY) > 5) moved = true;
+    lastX = event.clientX; lastY = event.clientY;
+    yaw = Math.max(-9, Math.min(9, yaw + dx * .035));
+    pitch = Math.max(-5, Math.min(5, pitch - dy * .025));
+    update();
+  }
+  function up() {
+    dragging = false; pointerId = null;
+    stage.classList.remove("is-dragging");
+  }
+  stage.addEventListener("pointerdown", down);
+  stage.addEventListener("pointermove", move);
+  stage.addEventListener("pointerup", up);
+  stage.addEventListener("pointercancel", up);
+  stage.addEventListener("lostpointercapture", up);
+  $("worldZoomIn")?.addEventListener("click", () => { zoom = Math.min(1.25, zoom + .08); update(); });
+  $("worldZoomOut")?.addEventListener("click", () => { zoom = Math.max(.78, zoom - .08); update(); });
+  $("worldZoomRange")?.addEventListener("input", event => {
+    zoom = Math.max(.78, Math.min(1.25, Number(event.target.value) / 100)); update();
   });
-  stage.append(room);
-  const v=document.createElement('div');v.className='room-vignette';stage.append(v);
-  hasRendered=true;
-  update();
- }
- function update(){
-  const r=$('immersiveRoom');if(!r)return;
-  const nextTransform='translate3d(0,0,-80px) rotateX('+pitch+'deg) rotateY('+yaw+'deg) scale('+zoom+')';
-  if(r.style.transform!==nextTransform) r.style.transform=nextTransform;
-  const z=$('worldZoomValue');if(z)z.textContent=Math.round(zoom*100)+'%';
-  const range=$('worldZoomRange');if(range)range.value=String(Math.round(zoom*100));
- }
- function down(e){if(e.target.closest('.room-portal')||e.button!==0)return;drag=true;pid=e.pointerId;lastX=e.clientX;lastY=e.clientY;vx=vy=0;stage.classList.add('is-dragging');try{stage.setPointerCapture(pid)}catch(_){}if(raf)cancelAnimationFrame(raf);if(moveRaf){cancelAnimationFrame(moveRaf);moveRaf=0;}}
- function move(e){if(!drag||e.pointerId!==pid)return;e.preventDefault();pendingX=e.clientX;pendingY=e.clientY;if(moveRaf)return;moveRaf=requestAnimationFrame(()=>{moveRaf=0;const dx=pendingX-lastX,dy=pendingY-lastY;lastX=pendingX;lastY=pendingY;yaw+=dx*.18;pitch=Math.max(-55,Math.min(55,pitch-dy*.15));vx=dx*.18;vy=-dy*.15;update();});}
- function up(){
-  if(!drag)return;
-  drag=false;pid=null;vx=vy=0;
-  stage.classList.remove('is-dragging');
-  if(moveRaf){cancelAnimationFrame(moveRaf);moveRaf=0;}
- }
- if('ResizeObserver' in window){const stageObserver=new ResizeObserver(()=>{if(stage.clientWidth&&stage.clientHeight)update();});stageObserver.observe(stage);}
- stage.addEventListener('pointerdown',down);stage.addEventListener('pointermove',move);stage.addEventListener('pointerup',up);stage.addEventListener('pointercancel',up);stage.addEventListener('lostpointercapture',up);
- stage.addEventListener('wheel',e=>{e.preventDefault();zoom=Math.max(.78,Math.min(1.35,zoom+(e.deltaY<0?.05:-.05)));update()},{passive:false});
- $('worldZoomIn')?.addEventListener('click',()=>{zoom=Math.min(1.35,zoom+.08);update()});
- $('worldZoomOut')?.addEventListener('click',()=>{zoom=Math.max(.78,zoom-.08);update()});
- $('worldZoomRange')?.addEventListener('input',e=>{zoom=Math.max(.78,Math.min(1.35,Number(e.target.value)/100));update()});
- $('worldLeft')?.addEventListener('click',()=>{yaw-=30;update()});$('worldRight')?.addEventListener('click',()=>{yaw+=30;update()});
- $('worldReset')?.addEventListener('click',()=>{if(raf)cancelAnimationFrame(raf);if(moveRaf)cancelAnimationFrame(moveRaf);moveRaf=0;vx=vy=0;yaw=0;pitch=0;zoom=1;update();});
- stage.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')yaw-=10;if(e.key==='ArrowRight')yaw+=10;if(e.key==='ArrowUp')pitch=Math.min(55,pitch+8);if(e.key==='ArrowDown')pitch=Math.max(-55,pitch-8);if(e.key==='+'||e.key==='=')zoom=Math.min(1.45,zoom+.1);if(e.key==='-')zoom=Math.max(.72,zoom-.1);update()});
- window.renderWorld3D=render;window.addEventListener('resize',update);window.addEventListener('kyyeu-config-ready',render);
+  $("worldLeft")?.addEventListener("click", () => { yaw = Math.max(-9, yaw - 3); update(); });
+  $("worldRight")?.addEventListener("click", () => { yaw = Math.min(9, yaw + 3); update(); });
+  $("worldReset")?.addEventListener("click", () => { yaw = 0; pitch = 0; zoom = 1; update(); });
+  stage.addEventListener("keydown", event => {
+    if (event.key === "ArrowLeft") yaw = Math.max(-9, yaw - 2);
+    if (event.key === "ArrowRight") yaw = Math.min(9, yaw + 2);
+    if (event.key === "+" || event.key === "=") zoom = Math.min(1.25, zoom + .05);
+    if (event.key === "-") zoom = Math.max(.78, zoom - .05);
+    update();
+  });
+  window.renderWorld3D = render;
+  window.addEventListener("kyyeu-config-ready", render);
+  render();
 })();
