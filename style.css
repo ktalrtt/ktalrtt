@@ -1210,9 +1210,11 @@ body.letter-page-mode .gallery-item:hover { box-shadow:0 22px 52px #5d40352b; }
 /* FIX: nền ảnh sảnh nằm dưới toàn bộ hiệu ứng 3D, không bị lớp sao che mất */
 #lobby.world-lobby { position:relative; isolation:isolate; }
 #lobby.world-lobby.has-custom-background::after {
-  content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
-  background-image:linear-gradient(rgba(4,7,20,.28),rgba(4,7,20,.56)),var(--lobby-custom-image);
-  background-size:cover; background-position:center; background-repeat:no-repeat;
+  content:""!important; display:block!important; position:absolute!important; inset:0!important;
+  z-index:0!important; pointer-events:none!important; opacity:1!important;
+  background-color:#050817;
+  background-image:linear-gradient(rgba(4,7,20,.22),rgba(4,7,20,.42)),var(--lobby-custom-image)!important;
+  background-size:cover!important; background-position:center!important; background-repeat:no-repeat!important;
 }
 #lobby #worldStage { z-index:1; background:transparent!important; }
 #lobby .world-hud,#lobby .world-bottom { z-index:10; }
