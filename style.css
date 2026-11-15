@@ -1217,4 +1217,4 @@ body.letter-page-mode .gallery-item:hover { box-shadow:0 22px 52px #5d40352b; }
 #lobby #worldStage { z-index:1; background:transparent!important; }
 #lobby .world-hud,#lobby .world-bottom { z-index:10; }
 #quickEdit:not(.hidden) { display:inline-flex!important; align-items:center; min-height:36px; padding:8px 12px; border:1px solid #c7a8ff66; border-radius:999px; background:#ffffff12; color:#fff; }
-#adminPanel:not(.hidden) { display:block; position:relative; z-index:30; max-height:calc(100svh - 58px); overflow:auto; }
+#adminPanel:not(.hidden) { display:block; position:fixed; inset:58px 0 0; z-index:100; width:100%; max-width:none; max-height:none; margin:0; overflow:auto; overscroll-behavior:contain; background:#fffdfb; }
