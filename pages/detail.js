@@ -121,7 +121,7 @@
   function draw() {
     $("#pageItems").innerHTML = (data.items || []).map((item,index) =>
       '<article class="memory-card">' +
-        (item.videoId ? '<video controls playsinline preload="metadata" data-video-id="' + esc(item.videoId) + '" aria-label="' + esc(item.title || "Video") + '"></video>' : item.image ? '<img src="' + esc(item.image) + '" alt="">' : '<div class="memory-placeholder">✦</div>') +
+        (item.videoId || item.videoUrl ? '<video controls playsinline preload="metadata" data-video-id="' + esc(item.videoId || "") + '" data-video-url="' + esc(item.videoUrl || "") + '" aria-label="' + esc(item.title || "Video") + '"></video>' : item.image ? '<img src="' + esc(item.image) + '" alt="">' : '<div class="memory-placeholder">✦</div>') +
         '<div class="memory-card-copy"><h3>' + esc(item.title) + '</h3><p>' + esc(item.text) + '</p></div>' +
         (canEdit ? '<div class="memory-actions"><button type="button" data-edit="' + index + '">Sửa</button><button type="button" data-remove="' + index + '" aria-label="Xóa">Xóa</button></div>' : '') +
       '</article>'
@@ -130,11 +130,14 @@
     videoUrls.clear();
     $("#pageItems").querySelectorAll("video[data-video-id]").forEach(async video => {
       try {
-        const blob = await getVideo(video.dataset.videoId);
-        if (!blob || !video.isConnected) return;
-        const url = URL.createObjectURL(blob);
-        videoUrls.add(url);
-        video.src = url;
+        const blob = video.dataset.videoId ? await getVideo(video.dataset.videoId) : null;
+        if (blob && video.isConnected) {
+          const url = URL.createObjectURL(blob);
+          videoUrls.add(url);
+          video.src = url;
+        } else if (video.dataset.videoUrl) {
+          video.src = new URL("../" + video.dataset.videoUrl, location.href).href;
+        }
       } catch (_) {
         video.insertAdjacentHTML("afterend", '<p class="media-error">Không tải được video đã lưu trên trình duyệt này.</p>');
       }
