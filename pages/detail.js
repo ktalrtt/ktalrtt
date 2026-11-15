@@ -14,6 +14,45 @@
   const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   let data = {title:defaults[0],subtitle:defaults[1],body:defaults[2],items:[]};
   let editingIndex = -1;
+  const videoUrls = new Set();
+  const videoDbPromise = new Promise((resolve,reject) => {
+    if (!("indexedDB" in window)) return reject(new Error("Trình duyệt không hỗ trợ lưu video."));
+    const request = indexedDB.open("kyyeu-media",1);
+    request.onupgradeneeded = () => {
+      const db = request.result;
+      if (!db.objectStoreNames.contains("videos")) db.createObjectStore("videos");
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(new Error("Không mở được kho lưu video."));
+  });
+  async function putVideo(videoId, blob) {
+    const db = await videoDbPromise;
+    return new Promise((resolve,reject) => {
+      const tx = db.transaction("videos","readwrite");
+      tx.objectStore("videos").put(blob,videoId);
+      tx.oncomplete = resolve;
+      tx.onerror = () => reject(tx.error || new Error("Không lưu được video."));
+      tx.onabort = () => reject(tx.error || new Error("Đã hủy lưu video."));
+    });
+  }
+  async function getVideo(videoId) {
+    const db = await videoDbPromise;
+    return new Promise((resolve,reject) => {
+      const request = db.transaction("videos","readonly").objectStore("videos").get(videoId);
+      request.onsuccess = () => resolve(request.result || null);
+      request.onerror = () => reject(request.error);
+    });
+  }
+  async function deleteVideo(videoId) {
+    if (!videoId) return;
+    const db = await videoDbPromise;
+    return new Promise((resolve,reject) => {
+      const tx = db.transaction("videos","readwrite");
+      tx.objectStore("videos").delete(videoId);
+      tx.oncomplete = resolve;
+      tx.onerror = () => reject(tx.error);
+    });
+  }
   try { data = {...data,...JSON.parse(localStorage.getItem(key) || "{}")}; } catch (_) {}
   function drawHeader() {
     document.title = data.title + " · Kỷ yếu";
@@ -24,16 +63,31 @@
   function draw() {
     $("#pageItems").innerHTML = (data.items || []).map((item,index) =>
       '<article class="memory-card">' +
-        (item.image ? '<img src="' + esc(item.image) + '" alt="">' : '<div class="memory-placeholder">✦</div>') +
-        '<div><h3>' + esc(item.title) + '</h3><p>' + esc(item.text) + '</p></div>' +
+        (item.videoId ? '<video controls playsinline preload="metadata" data-video-id="' + esc(item.videoId) + '" aria-label="' + esc(item.title || "Video") + '"></video>' : item.image ? '<img src="' + esc(item.image) + '" alt="">' : '<div class="memory-placeholder">✦</div>') +
+        '<div class="memory-card-copy"><h3>' + esc(item.title) + '</h3><p>' + esc(item.text) + '</p></div>' +
         (canEdit ? '<div class="memory-actions"><button type="button" data-edit="' + index + '">Sửa</button><button type="button" data-remove="' + index + '" aria-label="Xóa">Xóa</button></div>' : '') +
       '</article>'
     ).join("");
+    videoUrls.forEach(url => URL.revokeObjectURL(url));
+    videoUrls.clear();
+    $("#pageItems").querySelectorAll("video[data-video-id]").forEach(async video => {
+      try {
+        const blob = await getVideo(video.dataset.videoId);
+        if (!blob || !video.isConnected) return;
+        const url = URL.createObjectURL(blob);
+        videoUrls.add(url);
+        video.src = url;
+      } catch (_) {
+        video.insertAdjacentHTML("afterend", '<p class="media-error">Không tải được video đã lưu trên trình duyệt này.</p>');
+      }
+    });
     $("#pageItems").querySelectorAll("[data-edit]").forEach(button => button.addEventListener("click", () => openItemEditor(Number(button.dataset.edit))));
     $("#pageItems").querySelectorAll("[data-remove]").forEach(button => button.addEventListener("click", () => {
       const index = Number(button.dataset.remove);
       if (!Number.isInteger(index) || !data.items[index]) return;
-      data.items.splice(index,1); save();
+      const removed = data.items.splice(index,1)[0];
+      save();
+      if (removed && removed.videoId) deleteVideo(removed.videoId).catch(() => {});
     }));
   }
   function save() {
@@ -41,19 +95,22 @@
       localStorage.setItem(key,JSON.stringify(data));
       drawHeader();draw();
       $("#status").textContent = "Đã lưu trên trình duyệt này.";
+      return true;
     } catch (error) {
       $("#status").textContent = error.name === "QuotaExceededError"
         ? "Bộ nhớ trình duyệt đã đầy. Hãy dùng ảnh nhỏ hơn hoặc xóa bớt nội dung."
         : "Không thể lưu. Vui lòng thử lại.";
+      return false;
     }
   }
   function openItemEditor(index = -1) {
     editingIndex = index;
-    const item = index >= 0 ? data.items[index] : {title:"",text:"",image:""};
+    const item = index >= 0 ? data.items[index] : {title:"",text:"",image:"",videoId:""};
     $("#itemEditor").hidden = false;
     $("#itemTitle").value = item.title || "";
     $("#itemText").value = item.text || "";
     $("#itemImage").value = "";
+    $("#itemVideo").value = "";
     $("#itemEditor h2").textContent = index >= 0 ? "Chỉnh sửa nội dung" : "Thêm nội dung";
     $("#itemSave").textContent = index >= 0 ? "Lưu chỉnh sửa" : "Thêm vào trang";
   }
@@ -93,15 +150,30 @@
   $("#itemSave").onclick = async () => {
     const title = $("#itemTitle").value.trim(), text = $("#itemText").value.trim();
     const file = $("#itemImage").files[0];
-    if (!title && !text && !file && editingIndex < 0) { $("#status").textContent = "Hãy nhập nội dung hoặc chọn ảnh.";return; }
+    const videoFile = $("#itemVideo").files[0];
+    if (videoFile && !videoFile.type.startsWith("video/")) { $("#status").textContent = "Vui lòng chọn tệp video hợp lệ.";return; }
+    if (!title && !text && !file && !videoFile && editingIndex < 0) { $("#status").textContent = "Hãy nhập nội dung hoặc chọn ảnh/video.";return; }
+    if (file && videoFile) { $("#status").textContent = "Mỗi nội dung chỉ chọn ảnh hoặc video, không chọn cả hai.";return; }
     const button = $("#itemSave");button.disabled = true;
     try {
       const uploaded = await readCompressedImage(file);
       const old = editingIndex >= 0 ? data.items[editingIndex] : {};
-      const next = {title,text,image:uploaded || old.image || ""};
+      let videoId = old.videoId || "";
+      if (videoFile) {
+        videoId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : ("video-" + Date.now() + "-" + Math.random().toString(36).slice(2));
+        await putVideo(videoId, videoFile);
+      }
+      const next = {title,text,image:uploaded || (videoFile ? "" : old.image || ""),videoId:videoFile ? videoId : (file ? "" : videoId)};
       if (editingIndex >= 0) data.items[editingIndex] = next; else data.items.push(next);
-      save();$("#itemEditor").hidden = true;
-    } catch (error) { $("#status").textContent = error.message || "Không xử lý được ảnh."; }
+      const saved = save();
+      if (saved) {
+        if ((file || videoFile) && old.videoId && old.videoId !== videoId) deleteVideo(old.videoId).catch(() => {});
+        $("#itemEditor").hidden = true;
+      } else if (videoFile) {
+        deleteVideo(videoId).catch(() => {});
+        if (editingIndex >= 0) data.items[editingIndex] = old; else data.items.pop();
+      }
+    } catch (error) { $("#status").textContent = error.message || "Không xử lý được tệp."; }
     finally { button.disabled = false; }
   };
   $("#exportPage").onclick = () => {
