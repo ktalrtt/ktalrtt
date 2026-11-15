@@ -1108,3 +1108,38 @@ html[data-performance="high"] .world-stage:before{animation:none!important}
 @media(prefers-reduced-motion:reduce){
   .portal-inner,.room-portal{transition:none!important}
 }
+
+
+/* Performance pass: reduce costly compositing in the 3D lobby, especially on integrated GPUs. */
+.world-lobby,
+.world-stage { isolation: isolate; }
+.world-lobby *,
+.world-lobby *::before,
+.world-lobby *::after {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+.world-nebula,
+.world-vortex,
+.world-orbit-line {
+  filter: none !important;
+  box-shadow: none !important;
+}
+.world-stars,
+.world-nebula,
+.world-orbit-line,
+.world-vortex,
+.world-orbit {
+  animation-duration: 36s !important;
+}
+.world-lobby .world-stage {
+  contain: layout paint;
+}
+@media (max-width: 800px), (prefers-reduced-motion: reduce) {
+  .world-lobby .world-nebula,
+  .world-lobby .world-orbit-line,
+  .world-lobby .world-vortex,
+  .world-lobby .world-stars {
+    animation: none !important;
+  }
+}
