@@ -99,13 +99,26 @@
     try {
       const config = await readSharedConfig();
       const sharedPage = config.worldPages && config.worldPages[id];
-      if (sharedPage && Array.isArray(sharedPage.items)) data = { ...data, ...sharedPage };
-      else {
+      if (sharedPage && Array.isArray(sharedPage.items)) {
+        data = { ...data, ...sharedPage };
+      } else {
+        let publishedPage = null;
         try {
-          const legacy = JSON.parse(localStorage.getItem(key) || "{}");
-          data = { ...data, ...legacy };
-          if (Object.keys(legacy).length) await writeSharedPage();
+          const response = await fetch(new URL("../site-data/site-config.json", location.href), { cache: "no-store" });
+          if (response.ok) {
+            const publishedConfig = await response.json();
+            publishedPage = publishedConfig.worldPages && publishedConfig.worldPages[id];
+          }
         } catch (_) {}
+        if (publishedPage && Array.isArray(publishedPage.items)) {
+          data = { ...data, ...publishedPage };
+        } else {
+          try {
+            const legacy = JSON.parse(localStorage.getItem(key) || "{}");
+            data = { ...data, ...legacy };
+            if (Object.keys(legacy).length) await writeSharedPage();
+          } catch (_) {}
+        }
       }
     } catch (error) {
       try { data = { ...data, ...JSON.parse(localStorage.getItem(key) || "{}") }; } catch (_) {}
