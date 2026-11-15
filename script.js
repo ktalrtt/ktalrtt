@@ -135,9 +135,6 @@ function fillEditor() {
   $("editGalleryEyebrow").value = currentConfig.galleryEyebrow || "MEMORIES IN FRAMES";
   $("editWorldTitle").value = currentConfig.worldTitle || "Bảo tàng thanh xuân";
   $("editWorldGlow").value = currentConfig.worldGlow || "#d6ad79";
-  $("editOceanDeep").value = currentConfig.oceanDeep || "#062b46";
-  $("editOceanLight").value = currentConfig.oceanLight || "#4fd6d0";
-  $("editOceanLife").value = currentConfig.oceanLife || "medium";
   $("editWorldCenterTitle").value = currentConfig.worldCenterTitle || "OUR CLASS | OUR FOREVER";
   $("editWorldCenterSubtitle").value = currentConfig.worldCenterSubtitle || "MEMORIES LIVE HERE";
   $("editWorldItems").value = (currentConfig.worldItems || []).map(x => [x.title,x.description,x.url,x.icon || "✳",x.image || ""].join(" | ")).join("\n");
@@ -410,7 +407,6 @@ $("adminForm").addEventListener("submit", async (event) => {
       galleryEyebrow: $("editGalleryEyebrow").value.trim(), galleryTitle: $("editGalleryTitle").value.trim(),
       galleryCopy: $("editGalleryCopy").value.trim(),
       worldTitle: $("editWorldTitle").value.trim(), worldGlow: $("editWorldGlow").value,
-      oceanDeep: $("editOceanDeep").value, oceanLight: $("editOceanLight").value, oceanLife: $("editOceanLife").value,
       worldCenterTitle: $("editWorldCenterTitle").value.trim(), worldCenterSubtitle: $("editWorldCenterSubtitle").value.trim(),
       worldItems: $("editWorldItems").value.split(/\r?\n/).map(line => line.split("|").map(s => s.trim())).filter(parts => parts[0] && parts[2]).map((parts,index) => ({ title: parts[0], description: parts[1] || "Khám phá kỷ niệm", url: parts[2], icon: parts[3] || "✳", image: worldItemUploads[index] || parts[4] || currentConfig.worldItems?.[index]?.image || "" })),
       worldPages: JSON.parse($("editWorldPages").value || "{}"),
