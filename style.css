@@ -1300,3 +1300,112 @@ html[data-performance="low"] #lobby .room-portal {
   border:1px solid #7969b5 !important;
 }
 html[data-performance="low"] #lobby .portal-image { filter:none !important; opacity:1 !important; }
+
+
+/* MOBILE + LOW MODE FINAL FIX: keep portal icons stable and make every title readable. */
+@media (max-width: 600px) {
+  #lobby .immersive-room {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+    align-items: stretch !important;
+  }
+  #lobby .room-portal {
+    position: relative !important;
+    height: clamp(215px, 62vw, 250px) !important;
+    min-height: 215px !important;
+    overflow: hidden !important;
+    isolation: isolate !important;
+  }
+  #lobby .portal-inner {
+    position: relative !important;
+    display: block !important;
+    height: 100% !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+  #lobby .portal-image,
+  #lobby .portal-art {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    object-fit: cover !important;
+    border-radius: 0 !important;
+  }
+  #lobby .portal-info {
+    position: absolute !important;
+    z-index: 5 !important;
+    inset: auto 0 0 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-end !important;
+    gap: 5px !important;
+    width: 100% !important;
+    min-height: 58% !important;
+    padding: 34px 10px 12px !important;
+    background: linear-gradient(180deg, transparent 0%, rgba(5,8,24,.76) 28%, rgba(5,8,24,.97) 100%) !important;
+    text-align: left !important;
+    overflow: visible !important;
+  }
+  #lobby .portal-info small {
+    display: block !important;
+    font-size: 7px !important;
+    line-height: 1.3 !important;
+    letter-spacing: .12em !important;
+    color: #e5d5ff !important;
+    overflow-wrap: anywhere !important;
+  }
+  #lobby .portal-info strong {
+    display: block !important;
+    font-size: clamp(15px, 4.4vw, 19px) !important;
+    line-height: 1.25 !important;
+    color: #fff !important;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+    text-shadow: 0 1px 8px #000 !important;
+  }
+  #lobby .portal-info > span {
+    display: block !important;
+    font-size: 10px !important;
+    line-height: 1.35 !important;
+    color: #f0eaff !important;
+    overflow-wrap: anywhere !important;
+  }
+  #lobby .portal-info em {
+    display: block !important;
+    margin-top: 2px !important;
+    font-size: 7px !important;
+    line-height: 1.3 !important;
+    color: #f5c8ff !important;
+  }
+}
+@media (max-width: 360px) {
+  #lobby .immersive-room { gap: 9px !important; }
+  #lobby .room-portal { height: 220px !important; min-height: 220px !important; }
+  #lobby .portal-info { padding-left: 8px !important; padding-right: 8px !important; }
+  #lobby .portal-info strong { font-size: 14px !important; }
+  #lobby .portal-info > span { font-size: 9px !important; }
+}
+
+/* In low graphics mode, decorative portal glyphs must remain completely static. */
+html[data-performance="low"] #lobby .portal-art,
+html[data-performance="low"] #lobby .portal-art::before,
+html[data-performance="low"] #lobby .portal-art::after,
+html[data-performance="low"] #lobby .portal-art span,
+html[data-performance="low"] #lobby .portal-art i {
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+html[data-performance="low"] #lobby .portal-art::before,
+html[data-performance="low"] #lobby .portal-art::after {
+  display: none !important;
+}
+html[data-performance="low"] #lobby .portal-art span {
+  position: relative !important;
+  z-index: 1 !important;
+  text-shadow: none !important;
+}
