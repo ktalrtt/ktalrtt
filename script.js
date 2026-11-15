@@ -111,8 +111,19 @@ function applyConfig() {
   document.documentElement.style.setProperty("--ocean-deep", currentConfig.oceanDeep || "#062b46");
   document.documentElement.style.setProperty("--ocean-light", currentConfig.oceanLight || "#4fd6d0");
   document.documentElement.dataset.oceanLife = currentConfig.oceanLife || "medium";
+  // Ảnh nền sảnh phải đặt trên toàn bộ khu vực #lobby, không đặt riêng
+  // ở #worldStage vì các lớp sao/tinh vân và nền của sảnh có thể che khuất nó.
+  const worldLobby = $("lobby");
   const worldStage = $("worldStage");
-  if (worldStage) worldStage.style.backgroundImage = currentConfig.worldBackgroundImage ? `linear-gradient(rgba(4,7,20,.35),rgba(4,7,20,.62)),url("${currentConfig.worldBackgroundImage}")` : "";
+  if (worldLobby) {
+    worldLobby.style.backgroundImage = currentConfig.worldBackgroundImage
+      ? `linear-gradient(rgba(4,7,20,.38),rgba(4,7,20,.58)),url("${currentConfig.worldBackgroundImage}")`
+      : "";
+    worldLobby.style.backgroundSize = "cover";
+    worldLobby.style.backgroundPosition = "center";
+    worldLobby.style.backgroundRepeat = "no-repeat";
+  }
+  if (worldStage) worldStage.style.backgroundImage = "none";
   gallerySection.style.backgroundImage = currentConfig.galleryBackgroundImage
     ? `linear-gradient(rgba(243,233,226,${(currentConfig.galleryOverlay ?? .78)}),rgba(243,233,226,${(currentConfig.galleryOverlay ?? .78)})),url("${currentConfig.galleryBackgroundImage}")`
     : "";
