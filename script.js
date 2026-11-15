@@ -116,12 +116,9 @@ function applyConfig() {
   const worldLobby = $("lobby");
   const worldStage = $("worldStage");
   if (worldLobby) {
-    worldLobby.style.backgroundImage = currentConfig.worldBackgroundImage
-      ? `linear-gradient(rgba(4,7,20,.38),rgba(4,7,20,.58)),url("${currentConfig.worldBackgroundImage}")`
-      : "";
-    worldLobby.style.backgroundSize = "cover";
-    worldLobby.style.backgroundPosition = "center";
-    worldLobby.style.backgroundRepeat = "no-repeat";
+    const lobbyImage = currentConfig.worldBackgroundImage || "";
+    worldLobby.style.setProperty("--lobby-custom-image", lobbyImage ? `url("${lobbyImage}")` : "none");
+    worldLobby.classList.toggle("has-custom-background", Boolean(lobbyImage));
   }
   if (worldStage) worldStage.style.backgroundImage = "none";
   gallerySection.style.backgroundImage = currentConfig.galleryBackgroundImage
@@ -264,8 +261,11 @@ loadSavedConfig().then(async () => {
     currentGuestName = routeName;
     $("gate").classList.add("hidden");
     $("invitation").classList.remove("hidden");
-    $("adminPanel").classList.add("hidden");
+    const routeIsAdmin = sessionStorage.getItem(ADMIN_SESSION_KEY) === "1";
+    $("adminPanel").classList.toggle("hidden", !routeIsAdmin);
+    $("quickEdit")?.classList.toggle("hidden", !routeIsAdmin);
     $("helloLine").textContent = `${currentConfig.greetingPrefix || "Kính chào:"} ${currentGuestName}`.trim();
+    if (routeIsAdmin) fillEditor();
     $("classicInvitation")?.classList.toggle("hidden", routeView !== "letter");
     $("lobby")?.classList.toggle("hidden", routeView === "letter");
     document.body.classList.toggle("letter-page-mode", routeView === "letter");
