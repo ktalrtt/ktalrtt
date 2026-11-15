@@ -232,7 +232,7 @@ function applyBackgroundMusic() {
   audio.volume=Math.max(0,Math.min(1,(currentConfig.musicVolume??35)/100));
 }
 async function startBackgroundMusic() {
-  const audio=$("bgMusic"); if(!audio || currentConfig.musicEnabled===false)return;
+  const audio=$("bgMusic"); if(!audio || currentConfig.musicEnabled===false || getPerformanceMode()==="low" || !soundEnabled)return;
   applyBackgroundMusic();
   if(!audio.src)return;
   try{await audio.play();}catch(_){const b=$("soundToggle");if(b)b.title="Nhấn để phát nhạc nền";}
@@ -251,7 +251,7 @@ loadSavedConfig().then(async () => {
   window.dispatchEvent(new Event("kyyeu-config-ready"));
   soundEnabled = currentConfig.soundEnabled !== false && localStorage.getItem("kyyeu-sound") !== "off";
   soundVolume = (currentConfig.soundVolume ?? 65) / 100;
-  updateSoundButton();
+  applyPerformanceModeAudio();
   const remembered = await getRememberedName();
   if (remembered) $("guestName").value = remembered;
   const route = new URLSearchParams(window.location.search);
@@ -301,7 +301,10 @@ function setPerformanceMode(mode) {
   document.querySelectorAll('input[name="performanceMode"]').forEach(input => { input.checked = input.value === safe; });
 }
 document.querySelectorAll('input[name="performanceMode"]').forEach(input => {
-  input.addEventListener("change", () => setPerformanceMode(input.value));
+  input.addEventListener("change", () => {
+    setPerformanceMode(input.value);
+    applyPerformanceModeAudio();
+  });
 });
 setPerformanceMode(getPerformanceMode());
 
@@ -534,6 +537,19 @@ let soundEnabled = currentConfig.soundEnabled !== false && localStorage.getItem(
 let soundVolume = (currentConfig.soundVolume ?? 65) / 100;
 let audioContext = null;
 
+function applyPerformanceModeAudio() {
+  const low = getPerformanceMode() === "low";
+  const music = $("bgMusic");
+  if (low) {
+    soundEnabled = false;
+    music?.pause();
+    if (audioContext && audioContext.state === "running") audioContext.suspend().catch(() => {});
+  } else {
+    soundEnabled = currentConfig.soundEnabled !== false && localStorage.getItem("kyyeu-sound") !== "off";
+  }
+  updateSoundButton();
+}
+
 function getAudioContext() {
   const AudioContextClass = window.AudioContext || window.webkitAudioContext;
   if (!AudioContextClass) return null;
@@ -542,7 +558,7 @@ function getAudioContext() {
   return audioContext;
 }
 function playTone(frequency, start, duration, volume, type = "sine", endFrequency = frequency) {
-  if (!soundEnabled) return;
+  if (!soundEnabled || getPerformanceMode() === "low") return;
   try {
     const audio = getAudioContext();
     if (!audio) return;
@@ -576,21 +592,27 @@ function updateSoundButton() {
   button.setAttribute("aria-pressed", String(soundEnabled));
 }
 $("soundToggle")?.addEventListener("click", () => {
+  if (getPerformanceMode() === "low") {
+    soundEnabled = false;
+    $("soundToggle").title = "Âm thanh đã được tắt trong chế độ Máy yếu.";
+    updateSoundButton();
+    return;
+  }
   soundEnabled = !soundEnabled;
   localStorage.setItem("kyyeu-sound", soundEnabled ? "on" : "off");
   updateSoundButton();
   if (soundEnabled) { playOpenSound(); startBackgroundMusic(); } else $("bgMusic")?.pause();
-  if (currentConfig.musicEnabled !== false) startBackgroundMusic();
+  if (soundEnabled && currentConfig.musicEnabled !== false) startBackgroundMusic();
 });
 updateSoundButton();
 document.addEventListener("click", event => {
   const button = event.target.closest("button, .rsvp");
-  if (button && !button.disabled && button.id !== "soundToggle") playClickSound();
+  if (getPerformanceMode() !== "low" && button && !button.disabled && button.id !== "soundToggle") playClickSound();
 });
 
 // Bọt bong bóng khi bấm và vệt sáng/bong bóng nhỏ chạy theo chuột (chỉ trên thiết bị có chuột).
 function spawnBubble(x, y, count = 7, trail = false) {
-  if (currentConfig.motionEnabled === false || currentConfig.motionStyle === "off" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (getPerformanceMode() === "low" || currentConfig.motionEnabled === false || currentConfig.motionStyle === "off" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   for (let i = 0; i < count; i++) {
     const bubble = document.createElement("i");
     bubble.className = trail ? "cursor-bubble cursor-bubble-trail" : "cursor-bubble";
@@ -612,7 +634,7 @@ if (window.matchMedia("(pointer: fine)").matches) {
   cursorGlow.setAttribute("aria-hidden", "true");
   document.body.appendChild(cursorGlow);
   document.addEventListener("pointermove", event => {
-    if (currentConfig.motionEnabled === false || currentConfig.motionStyle === "off") {
+    if (getPerformanceMode() === "low" || currentConfig.motionEnabled === false || currentConfig.motionStyle === "off") {
       cursorGlow.style.opacity = "0";
       return;
     }
