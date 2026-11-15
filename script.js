@@ -646,9 +646,9 @@ $("confirmModal").addEventListener("click", event => {
 let rsvpSending = false;
 $("confirmYes").addEventListener("click", async () => {
   if (rsvpSending) return;
-  const publicKey = currentConfig.emailjsPublicKey;
-  const serviceId = currentConfig.emailjsServiceId;
-  const templateId = currentConfig.emailjsTemplateId;
+  const publicKey = currentConfig.emailjsPublicKey || "6iJeEr2OMz7yInJJw";
+  const serviceId = currentConfig.emailjsServiceId || "service_0yes7lb";
+  const templateId = currentConfig.emailjsTemplateId || "template_j6s5139";
   if (!window.emailjs || !publicKey || !serviceId || !templateId) {
     $("confirmStatus").textContent = "Thiếu cấu hình EmailJS. Chủ lời mời cần kiểm tra Public Key, Service ID và Template ID.";
     $("confirmStatus").className = "confirm-status is-error";
