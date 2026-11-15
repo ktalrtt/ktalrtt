@@ -15,6 +15,48 @@
   let data = {title:defaults[0],subtitle:defaults[1],body:defaults[2],items:[]};
   let editingIndex = -1;
   const videoUrls = new Set();
+  const CONFIG_DB = "kyyeu_invitation_db";
+  const CONFIG_STORE = "settings";
+  const CONFIG_KEY = "site-config";
+  function openSharedConfigDB() {
+    return new Promise((resolve,reject) => {
+      const request = indexedDB.open(CONFIG_DB,1);
+      request.onupgradeneeded = () => {
+        if (!request.result.objectStoreNames.contains(CONFIG_STORE)) request.result.createObjectStore(CONFIG_STORE);
+      };
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error || new Error("Không mở được cấu hình tổng."));
+    });
+  }
+  async function readSharedConfig() {
+    const db = await openSharedConfigDB();
+    try {
+      return await new Promise((resolve,reject) => {
+        const req = db.transaction(CONFIG_STORE,"readonly").objectStore(CONFIG_STORE).get(CONFIG_KEY);
+        req.onsuccess = () => resolve(req.result || {});
+        req.onerror = () => reject(req.error);
+      });
+    } finally { db.close(); }
+  }
+  async function writeSharedPage() {
+    const db = await openSharedConfigDB();
+    try {
+      const config = await new Promise((resolve,reject) => {
+        const req = db.transaction(CONFIG_STORE,"readonly").objectStore(CONFIG_STORE).get(CONFIG_KEY);
+        req.onsuccess = () => resolve(req.result || {});
+        req.onerror = () => reject(req.error);
+      });
+      config.worldPages = config.worldPages || {};
+      config.worldPages[id] = { ...(config.worldPages[id] || {}), title:data.title, subtitle:data.subtitle, body:data.body, items:data.items || [] };
+      await new Promise((resolve,reject) => {
+        const tx = db.transaction(CONFIG_STORE,"readwrite");
+        tx.objectStore(CONFIG_STORE).put(config,CONFIG_KEY);
+        tx.oncomplete = resolve;
+        tx.onerror = () => reject(tx.error || new Error("Không lưu được cấu hình tổng."));
+        tx.onabort = () => reject(tx.error || new Error("Lưu cấu hình bị hủy."));
+      });
+    } finally { db.close(); }
+  }
   const videoDbPromise = new Promise((resolve,reject) => {
     if (!("indexedDB" in window)) return reject(new Error("Trình duyệt không hỗ trợ lưu video."));
     const request = indexedDB.open("kyyeu-media",1);
@@ -53,7 +95,23 @@
       tx.onerror = () => reject(tx.error);
     });
   }
-  try { data = {...data,...JSON.parse(localStorage.getItem(key) || "{}")}; } catch (_) {}
+  async function loadPageData() {
+    try {
+      const config = await readSharedConfig();
+      const sharedPage = config.worldPages && config.worldPages[id];
+      if (sharedPage) data = { ...data, ...sharedPage };
+      else {
+        try {
+          const legacy = JSON.parse(localStorage.getItem(key) || "{}");
+          data = { ...data, ...legacy };
+          if (Object.keys(legacy).length) await writeSharedPage();
+        } catch (_) {}
+      }
+    } catch (error) {
+      try { data = { ...data, ...JSON.parse(localStorage.getItem(key) || "{}") }; } catch (_) {}
+      console.warn("Không đọc được cấu hình tổng:",error);
+    }
+  }
   function drawHeader() {
     document.title = data.title + " · Kỷ yếu";
     $("#pageTitle").textContent = data.title;
@@ -90,16 +148,16 @@
       if (removed && removed.videoId) deleteVideo(removed.videoId).catch(() => {});
     }));
   }
-  function save() {
+  async function save() {
     try {
-      localStorage.setItem(key,JSON.stringify(data));
+      await writeSharedPage();
       drawHeader();draw();
-      $("#status").textContent = "Đã lưu trên trình duyệt này.";
+      $("#status").textContent = "Đã lưu vào cấu hình tổng trên thiết bị này.";
       return true;
     } catch (error) {
-      $("#status").textContent = error.name === "QuotaExceededError"
-        ? "Bộ nhớ trình duyệt đã đầy. Hãy dùng ảnh nhỏ hơn hoặc xóa bớt nội dung."
-        : "Không thể lưu. Vui lòng thử lại.";
+      $("#status").textContent = error && error.name === "QuotaExceededError"
+        ? "Bộ nhớ trình duyệt đã đầy. Hãy giảm dung lượng ảnh hoặc xóa bớt nội dung."
+        : "Không thể lưu vào cấu hình tổng: " + (error.message || "Vui lòng thử lại.");
       return false;
     }
   }
@@ -134,7 +192,6 @@
     return canvas.toDataURL("image/jpeg",.76);
   }
   const canEdit = sessionStorage.getItem("kyyeu-admin-session") === "1";
-  drawHeader();
   $("#editOpen").onclick = () => {
     $("#editor").hidden = false;
     $("#fTitle").value = data.title;$("#fSubtitle").value = data.subtitle;$("#fBody").value = data.body;
@@ -143,7 +200,7 @@
   $("#editSave").onclick = () => {
     data.title = $("#fTitle").value.trim() || defaults[0];
     data.subtitle = $("#fSubtitle").value.trim();data.body = $("#fBody").value.trim();
-    save();$("#editor").hidden = true;
+    save().then(saved => { if (saved) $("#editor").hidden = true; });
   };
   $("#addItem").onclick = () => openItemEditor(-1);
   $("#itemClose").onclick = () => $("#itemEditor").hidden = true;
@@ -165,7 +222,7 @@
       }
       const next = {title,text,image:uploaded || (videoFile ? "" : old.image || ""),videoId:videoFile ? videoId : (file ? "" : videoId)};
       if (editingIndex >= 0) data.items[editingIndex] = next; else data.items.push(next);
-      const saved = save();
+      const saved = await save();
       if (saved) {
         if ((file || videoFile) && old.videoId && old.videoId !== videoId) deleteVideo(old.videoId).catch(() => {});
         $("#itemEditor").hidden = true;
@@ -183,5 +240,5 @@
   };
   ["editOpen","addItem","exportPage"].forEach(buttonId => { const button = document.getElementById(buttonId);if(button)button.hidden = !canEdit; });
   if (!canEdit) $("#status").textContent = "Chế độ xem · chỉ quản trị viên mới được chỉnh sửa";
-  draw();
+  loadPageData().then(() => { drawHeader(); draw(); }).catch(error => { console.warn(error); drawHeader(); draw(); });
 })();
