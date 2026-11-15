@@ -476,10 +476,7 @@ $("quickEdit")?.addEventListener("click", () => { $("adminPanel")?.classList.rem
 
 /* Main lobby / restored classic invitation navigation. */
 $("openInvitation")?.addEventListener("click", () => {
-  $("worldLobby")?.classList.add("hidden");
-  $("classicInvitation")?.classList.remove("hidden");
-  $("adminPanel")?.classList.toggle("hidden", sessionStorage.getItem(ADMIN_SESSION_KEY) !== "1");
-  window.scrollTo({top:0,behavior:"smooth"});
+  window.open("https://ktalrtt.github.io/ktalrtt/thu-thanh-xuan/", "_blank", "noopener,noreferrer");
 });
 $("returnLobby")?.addEventListener("click", () => {
   $("classicInvitation")?.classList.add("hidden");
