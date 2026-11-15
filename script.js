@@ -429,7 +429,7 @@ $("adminForm").addEventListener("submit", async (event) => {
     const musicData = await readMusic($("editMusicFile").files[0]);
     const worldItemUploads = await Promise.all([1,2,3,4,5,6].map(i => readImage($(`editWorldItem${i}`).files[0])));
     const galleryUploads = await Promise.all([1, 2, 3].map(i => readImage($(`editGallery${i}`).files[0])));
-    currentConfig = { ...currentConfig,
+    const nextConfig = { ...currentConfig,
       siteTitle: $("editSiteTitle").value.trim(), gateButtonText: $("editGateButton").value.trim(),
       gateTinyNote: $("editGateTinyNote").value.trim(), brandText: $("editBrandText").value.trim(),
       galleryEyebrow: $("editGalleryEyebrow").value.trim(), galleryTitle: $("editGalleryTitle").value.trim(),
@@ -467,7 +467,13 @@ $("adminForm").addEventListener("submit", async (event) => {
         ...(galleryUploads[index] ? { image: galleryUploads[index] } : {})
       }))
     };
-    await saveConfigToDB(currentConfig);
+    // Chỉ thay cấu hình đang chạy sau khi IndexedDB xác nhận đã lưu thành công.
+    // Nếu lưu thất bại, không để giao diện báo như thể dữ liệu đã được giữ lại.
+    if ($("editWorldBackground").files[0] && !worldBackground) {
+      throw new Error("Không xử lý được ảnh nền sảnh. Hãy chọn ảnh khác ở định dạng JPG, PNG hoặc WebP.");
+    }
+    await saveConfigToDB(nextConfig);
+    currentConfig = nextConfig;
     applyConfig();
     if (window.renderWorld3D) window.renderWorld3D();
     ["editCover", "editBackground", "editGateBackground", "editGalleryBackground", "editGallery1", "editGallery2", "editGallery3", "editWorldBackground", "editWorldItem1", "editWorldItem2", "editWorldItem3", "editWorldItem4", "editWorldItem5", "editWorldItem6", "editMusicFile"].forEach(id => { $(id).value = ""; });
