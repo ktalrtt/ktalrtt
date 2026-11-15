@@ -256,6 +256,8 @@ loadSavedConfig().then(async () => {
     $("helloLine").textContent = `${currentConfig.greetingPrefix || "Kính chào:"} ${currentGuestName}`.trim();
     $("classicInvitation")?.classList.toggle("hidden", routeView !== "letter");
     $("lobby")?.classList.toggle("hidden", routeView === "letter");
+    document.body.classList.toggle("letter-page-mode", routeView === "letter");
+    document.body.classList.toggle("lobby-page-mode", routeView === "lobby");
     window.scrollTo({ top: 0, behavior: "auto" });
     if (routeView === "lobby") requestAnimationFrame(() => window.renderWorld3D?.());
     return;
@@ -488,18 +490,9 @@ $("copyConfig")?.addEventListener("click", async () => {
 
 $("quickEdit")?.addEventListener("click", () => { $("adminPanel")?.classList.remove("hidden"); $("adminPanel")?.scrollIntoView({behavior:"smooth",block:"start"}); });
 
-/* Mở lá thư bằng một URL riêng, cùng cách điều hướng với Album ảnh. */
-$("openInvitation")?.addEventListener("click", async () => {
-  const openLetterPage = () => {
-    window.location.href = "pages/letter.html?name=" + encodeURIComponent(currentGuestName || "");
-  };
-  try {
-    playOpenSound();
-    await runCinematicTransition("enter", openLetterPage);
-  } catch (error) {
-    console.error("Không chạy được hiệu ứng mở thư:", error);
-    openLetterPage();
-  }
+/* Điều hướng trực tiếp giữa hai trang, không chạy hiệu ứng chuyển cảnh. */
+$("openInvitation")?.addEventListener("click", () => {
+  window.location.href = "pages/letter.html?name=" + encodeURIComponent(currentGuestName || "");
 });
 $("returnLobby")?.addEventListener("click", () => {
   const name = encodeURIComponent(currentGuestName || "");
@@ -693,3 +686,56 @@ $("confirmYes").addEventListener("click", async () => {
     rsvpSending = false;
   }
 });
+
+// Hiệu ứng tương tác nhẹ: tia sáng theo chuột, nghiêng ảnh khi rê và sao khi chạm.
+function addLetterPointerEffects() {
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const colors = ["#ff78a8", "#ffc857", "#8ed8ff", "#b99aff", "#8ce6c0"];
+  let lastTrail = 0;
+  document.addEventListener("pointermove", event => {
+    if (reduceMotion || event.pointerType !== "mouse" || event.buttons) return;
+    const now = performance.now();
+    if (now - lastTrail < 110) return;
+    lastTrail = now;
+    const dot = document.createElement("span");
+    dot.className = "pointer-twinkle";
+    dot.textContent = "✧";
+    dot.style.left = event.clientX + "px";
+    dot.style.top = event.clientY + "px";
+    dot.style.color = colors[Math.floor(Math.random() * colors.length)];
+    document.body.append(dot);
+    window.setTimeout(() => dot.remove(), 650);
+  }, { passive: true });
+
+  document.querySelectorAll(".photo-frame,.gallery-item").forEach(card => {
+    if (card.dataset.pointerFx) return;
+    card.dataset.pointerFx = "1";
+    card.addEventListener("pointermove", event => {
+      if (reduceMotion || event.pointerType !== "mouse") return;
+      const rect = card.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / rect.width - .5;
+      const y = (event.clientY - rect.top) / rect.height - .5;
+      card.style.setProperty("--tilt-x", (-y * 4) + "deg");
+      card.style.setProperty("--tilt-y", (x * 5) + "deg");
+      card.style.setProperty("--lift", "-4px");
+    }, { passive: true });
+    card.addEventListener("pointerleave", () => {
+      card.style.setProperty("--tilt-x", "0deg");
+      card.style.setProperty("--tilt-y", "0deg");
+      card.style.setProperty("--lift", "0px");
+    });
+    card.addEventListener("pointerdown", event => {
+      if (reduceMotion || event.pointerType !== "touch") return;
+      const burst = document.createElement("span");
+      burst.className = "touch-spark";
+      burst.textContent = "✦";
+      burst.style.left = event.clientX + "px";
+      burst.style.top = event.clientY + "px";
+      document.body.append(burst);
+      window.setTimeout(() => burst.remove(), 650);
+    }, { passive: true });
+  });
+}
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", addLetterPointerEffects, { once: true });
+} else addLetterPointerEffects();
