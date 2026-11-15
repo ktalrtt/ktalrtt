@@ -237,6 +237,100 @@ async function startBackgroundMusic() {
   if(!audio.src)return;
   try{await audio.play();}catch(_){const b=$("soundToggle");if(b)b.title="Nhấn để phát nhạc nền";}
 }
+
+async function readAllPageConfigForExport() {
+  const db = await openConfigDB();
+  try {
+    return await new Promise((resolve,reject) => {
+      const req = db.transaction(DB_STORE,"readonly").objectStore(DB_STORE).get(DB_KEY);
+      req.onsuccess = () => resolve(req.result || {});
+      req.onerror = () => reject(req.error);
+    });
+  } finally { db.close(); }
+}
+async function readAllStoredVideos() {
+  const db = await new Promise((resolve,reject) => {
+    const req = indexedDB.open("kyyeu-media",1);
+    req.onupgradeneeded = () => { if (!req.result.objectStoreNames.contains("videos")) req.result.createObjectStore("videos"); };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+  try {
+    return await new Promise((resolve,reject) => {
+      const tx = db.transaction("videos","readonly");
+      const store = tx.objectStore("videos");
+      const keysReq = store.getAllKeys();
+      const valuesReq = store.getAll();
+      tx.oncomplete = () => resolve(keysReq.result.map((key,index) => ({key:String(key), blob:valuesReq.result[index]})));
+      tx.onerror = () => reject(tx.error);
+    });
+  } finally { db.close(); }
+}
+function loadZipLibrary() {
+  if (window.JSZip) return Promise.resolve(window.JSZip);
+  if (window.__kyyeuZipPromise) return window.__kyyeuZipPromise;
+  window.__kyyeuZipPromise = new Promise((resolve,reject) => {
+    const script = document.createElement("script");
+    script.src = "https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js";
+    script.onload = () => window.JSZip ? resolve(window.JSZip) : reject(new Error("Không tải được thư viện nén ZIP."));
+    script.onerror = () => reject(new Error("Không tải được công cụ tạo ZIP. Hãy kiểm tra kết nối Internet."));
+    document.head.appendChild(script);
+  });
+  return window.__kyyeuZipPromise;
+}
+async function downloadFullWebsiteData() {
+  const button = $("exportConfig");
+  const oldLabel = button.textContent;
+  button.disabled = true;
+  button.textContent = "Đang đóng gói dữ liệu…";
+  try {
+    const JSZip = await loadZipLibrary();
+    const saved = await readAllPageConfigForExport();
+    const exportConfig = { ...currentConfig, ...saved };
+    exportConfig.worldPages = { ...(currentConfig.worldPages || {}), ...(saved.worldPages || {}) };
+    const videos = await readAllStoredVideos();
+    const zip = new JSZip();
+    const mediaFolder = zip.folder("site-data/videos");
+    const videoIndex = {};
+    for (const entry of videos) {
+      if (!(entry.blob instanceof Blob)) continue;
+      const ext = (entry.blob.type.split("/")[1] || "mp4").replace(/[^a-z0-9]/gi,"").toLowerCase() || "mp4";
+      const fileName = entry.key + "." + ext;
+      mediaFolder.file(fileName, entry.blob);
+      videoIndex[entry.key] = "site-data/videos/" + fileName;
+    }
+    Object.entries(exportConfig.worldPages || {}).forEach(([pageId,pageData]) => {
+      if (!pageData || !Array.isArray(pageData.items)) return;
+      pageData.items = pageData.items.map(item => item && item.videoId && videoIndex[item.videoId]
+        ? { ...item, videoUrl: videoIndex[item.videoId] }
+        : item);
+    });
+    zip.file("site-data/site-config.json", JSON.stringify(exportConfig,null,2));
+    zip.file("HUONG-DAN.txt",
+      "SAO LƯU DỮ LIỆU WEBSITE KTA_LRTT\n\n" +
+      "1. Giải nén file ZIP này.\n" +
+      "2. Tải nguyên thư mục site-data lên thư mục gốc repository GitHub (cùng cấp với index.html).\n" +
+      "3. Nếu GitHub hỏi ghi đè, chọn ghi đè các file cũ trong site-data.\n" +
+      "4. Chờ GitHub Pages triển khai xong, sau đó tải lại website trên các thiết bị.\n\n" +
+      "Cấu hình và ảnh được lưu trong site-data/site-config.json (ảnh đang được nhúng trong JSON). Video nằm trong site-data/videos/.\n" +
+      "Lưu ý: đây là bản xuất tĩnh. Muốn thay đổi tự đồng bộ ngay sau mỗi lần bấm Lưu mà không cần xuất/tải lên GitHub, cần kết nối cơ sở dữ liệu trực tuyến.\n");
+    const blob = await zip.generateAsync({type:"blob",compression:"DEFLATE",compressionOptions:{level:5}});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "ktalrtt-website-data.zip";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url),1500);
+    alert("Đã tải bản sao lưu cấu hình, ảnh và video. Hãy giải nén ZIP rồi tải thư mục site-data lên GitHub theo file HUONG-DAN.txt.");
+  } catch(error) {
+    console.error(error);
+    alert(error.message || "Không thể xuất dữ liệu website.");
+  } finally {
+    button.disabled = false;
+    button.textContent = oldLabel;
+  }
+}
+
 function downloadConfig() {
   const source = "/* File được xuất từ trình chỉnh sửa thiệp kỷ yếu */\nconst CONFIG = " + JSON.stringify(currentConfig, null, 2) + ";\n";
   const blob = new Blob([source], { type: "text/javascript;charset=utf-8" });
@@ -244,8 +338,18 @@ function downloadConfig() {
   const a = document.createElement("a"); a.href = url; a.download = "config.js"; a.click();
   URL.revokeObjectURL(url);
 }
+async function loadPublishedWebsiteConfig() {
+  try {
+    const response = await fetch(new URL("site-data/site-config.json", document.baseURI), { cache: "no-store" });
+    if (!response.ok) return;
+    const published = await response.json();
+    if (published && typeof published === "object") currentConfig = { ...currentConfig, ...published };
+  } catch (error) {
+    console.info("Chưa có bản dữ liệu website đã xuất:", error);
+  }
+}
 applyConfig();
-loadSavedConfig().then(async () => {
+loadPublishedWebsiteConfig().then(() => loadSavedConfig()).then(async () => {
   applyConfig();
   if (typeof addLetterPointerEffects === "function") addLetterPointerEffects();
   window.dispatchEvent(new Event("kyyeu-config-ready"));
@@ -493,20 +597,8 @@ $("adminForm").addEventListener("submit", async (event) => {
       : (error.message || "Có lỗi khi lưu ảnh."));
   }
 });
-$("exportConfig").addEventListener("click", downloadConfig);
-$("copyConfig")?.addEventListener("click", async () => {
-  const source = "/* File được xuất từ trình chỉnh sửa kỷ yếu */\nconst CONFIG = " + JSON.stringify(currentConfig, null, 2) + ";\n";
-  try {
-    await navigator.clipboard.writeText(source);
-    alert("Đã sao chép toàn bộ config.js. Bạn có thể dán vào file config.js trên GitHub.");
-  } catch (_) {
-    const area = document.createElement("textarea");
-    area.value = source; area.style.position = "fixed"; area.style.opacity = "0";
-    document.body.appendChild(area); area.select();
-    const ok = document.execCommand("copy"); area.remove();
-    alert(ok ? "Đã sao chép config.js." : "Không thể sao chép tự động. Hãy dùng nút Tải config.js.");
-  }
-});
+$("exportConfig").addEventListener("click", downloadFullWebsiteData);
+
 
 
 $("quickEdit")?.addEventListener("click", () => { $("adminPanel")?.classList.remove("hidden"); $("adminPanel")?.scrollIntoView({behavior:"smooth",block:"start"}); });
