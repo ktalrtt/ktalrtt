@@ -6,7 +6,6 @@ const DB_KEY = "site-config";
 const ACCOUNT_KEY = "remembered-guest-name";
 const ADMIN_SESSION_KEY = "kyyeu-admin-session";
 const ENTERED_SESSION_KEY = "kyyeu-entered-session";
-const RSVP_WEB_APP_URL = "https://script.google.com/macros/s/AKfycby0xLcANRpEN6RmVUS4yaVj58iC2EPPV0ddPoB9z9KDH1sZQC9mgZwb4-XwYqo2ZfZ1/exec";
 let currentConfig = { ...CONFIG };
 let currentGuestName = "";
 window.getYearbookConfig = () => currentConfig;
@@ -495,8 +494,8 @@ $("openInvitation")?.addEventListener("click", async () => {
     window.location.href = "pages/letter.html?name=" + encodeURIComponent(currentGuestName || "");
   };
   try {
-    await runCinematicTransition("enter", openLetterPage);
     playOpenSound();
+    await runCinematicTransition("enter", openLetterPage);
   } catch (error) {
     console.error("Không chạy được hiệu ứng mở thư:", error);
     openLetterPage();
