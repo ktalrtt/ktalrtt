@@ -251,7 +251,7 @@ loadSavedConfig().then(async () => {
     $("helloLine").textContent = `${currentConfig.greetingPrefix || "Kính chào:"} ${currentGuestName}`.trim();
     $("gate").classList.add("hidden");
     $("invitation").classList.remove("hidden");
-    $("worldLobby")?.classList.remove("hidden");
+    $("lobby")?.classList.remove("hidden");
     $("classicInvitation")?.classList.add("hidden");
     const isAdmin = sessionStorage.getItem(ADMIN_SESSION_KEY) === "1";
     $("adminPanel").classList.toggle("hidden", !isAdmin);
@@ -342,7 +342,7 @@ $("nameForm")?.addEventListener("submit", async (event) => {
   const showLobby = () => {
     $("gate")?.classList.add("hidden");
     $("invitation")?.classList.remove("hidden");
-    $("worldLobby")?.classList.remove("hidden");
+    $("lobby")?.classList.remove("hidden");
     $("classicInvitation")?.classList.add("hidden");
     window.scrollTo({ top: 0, behavior: "auto" });
     // Render lai sau khi san thoat trang thai display:none de lay dung kich thuoc khung 3D.
@@ -474,14 +474,36 @@ $("copyConfig")?.addEventListener("click", async () => {
 
 $("quickEdit")?.addEventListener("click", () => { $("adminPanel")?.classList.remove("hidden"); $("adminPanel")?.scrollIntoView({behavior:"smooth",block:"start"}); });
 
-/* Main lobby / restored classic invitation navigation. */
-$("openInvitation")?.addEventListener("click", () => {
-  window.open("https://ktalrtt.github.io/ktalrtt/thu-thanh-xuan/", "_blank", "noopener,noreferrer");
+/* Chuyển giữa sảnh 3D và lá thư ngay trong cùng website. */
+$("openInvitation")?.addEventListener("click", async () => {
+  const showLetter = () => {
+    $("lobby")?.classList.add("hidden");
+    $("classicInvitation")?.classList.remove("hidden");
+    $("helloLine").textContent = `${currentConfig.greetingPrefix || "Kính chào:"} ${currentGuestName}`.trim();
+    window.scrollTo({ top: 0, behavior: "auto" });
+  };
+  try {
+    const transition = runCinematicTransition("enter", showLetter);
+    playOpenSound();
+    await transition;
+  } catch (error) {
+    console.error("Không chạy được hiệu ứng mở thư:", error);
+    showLetter();
+  }
 });
-$("returnLobby")?.addEventListener("click", () => {
-  $("classicInvitation")?.classList.add("hidden");
-  $("worldLobby")?.classList.remove("hidden");
-  window.scrollTo({top:0,behavior:"smooth"});
+$("returnLobby")?.addEventListener("click", async () => {
+  const showLobby = () => {
+    $("classicInvitation")?.classList.add("hidden");
+    $("lobby")?.classList.remove("hidden");
+    window.scrollTo({ top: 0, behavior: "auto" });
+    requestAnimationFrame(() => window.renderWorld3D?.());
+  };
+  try {
+    await runCinematicTransition("leave", showLobby);
+  } catch (error) {
+    console.error("Không chạy được hiệu ứng quay lại sảnh:", error);
+    showLobby();
+  }
 });
 
 
