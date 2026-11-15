@@ -1084,3 +1084,27 @@ html[data-performance="high"] .world-stage:before{animation:none!important}
  .world-bottom{font-size:7px!important;justify-content:center!important;gap:10px!important}.world-bottom>span:nth-child(2){display:none!important}
 }
 @media(prefers-reduced-motion:reduce){.world-lobby:before{animation:none!important}.immersive-room,.portal-inner{transition:none!important}}
+
+
+/* Performance pass: reduce expensive compositing in the 3D lobby */
+.world-lobby:before{animation:none!important}
+.world-stage{perspective:900px!important}
+.immersive-room{will-change:auto!important;transition:none!important}
+.cosmic-depth{filter:none!important;opacity:.75!important}
+.portal-inner{
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+  box-shadow:0 10px 28px #0007,inset 0 0 18px #e2c7ff12!important;
+  transition:transform .18s ease,border-color .18s ease!important;
+}
+.room-portal{filter:none!important}
+.room-portal:hover .portal-inner,.room-portal:focus-visible .portal-inner{
+  transform:translateY(-4px)!important;box-shadow:0 12px 30px #0008,0 0 18px #a78bfa44!important;
+}
+.world-controls button,.open-invitation{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+@media(max-width:900px){
+  .immersive-room{transform:none!important}
+  .portal-inner{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .portal-inner,.room-portal{transition:none!important}
+}
