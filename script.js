@@ -496,11 +496,17 @@ $("openInvitation")?.addEventListener("click", () => {
   window.location.href = "pages/letter.html?name=" + encodeURIComponent(currentGuestName || "");
 });
 $("returnLobby")?.addEventListener("click", () => {
-  const name = encodeURIComponent(currentGuestName || "");
+  // Dùng URL hiện tại của trang gốc trong dự án GitHub Pages,
+  // tránh ../index.html trỏ ra ngoài thư mục /ktalrtt/ khi thư chạy trong iframe.
+  const destination = new URL(window.location.href);
+  destination.search = "";
+  destination.searchParams.set("view", "lobby");
+  destination.searchParams.set("name", currentGuestName || "");
+  destination.hash = "";
   if (window.top !== window.self) {
-    window.top.location.href = "../index.html?view=lobby&name=" + name;
+    window.top.location.href = destination.href;
   } else {
-    window.location.href = "index.html?view=lobby&name=" + name;
+    window.location.href = destination.href;
   }
 });
 
