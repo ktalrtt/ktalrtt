@@ -99,7 +99,7 @@
     try {
       const config = await readSharedConfig();
       const sharedPage = config.worldPages && config.worldPages[id];
-      if (sharedPage) data = { ...data, ...sharedPage };
+      if (sharedPage && Array.isArray(sharedPage.items)) data = { ...data, ...sharedPage };
       else {
         try {
           const legacy = JSON.parse(localStorage.getItem(key) || "{}");
