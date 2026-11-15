@@ -246,6 +246,21 @@ loadSavedConfig().then(async () => {
   updateSoundButton();
   const remembered = await getRememberedName();
   if (remembered) $("guestName").value = remembered;
+  const route = new URLSearchParams(window.location.search);
+  const routeView = route.get("view");
+  const routeName = route.get("name") || "";
+  if ((routeView === "letter" || routeView === "lobby") && routeName) {
+    currentGuestName = routeName;
+    $("gate").classList.add("hidden");
+    $("invitation").classList.remove("hidden");
+    $("adminPanel").classList.add("hidden");
+    $("helloLine").textContent = `${currentConfig.greetingPrefix || "Kính chào:"} ${currentGuestName}`.trim();
+    $("classicInvitation")?.classList.toggle("hidden", routeView !== "letter");
+    $("lobby")?.classList.toggle("hidden", routeView === "letter");
+    window.scrollTo({ top: 0, behavior: "auto" });
+    if (routeView === "lobby") requestAnimationFrame(() => window.renderWorld3D?.());
+    return;
+  }
   if (sessionStorage.getItem(ENTERED_SESSION_KEY) === "1") {
     currentGuestName = sessionStorage.getItem("kyyeu-guest-name") || remembered || "";
     $("helloLine").textContent = `${currentConfig.greetingPrefix || "Kính chào:"} ${currentGuestName}`.trim();
@@ -474,35 +489,25 @@ $("copyConfig")?.addEventListener("click", async () => {
 
 $("quickEdit")?.addEventListener("click", () => { $("adminPanel")?.classList.remove("hidden"); $("adminPanel")?.scrollIntoView({behavior:"smooth",block:"start"}); });
 
-/* Chuyển giữa sảnh 3D và lá thư ngay trong cùng website. */
+/* Mở lá thư bằng một URL riêng, cùng cách điều hướng với Album ảnh. */
 $("openInvitation")?.addEventListener("click", async () => {
-  const showLetter = () => {
-    $("lobby")?.classList.add("hidden");
-    $("classicInvitation")?.classList.remove("hidden");
-    $("helloLine").textContent = `${currentConfig.greetingPrefix || "Kính chào:"} ${currentGuestName}`.trim();
-    window.scrollTo({ top: 0, behavior: "auto" });
+  const openLetterPage = () => {
+    window.location.href = "pages/letter.html?name=" + encodeURIComponent(currentGuestName || "");
   };
   try {
-    const transition = runCinematicTransition("enter", showLetter);
+    await runCinematicTransition("enter", openLetterPage);
     playOpenSound();
-    await transition;
   } catch (error) {
     console.error("Không chạy được hiệu ứng mở thư:", error);
-    showLetter();
+    openLetterPage();
   }
 });
-$("returnLobby")?.addEventListener("click", async () => {
-  const showLobby = () => {
-    $("classicInvitation")?.classList.add("hidden");
-    $("lobby")?.classList.remove("hidden");
-    window.scrollTo({ top: 0, behavior: "auto" });
-    requestAnimationFrame(() => window.renderWorld3D?.());
-  };
-  try {
-    await runCinematicTransition("leave", showLobby);
-  } catch (error) {
-    console.error("Không chạy được hiệu ứng quay lại sảnh:", error);
-    showLobby();
+$("returnLobby")?.addEventListener("click", () => {
+  const name = encodeURIComponent(currentGuestName || "");
+  if (window.top !== window.self) {
+    window.top.location.href = "../index.html?view=lobby&name=" + name;
+  } else {
+    window.location.href = "index.html?view=lobby&name=" + name;
   }
 });
 
@@ -642,44 +647,46 @@ $("confirmModal").addEventListener("click", event => {
 let rsvpSending = false;
 $("confirmYes").addEventListener("click", async () => {
   if (rsvpSending) return;
+  const publicKey = currentConfig.emailjsPublicKey;
+  const serviceId = currentConfig.emailjsServiceId;
+  const templateId = currentConfig.emailjsTemplateId;
+  if (!window.emailjs || !publicKey || !serviceId || !templateId) {
+    $("confirmStatus").textContent = "Thiếu cấu hình EmailJS. Chủ lời mời cần kiểm tra Public Key, Service ID và Template ID.";
+    $("confirmStatus").className = "confirm-status is-error";
+    return;
+  }
   rsvpSending = true;
   const button = $("confirmYes");
   const status = $("confirmStatus");
   button.disabled = true;
   button.classList.add("is-sending");
   button.textContent = "Đang gửi xác nhận…";
-  status.textContent = "Đang gửi thông tin đến chủ lời mời. Vui lòng đợi một chút nhé.";
+  status.textContent = "Đang gửi thông tin đến Gmail của chủ lời mời.";
   status.className = "confirm-status is-pending";
-  const payload = {
-    name: currentGuestName || "Khách mời",
-    note: "Đã xác nhận tham gia buổi chụp kỷ yếu.",
-    page: location.href,
-    submittedAt: new Date().toISOString()
-  };
   try {
-    // text/plain + no-cors tránh yêu cầu preflight từ trình duyệt khi gọi Apps Script.
-    // Response ở chế độ opaque nên chỉ xác nhận yêu cầu đã được gửi đi, không đọc được kết quả MailApp.
-    await fetch(RSVP_WEB_APP_URL, {
-      method: "POST",
-      mode: "no-cors",
-      redirect: "follow",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(payload)
+    emailjs.init({ publicKey });
+    await emailjs.send(serviceId, templateId, {
+      to_email: currentConfig.rsvpEmail || "khongtienanhlrtt@gmail.com",
+      guest_name: currentGuestName || "Khách mời",
+      event_date: currentConfig.eventDate || "Chưa cập nhật",
+      event_place: currentConfig.eventPlace || "Chưa cập nhật",
+      reply_to: "",
+      message: `${currentGuestName || "Khách mời"} đã xác nhận tham gia buổi chụp kỷ yếu.`
     });
     playSuccessSound();
-    status.textContent = "Đã gửi yêu cầu xác nhận! Chủ lời mời sẽ nhận thông báo qua Gmail nếu Apps Script đã được cấp quyền và triển khai đúng.";
+    status.textContent = "Đã gửi xác nhận thành công! Gmail của chủ lời mời đã được thông báo.";
     status.className = "confirm-status is-success";
-    button.textContent = "Đã gửi yêu cầu ♥";
+    button.textContent = "Đã gửi xác nhận ♥";
     setTimeout(() => {
       closeConfirmModal();
       button.textContent = currentConfig.confirmYesText || "Đồng ý, mình sẽ tham gia ♥";
       button.disabled = false;
       button.classList.remove("is-sending");
       rsvpSending = false;
-    }, 2600);
+    }, 2200);
   } catch (error) {
-    console.error("Không gửi được thông báo RSVP:", error);
-    status.textContent = "Chưa gửi được thông báo. Bạn hãy thử lại hoặc báo chủ lời mời kiểm tra đường dẫn Apps Script.";
+    console.error("Lỗi gửi EmailJS RSVP:", error);
+    status.textContent = "Gửi thất bại. Hãy kiểm tra cấu hình EmailJS và mẫu email rồi thử lại.";
     status.className = "confirm-status is-error";
     button.textContent = currentConfig.confirmYesText || "Thử gửi lại ♥";
     button.disabled = false;
