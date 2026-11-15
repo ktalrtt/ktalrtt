@@ -239,6 +239,7 @@ function downloadConfig() {
 applyConfig();
 loadSavedConfig().then(async () => {
   applyConfig();
+  if (typeof addLetterPointerEffects === "function") addLetterPointerEffects();
   window.dispatchEvent(new Event("kyyeu-config-ready"));
   soundEnabled = currentConfig.soundEnabled !== false && localStorage.getItem("kyyeu-sound") !== "off";
   soundVolume = (currentConfig.soundVolume ?? 65) / 100;
@@ -692,7 +693,9 @@ function addLetterPointerEffects() {
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const colors = ["#ff78a8", "#ffc857", "#8ed8ff", "#b99aff", "#8ce6c0"];
   let lastTrail = 0;
-  document.addEventListener("pointermove", event => {
+  if (!window.letterPointerTrailReady) {
+    window.letterPointerTrailReady = true;
+    document.addEventListener("pointermove", event => {
     if (reduceMotion || event.pointerType !== "mouse" || event.buttons) return;
     const now = performance.now();
     if (now - lastTrail < 110) return;
@@ -705,7 +708,8 @@ function addLetterPointerEffects() {
     dot.style.color = colors[Math.floor(Math.random() * colors.length)];
     document.body.append(dot);
     window.setTimeout(() => dot.remove(), 650);
-  }, { passive: true });
+    }, { passive: true });
+  }
 
   document.querySelectorAll(".photo-frame,.gallery-item").forEach(card => {
     if (card.dataset.pointerFx) return;
