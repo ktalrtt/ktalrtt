@@ -104,7 +104,8 @@
       } else {
         let publishedPage = null;
         try {
-          const response = await fetch(new URL("../site-data/site-config.json", location.href), { cache: "no-store" });
+          let response = await fetch(new URL("../site-data/site-config.json", location.href), { cache: "no-store" });
+          if (!response.ok) response = await fetch(new URL("../site-config.json", location.href), { cache: "no-store" });
           if (response.ok) {
             const publishedConfig = await response.json();
             publishedPage = publishedConfig.worldPages && publishedConfig.worldPages[id];
