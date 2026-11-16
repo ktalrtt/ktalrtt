@@ -340,8 +340,12 @@ function downloadConfig() {
 }
 async function loadPublishedWebsiteConfig() {
   try {
-    const response = await fetch(new URL("site-data/site-config.json", document.baseURI), { cache: "no-store" });
-    if (!response.ok) return;
+    let response = await fetch(new URL("site-data/site-config.json", document.baseURI), { cache: "no-store" });
+    if (!response.ok) response = await fetch(new URL("site-config.json", document.baseURI), { cache: "no-store" });
+    if (!response.ok) {
+      console.warn("Không tìm thấy site-data/site-config.json hoặc site-config.json trên GitHub.");
+      return;
+    }
     const published = await response.json();
     if (published && typeof published === "object") currentConfig = { ...currentConfig, ...published };
   } catch (error) {
