@@ -222,7 +222,7 @@ async function readImage(file) {
 async function readMusic(file) {
   if (!file) return null;
   if (!file.type.startsWith("audio/")) throw new Error("Vui lòng chọn tệp âm thanh hợp lệ.");
-  if (file.size > 1.5 * 1024 * 1024) throw new Error("Nhạc tải trực tiếp tối đa 1,5 MB. Hãy dùng URL MP3 công khai cho tệp lớn.");
+  if (file.size > 5 * 1024 * 1024) throw new Error("Nhạc tải trực tiếp tối đa 5 MB. Hãy dùng URL MP3 công khai cho tệp lớn hơn.");
   return await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(new Error("Không đọc được tệp nhạc."));reader.readAsDataURL(file);});
 }
 function applyBackgroundMusic() {
