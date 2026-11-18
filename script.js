@@ -235,8 +235,38 @@ async function startBackgroundMusic() {
   const audio=$("bgMusic"); if(!audio || currentConfig.musicEnabled===false || getPerformanceMode()==="low" || !soundEnabled)return;
   applyBackgroundMusic();
   if(!audio.src)return;
-  try{await audio.play();}catch(_){const b=$("soundToggle");if(b)b.title="Nhấn để phát nhạc nền";}
+  try{await audio.play();}catch(_){const b=$("soundToggle");if(b)b.title="Nhấn để bật âm thanh; nếu vẫn không phát, kiểm tra URL nhạc.";}
 }
+function updateMusicButton() {
+  const button=$("musicToggle"), audio=$("bgMusic");
+  if(!button || !audio)return;
+  const hasSource=Boolean(currentConfig.musicData || currentConfig.musicUrl);
+  button.disabled=!hasSource || currentConfig.musicEnabled===false;
+  button.textContent=!hasSource ? "♫ Chưa có nhạc" : (audio.paused ? "♫ Phát nhạc" : "Ⅱ Tạm dừng");
+  button.title=!hasSource ? "Quản trị viên cần thêm URL MP3 trong phần chỉnh sửa" : (currentConfig.musicEnabled===false ? "Nhạc nền đang bị tắt trong phần quản trị" : "Phát hoặc tạm dừng nhạc nền");
+}
+const musicToggleButton=$("musicToggle");
+musicToggleButton?.addEventListener("click", async () => {
+  const audio=$("bgMusic");
+  if(!audio || !currentConfig.musicEnabled || getPerformanceMode()==="low") { updateMusicButton(); return; }
+  if(!audio.paused) { audio.pause(); updateMusicButton(); return; }
+  applyBackgroundMusic();
+  try {
+    await audio.play();
+    updateMusicButton();
+  } catch(error) {
+    musicToggleButton.title="Không phát được nhạc. Hãy kiểm tra link có phải URL MP3/âm thanh trực tiếp và công khai.";
+    updateMusicButton();
+    musicToggleButton.title="Không phát được nhạc. Kiểm tra URL MP3 công khai.";
+  }
+});
+$("bgMusic")?.addEventListener("play",updateMusicButton);
+$("bgMusic")?.addEventListener("pause",updateMusicButton);
+$("bgMusic")?.addEventListener("ended",updateMusicButton);
+$("bgMusic")?.addEventListener("error",() => {
+  const button=$("musicToggle");
+  if(button)button.title="Lỗi tải âm thanh: link có thể không trực tiếp, không công khai hoặc định dạng không hỗ trợ.";
+});
 
 async function readAllPageConfigForExport() {
   const db = await openConfigDB();
@@ -360,6 +390,8 @@ loadPublishedWebsiteConfig().then(() => loadSavedConfig()).then(async () => {
   soundEnabled = currentConfig.soundEnabled !== false && localStorage.getItem("kyyeu-sound") !== "off";
   soundVolume = (currentConfig.soundVolume ?? 65) / 100;
   applyPerformanceModeAudio();
+  applyBackgroundMusic();
+  updateMusicButton();
   const remembered = await getRememberedName();
   if (remembered) $("guestName").value = remembered;
   const route = new URLSearchParams(window.location.search);
