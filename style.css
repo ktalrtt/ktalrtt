@@ -1409,3 +1409,27 @@ html[data-performance="low"] #lobby .portal-art span {
   z-index: 1 !important;
   text-shadow: none !important;
 }
+
+
+/* Trình phát nhạc nền: điều khiển riêng với hiệu ứng âm thanh. */
+.music-floating {
+  position: fixed;
+  right: 18px;
+  bottom: 66px;
+  z-index: 25;
+  border: 1px solid rgba(255,255,255,.42);
+  border-radius: 999px;
+  background: rgba(35,24,57,.88);
+  color: #fff;
+  padding: 10px 15px;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(12,8,30,.22);
+  backdrop-filter: blur(10px);
+}
+.music-floating:disabled { opacity: .72; cursor: not-allowed; }
+@media (max-width: 600px) {
+  .music-floating { right: 12px; bottom: 62px; padding: 9px 12px; font-size: 12px; }
+  .sound-floating { right: 12px; bottom: 12px; }
+}
